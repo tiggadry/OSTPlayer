@@ -1,0 +1,7 @@
+﻿Id: OSTPlayer_f3b0c108-5212-4b34-a303-47e859b31a92
+Name: Generic Plugin
+Author: Tigg_Adry
+Version: 0.1
+Module: OSTPlayer.dll
+Type: GenericPlugin
+Icon: OSTPlayer.png
