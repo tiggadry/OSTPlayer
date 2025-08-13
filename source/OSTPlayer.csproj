@@ -52,6 +52,7 @@
     <Compile Include="DevTools\ReadmeUpdateRules.cs" />
     <Compile Include="DevTools\TemplateEngine.cs" />
     <Compile Include="Diagnostics\PluginDiagnostics.cs" />
+    <Compile Include="Documentation\References\Interfaces\IAudioViewModel.cs" />
     <Compile Include="Models\AlbumMetadataModel.cs" />
     <Compile Include="Models\IMetadataModel.cs" />
     <Compile Include="Models\TrackListItem.cs" />
@@ -83,20 +84,9 @@
     <Compile Include="Utils\Performance\TTLCache.cs" />
     <Compile Include="Utils\RelayCommand.cs" />
     <Compile Include="Utils\TrackDataGridSorter.cs" />
-    <Compile Include="ViewModels\Audio\AudioPlaybackViewModel.cs" />
-    <Compile Include="ViewModels\Audio\IAudioViewModel.cs" />
-    <Compile Include="ViewModels\Audio\IPlaylistViewModel.cs" />
-    <Compile Include="ViewModels\Audio\PlaylistViewModel.cs" />
     <Compile Include="ViewModels\Core\ViewModelBase.cs" />
-    <Compile Include="ViewModels\Metadata\DiscogsMetadataViewModel.cs" />
-    <Compile Include="ViewModels\Metadata\IMetadataViewModel.cs" />
-    <Compile Include="ViewModels\Metadata\MetadataManagerViewModel.cs" />
-    <Compile Include="ViewModels\Metadata\Mp3MetadataViewModel.cs" />
     <Compile Include="ViewModels\OstPlayerSettingsViewModel.cs" />
     <Compile Include="ViewModels\OstPlayerSidebarViewModel.cs" />
-    <Compile Include="ViewModels\UI\GameSelectionViewModel.cs" />
-    <Compile Include="ViewModels\UI\IUIViewModel.cs" />
-    <Compile Include="ViewModels\UI\StatusViewModel.cs" />
     <Compile Include="Views\Windows\CoverPreviewWindow.xaml.cs">
       <DependentUpon>CoverPreviewWindow.xaml</DependentUpon>
     </Compile>
@@ -161,6 +151,8 @@
     <None Include="Documentation\AI-Assistant\FileHeaderTemplates.md" />
     <None Include="Documentation\AI-Assistant\README.md" />
     <None Include="Documentation\AI-Assistant\SmartDateAutomation.md" />
+    <None Include="Documentation\Analysis\ExtractedViewModels-DetailedAnalysis.md" />
+    <None Include="Documentation\Analysis\ViewModels-Analysis-Pre-Step3.md" />
     <None Include="Documentation\Archive\DocumentationReviewSummary.md" />
     <None Include="Documentation\Archive\HeaderUpdateSummary.md" />
     <None Include="Documentation\Archive\InternalCommentsEnhancementSummary.md" />
@@ -210,7 +202,9 @@
     <None Include="Documentation\README.md" />
     <None Include="Documentation\Refactoring\SafeViewModelRefactoringPlan.md" />
     <None Include="Documentation\Refactoring\Step1-Complete.md" />
+    <None Include="Documentation\Refactoring\Step2-Complete.md" />
     <None Include="Documentation\Testing\Step1-Infrastructure-TestChecklist.md" />
+    <None Include="Documentation\Testing\Step2-Helpers-TestChecklist.md" />
     <None Include="extension.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -221,9 +215,6 @@
     <None Include="Localization\en_US.xaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="ViewModels\README.md" />
-    <None Include="ViewModels\REFACTORING_PROGRESS_REPORT.md" />
-    <None Include="ViewModels\VIEWMODEL_REFACTORING_PLAN.md" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="App.xaml">
@@ -251,6 +242,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="ViewModels\Audio\" />
+    <Folder Include="ViewModels\Metadata\" />
+    <Folder Include="ViewModels\UI\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

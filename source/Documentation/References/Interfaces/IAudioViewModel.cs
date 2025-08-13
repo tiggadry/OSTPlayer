@@ -1,80 +1,48 @@
 // ====================================================================
-// FILE: IAudioViewModel.cs
-// PROJECT: OstPlayer - Playnite Plugin for Game Soundtrack Management
-// MODULE: ViewModels
-// LOCATION: ViewModels/Audio/
+// FILE: IAudioViewModel.cs (REFERENCE COPY)
+// PROJECT: OstPlayer - Reference Interface for Future Extractions
+// MODULE: References
+// LOCATION: Documentation/References/Interfaces/
 // VERSION: 1.1.0
-// CREATED: 2025-08-06
-// UPDATED: 2025-08-07
-// AUTHOR: TiggAdry
+// STATUS: REFERENCE ONLY - NOT USED IN CURRENT BUILD
 // ====================================================================
 //
 // PURPOSE:
-// Interface contract for audio-related ViewModels in the OstPlayer project.
-// Defines the public API for audio playbook control, progress tracking, and
-// volume management. Part of the critical refactoring to extract audio concerns
-// from the monolithic OstPlayerSidebarViewModel. Now includes async/await 
-// support for improved UI responsiveness.
+// REFERENCE COPY of high-quality interface design for future audio extractions.
+// This interface demonstrates excellent separation of concerns and MVVM patterns
+// that can be used as inspiration for Step 3+ micro-extractions.
 //
-// FEATURES:
-// - Audio playback control interface (play, pause, stop)
-// - Progress tracking and position management
-// - Volume control and mute functionality
-// - Track selection and playlist navigation
-// - Event-driven audio state notifications
-// - **NEW**: Async audio operations for non-blocking UI
+// LESSONS LEARNED:
+// - Clean interface segregation
+// - Comprehensive audio control API
+// - Async/await pattern integration
+// - Event-driven state notifications
+// - Proper IDisposable pattern
 //
-// DEPENDENCIES:
-// - System.Windows.Input (ICommand for MVVM)
-// - System (EventHandler, TimeSpan, basic types)
-// - System.Threading.Tasks (async operations support)
+// FUTURE USE:
+// When we're ready for larger extractions, this interface provides:
+// - Template for audio ViewModel contracts
+// - Guidance for method signatures
+// - Event pattern examples
+// - Property organization patterns
 //
-// DESIGN PATTERNS:
-// - Interface Segregation Principle (focused audio contract)
-// - Command Pattern (audio control commands)
-// - Observer Pattern (audio state events)
-// - **NEW**: Task-based Asynchronous Pattern (TAP)
+// EXTRACTION READINESS:
+// This interface is ready to be used when we reach the audio extraction phase
+// of our safe micro-extraction plan.
 //
-// REFACTORING CONTEXT:
-// This interface is part of the OstPlayerSidebarViewModel refactoring initiative.
-// Enables extraction of audio concerns into specialized ViewModels while maintaining
-// clear contracts and testability through interface-based design.
-//
-// IMPLEMENTATION TARGETS:
-// - AudioPlaybackViewModel: Core playback control and state
-// - PlaylistViewModel: Track navigation and auto-play logic
-// - Main coordinator: Delegates audio operations to implementing ViewModels
-//
-// THREAD SAFETY:
-// - Interface methods should be thread-safe for UI thread operations
-// - Event notifications should support cross-thread invocation
-// - Implementations must handle concurrent access appropriately
-// - **NEW**: Async methods must properly handle thread context
-//
-// COMPATIBILITY:
-// - .NET Framework 4.6.2
-// - C# 7.3
-// - WPF data binding compatible
-// - NAudio integration support
-// - **NEW**: Task-based Asynchronous Pattern support
-//
-// CHANGELOG:
-// 2025-08-07 v1.1.0 - Added async/await support: PlayAsync method, ErrorOccurred event
-// 2025-08-06 v1.0.0 - Initial interface definition for audio ViewModel extraction
 // ====================================================================
 
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace OstPlayer.ViewModels.Audio
+namespace OstPlayer.References.Interfaces
 {
     /// <summary>
-    /// Interface contract for audio-related ViewModels providing playback control,
-    /// progress tracking, and volume management functionality.
+    /// REFERENCE: Interface contract for audio-related ViewModels.
     /// 
-    /// Designed to support the extraction of audio concerns from the monolithic
-    /// OstPlayerSidebarViewModel into focused, testable components.
+    /// This interface demonstrates excellent design patterns for future use
+    /// in our safe micro-extraction process.
     /// </summary>
     public interface IAudioViewModel : IDisposable
     {
