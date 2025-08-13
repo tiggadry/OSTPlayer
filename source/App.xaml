@@ -1,10 +1,114 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+====================================================================
+FILE: App.xaml
+PROJECT: OstPlayer - Playnite Plugin for Game Soundtrack Management
+MODULE: Application
+LOCATION: /
+VERSION: 1.0.0
+CREATED: 2025-08-06
+UPDATED: 2025-08-06
+AUTHOR: TiggAdry
+====================================================================
+
+PURPOSE:
+Application definition file for WPF plugin components providing
+resource dictionary management and application-level configuration
+for the OstPlayer Playnite plugin.
+
+FEATURES:
+- Resource dictionary merging for styles and localization
+- Application-level resource management
+- Centralized styling and theming support
+- Localization resource integration
+- Plugin-wide resource accessibility
+
+DEPENDENCIES:
+- Styles.xaml (custom styling definitions)
+- Localization/en_US.xaml (localization resources)
+- System.Windows.Application (WPF framework)
+
+RESOURCE STRUCTURE:
+- Merged resource dictionaries for modular organization
+- Styles.xaml inclusion for custom control styling
+- Localization resources for multi-language support
+- Application-level resource hierarchy
+
+DESIGN PATTERNS:
+- Resource Dictionary Pattern (modular resource organization)
+- Merged Dictionary Pattern (resource composition)
+- Localization Pattern (culture-specific resources)
+
+RESOURCE MANAGEMENT:
+- Centralized resource definition and access
+- Hierarchical resource resolution
+- Plugin-wide resource availability
+- Memory-efficient resource sharing
+
+LOCALIZATION SUPPORT:
+- Culture-specific resource loading
+- Extensible localization framework
+- Default language fallback mechanism
+- Plugin internationalization preparation
+
+PERFORMANCE OPTIMIZATION:
+- Efficient resource dictionary merging
+- Minimal application startup overhead
+- Lazy resource loading where possible
+- Memory-conscious resource management
+
+LIMITATIONS:
+- Plugin context within Playnite application
+- Limited to WPF resource system capabilities
+- No dynamic resource loading or unloading
+- Static resource definition approach
+
+FUTURE REFACTORING:
+TODO: Add dynamic theming support
+TODO: Implement runtime localization switching
+TODO: Add resource caching and optimization
+TODO: Create plugin-specific resource namespaces
+TODO: Add resource validation and error handling
+CONSIDER: Hot-reload support for development
+CONSIDER: Resource compression and optimization
+IDEA: Theme marketplace integration
+IDEA: User-customizable styling options
+
+TESTING:
+- Resource loading tests for all merged dictionaries
+- Application startup tests for resource availability
+- Localization tests for resource resolution
+- Memory usage tests for resource efficiency
+
+RESOURCE ORGANIZATION:
+- Styles.xaml: Custom control styles and templates
+- Localization/en_US.xaml: English language resources
+- Future: Additional language resource files
+- Future: Theme-specific resource dictionaries
+
+PLUGIN INTEGRATION:
+- Seamless integration with Playnite's resource system
+- Plugin-specific resource isolation
+- Compatibility with Playnite's theming
+- Resource sharing between plugin components
+
+COMPATIBILITY:
+- .NET Framework 4.6.2
+- C# 7.3
+- WPF 4.6.2
+- Playnite SDK 6.x
+- Windows resource system
+
+CHANGELOG:
+2025-08-06 v1.0.0 - Initial implementation with resource dictionary management
+====================================================================
+-->
 <Application xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Application.Resources>
         <ResourceDictionary>
-            <Style x:Key="BaseTextBlockStyle" TargetType="TextBlock" />
-            <ResourceDictionary.MergedDictionaries>                
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles.xaml" />
                 <ResourceDictionary Source="Localization/en_US.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

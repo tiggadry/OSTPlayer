@@ -1,20 +1,20 @@
-﻿OSTPlayer
+﻿OstPlayer
 
 
 library
 C#
 .cs
-C:\Playnite\_github\OSTPlayer\obj\Debug\
-OSTPlayer
+C:\Playnite\_github\OSTPlayer\source\obj\Debug\
+OstPlayer
 none
 false
 DEBUG;TRACE
 
-2-1541089005
+6-1304106483
 
-5-1033047539
-131726951844
-App.xaml;OSTPlayerSettingsView.xaml;
+77-465872538
+19-830136744
+App.xaml;Views\Windows\CoverPreviewWindow.xaml;Views\Settings\OstPlayerSettingsView.xaml;Views\OstPlayerSidebarView.xaml;Views\Dialogs\DiscogsReleaseSelectDialog.xaml;Styles.xaml;
 
 False
 

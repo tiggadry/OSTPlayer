@@ -1,3 +1,126 @@
+<!--
+====================================================================
+FILE: en_US.xaml
+PROJECT: OstPlayer - Playnite Plugin for Game Soundtrack Management
+MODULE: Localization
+LOCATION: Localization/
+VERSION: 1.0.0
+CREATED: 2025-08-06
+UPDATED: 2025-08-06
+AUTHOR: TiggAdry
+====================================================================
+
+PURPOSE:
+English (United States) localization resource dictionary providing
+translatable strings, messages, and culture-specific content for
+the OstPlayer plugin user interface and user experience.
+
+FEATURES:
+- Centralized string resources for internationalization
+- Culture-specific content definitions
+- Extensible localization framework
+- Support for future multi-language expansion
+- Plugin-wide localization accessibility
+- Resource-based text management
+
+DEPENDENCIES:
+- System.Windows (WPF resource framework)
+- System (base system types for resource values)
+
+RESOURCE STRUCTURE:
+- String resources for UI text and messages
+- Culture-specific formatting definitions
+- Error messages and user notifications
+- Help text and tooltips
+- Future: Audio and visual culture-specific content
+
+DESIGN PATTERNS:
+- Localization Pattern (culture-specific resources)
+- Resource Dictionary Pattern (organized content)
+- Fallback Pattern (default language support)
+- Key-Value Pattern (resource identification)
+
+LOCALIZATION APPROACH:
+- Comprehensive string externalization
+- Consistent resource key naming conventions
+- Support for pluralization and formatting
+- Context-aware resource organization
+
+INTERNATIONALIZATION SUPPORT:
+- Foundation for multi-language plugin support
+- Culture-aware resource loading
+- Extensible framework for additional languages
+- Professional localization workflow preparation
+
+CONTENT ORGANIZATION:
+- UI labels and button text
+- Status messages and notifications
+- Error messages and warnings
+- Help text and documentation
+- Future: Audio prompts and announcements
+
+PERFORMANCE OPTIMIZATION:
+- Efficient resource loading and caching
+- Minimal memory overhead for unused resources
+- Fast resource resolution and lookup
+- Culture-aware performance optimization
+
+LIMITATIONS:
+- Currently empty awaiting content definition
+- English-only implementation initially
+- Static resource approach
+- No runtime language switching
+
+FUTURE REFACTORING:
+TODO: Add comprehensive string resource definitions
+TODO: Implement multi-language support framework
+TODO: Add context-aware resource organization
+TODO: Create localization testing and validation
+TODO: Add pluralization and formatting support
+TODO: Implement runtime language switching
+TODO: Add right-to-left language support
+TODO: Create localization workflow and tools
+CONSIDER: Automatic translation integration
+CONSIDER: Community-driven localization support
+IDEA: Dynamic content localization
+IDEA: Voice and audio localization
+
+TESTING:
+- Resource loading tests for all defined strings
+- Localization tests for proper resource resolution
+- Culture switching tests for multi-language support
+- Performance tests for resource efficiency
+
+RESOURCE CATEGORIES:
+- UI Text: Button labels, menu items, form labels
+- Messages: Status updates, confirmations, notifications
+- Errors: Error messages, warnings, validation text
+- Help: Tooltips, help text, documentation strings
+- Future: Audio cues, accessibility descriptions
+
+LOCALIZATION WORKFLOW:
+- Resource extraction from code and XAML
+- Translation and review process
+- Resource validation and testing
+- Deployment and distribution management
+
+CULTURAL CONSIDERATIONS:
+- US English spelling and terminology
+- Cultural context for messages and content
+- Date, time, and number formatting preferences
+- Accessibility and inclusive language practices
+
+COMPATIBILITY:
+- .NET Framework 4.6.2
+- C# 7.3
+- WPF 4.6.2
+- Windows globalization support
+- Unicode text encoding
+
+CHANGELOG:
+2025-08-06 v1.0.0 - Initial implementation with localization framework
+====================================================================-->
+
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">

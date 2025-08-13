@@ -1,0 +1,151 @@
+﻿<!--
+====================================================================
+FILE: OstPlayerSettingsView.xaml
+PROJECT: OstPlayer - Playnite Plugin for Game Soundtrack Management
+MODULE: Views
+LOCATION: Views/Settings/
+VERSION: 1.1.0
+CREATED: 2025-08-06
+UPDATED: 2025-08-09
+AUTHOR: TiggAdry
+====================================================================
+
+PURPOSE:
+Settings UserControl for Playnite's plugin configuration dialog.
+Provides minimal UI for plugin settings with pure XAML data binding
+to OstPlayerSettingsViewModel following MVVM best practices.
+
+FEATURES:
+- Minimal and clean settings interface
+- Discogs Personal Access Token configuration
+- Pure XAML data binding without code-behind logic
+- Playnite settings dialog integration
+- Input validation through ToolTip guidance
+- Responsive layout for different dialog sizes
+- **PHASE 5**: Enhanced UI with clear token acquisition instructions
+- **PHASE 5**: Fixed DataContext binding for proper settings integration
+
+DEPENDENCIES:
+- OstPlayer.Views.Settings.OstPlayerSettingsView (code-behind)
+- OstPlayerSettingsViewModel (data binding target)
+- System.Windows.Controls (WPF framework)
+- Playnite Settings Framework (plugin integration)
+
+UI STRUCTURE:
+- Simple StackPanel layout for vertical arrangement
+- TextBlock labels for clear field identification
+- TextBox controls with data binding and tooltips
+- Consistent spacing and alignment
+- No complex layout or custom controls
+
+DESIGN PATTERNS:
+- MVVM (pure data binding approach)
+- Declarative UI (all behavior through XAML)
+- Settings Pattern (configuration interface)
+- Minimalist Design (essential controls only)
+
+DATA BINDING:
+- Two-way binding for settings properties
+- Automatic property change notifications
+- Settings persistence through ViewModel
+- Validation support through binding framework
+
+PLAYNITE INTEGRATION:
+- Compatible with Playnite's settings dialog
+- Follows Playnite plugin UI conventions
+- Integrates with plugin lifecycle management
+- Supports Playnite's theming and styling
+
+ACCESSIBILITY FEATURES:
+- Clear label associations with input controls
+- ToolTip guidance for user assistance
+- Keyboard navigation support
+- Screen reader compatible structure
+- Logical tab order for form completion
+
+PERFORMANCE OPTIMIZATION:
+- Minimal XAML overhead
+- Efficient data binding setup
+- No complex UI operations
+- Fast initialization and rendering
+- Low memory footprint
+
+LIMITATIONS:
+- Basic settings interface only
+- No advanced validation UI
+- Limited to simple input controls
+- No real-time settings preview
+- Requires ViewModel for all logic
+
+FUTURE REFACTORING:
+TODO: Add validation indicators for user feedback
+TODO: Implement advanced settings sections
+TODO: Add settings import/export functionality
+TODO: Create reusable settings control templates
+TODO: Add real-time validation feedback
+TODO: Implement settings backup and restore
+TODO: Add contextual help and documentation links
+TODO: Create settings wizard for complex configuration
+CONSIDER: Advanced settings grouping and categorization
+CONSIDER: Settings search and filtering capabilities
+IDEA: Visual settings preview and testing
+IDEA: Settings synchronization across devices
+
+TESTING:
+- UI automation tests for settings interaction
+- Data binding tests with various input scenarios
+- Playnite integration tests for dialog behavior
+- Accessibility tests for keyboard navigation
+- Validation tests for input handling
+
+VALIDATION:
+- Input validation through ViewModel
+- Required field validation for essential settings
+- Format validation for API tokens
+- User guidance through tooltips and labels
+
+SETTINGS FIELDS:
+- DiscogsToken: Personal Access Token for Discogs API
+- Future: Additional plugin configuration options
+- Future: User preferences and behavior settings
+- Future: Advanced feature toggles and customization
+
+COMPATIBILITY:
+- .NET Framework 4.6.2
+- C# 7.3
+- WPF 4.6.2
+- Playnite SDK 6.x
+- Playnite Settings Framework
+
+CHANGELOG:
+2025-08-09 v1.1.0 - Phase 5 DI Implementation: Enhanced UI with instructions, fixed DataContext binding
+2025-08-06 v1.0.0 - Initial implementation with minimal settings interface
+====================================================================
+-->
+
+<UserControl x:Class="OstPlayer.Views.Settings.OstPlayerSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/extension/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="400" d:DesignWidth="600">
+    <StackPanel Margin="10">
+        <TextBlock Text="Discogs Personal Access Token:" Margin="0,0,0,5" FontWeight="Bold"/>
+        <TextBox Text="{Binding Settings.DiscogsToken, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                 Width="400" 
+                 Height="25"
+                 HorizontalAlignment="Left"
+                 Margin="0,0,0,10"
+                 ToolTip="Enter your Discogs Personal Access Token here. You can get one from https://www.discogs.com/settings/developers"/>
+        
+        <TextBlock Text="How to get Discogs Token:" Margin="0,10,0,5" FontWeight="Bold"/>
+        <TextBlock Text="1. Go to https://www.discogs.com/settings/developers" Margin="0,0,0,2"/>
+        <TextBlock Text="2. Click 'Generate new token'" Margin="0,0,0,2"/>
+        <TextBlock Text="3. Copy the token and paste it above" Margin="0,0,0,10"/>
+        
+        <TextBlock Text="Without this token, Discogs metadata loading will not work." 
+                   Foreground="DarkOrange" 
+                   Margin="0,10,0,0"/>
+    </StackPanel>
+</UserControl>

@@ -1,0 +1,33 @@
+# Visual Studio build and user files
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# VS Code workspace settings
+.vscode/
+.vs/
+
+# NuGet packages (if using package restore)
+packages/
+
+# Debug/Release output
+*.log
+
+# Playnite plugin cache and temp files
+*.tmp
+*.bak
+
+# Windows/OS junk
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# IDE config
+*.DS_Store
+
+# Ignore local test data
+*.local.json
+*.local.yaml

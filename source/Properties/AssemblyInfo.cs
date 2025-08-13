@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("OSTPlayer")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("OstPlayer - Playnite Plugin for Game Soundtrack Management")]
+[assembly: AssemblyDescription("Advanced Playnite plugin enabling seamless game soundtrack management with metadata integration, audio playback, and external service connectivity. Features modern MVVM architecture with complete SOLID principles compliance.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("OSTPlayer")]
-[assembly: AssemblyCopyright("Copyright ©  2019")]
+[assembly: AssemblyCompany("TiggAdry")]
+[assembly: AssemblyProduct("OstPlayer")]
+[assembly: AssemblyCopyright("Copyright © TiggAdry 2019-2025")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -24,13 +24,16 @@ using System.Runtime.InteropServices;
 
 // Version information for an assembly consists of the following four values:
 //
-//      Major Version
-//      Minor Version
-//      Build Number
-//      Revision
+//      Major Version - Incremented for major architectural changes
+//      Minor Version - Incremented for significant feature additions
+//      Build Number - Incremented for bug fixes and minor improvements
+//      Revision - Reserved for hotfixes and patches
 //
-// You can specify all the values or you can default the Build and Revision Numbers
-// by using the '*' as shown below:
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+// Version History:
+// 1.0.0.0 - Initial release with basic functionality
+// 1.1.0.0 - Added Discogs metadata refresh capabilities
+// 1.2.0.0 - XAML Command Binding refactoring completion
+// 2.0.0.0 - MAJOR: Complete architecture refactoring with MVVM transformation
+//
+[assembly: AssemblyVersion("2.0.0.0")]
+[assembly: AssemblyFileVersion("2.0.0.0")]
