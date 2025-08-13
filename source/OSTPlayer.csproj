@@ -137,6 +137,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <None Include=".editorconfig" />
+    <None Include=".gitattributes" />
+    <None Include=".gitignore" />
     <None Include="DevTools\FixEncodingAndSymbols.ps1" />
     <None Include="DevTools\FixIncorrectDates.ps1" />
     <None Include="DevTools\GetCurrentDate.ps1" />
@@ -151,6 +154,7 @@
     <None Include="Documentation\AI-Assistant\FileHeaderTemplates.md" />
     <None Include="Documentation\AI-Assistant\README.md" />
     <None Include="Documentation\AI-Assistant\SmartDateAutomation.md" />
+    <None Include="Documentation\Analysis\Cleanup-Complete-Summary.md" />
     <None Include="Documentation\Analysis\ExtractedViewModels-DetailedAnalysis.md" />
     <None Include="Documentation\Analysis\ViewModels-Analysis-Pre-Step3.md" />
     <None Include="Documentation\Archive\DocumentationReviewSummary.md" />
@@ -171,6 +175,7 @@
     <None Include="Documentation\Development\DataGridSortingImplementation.md" />
     <None Include="Documentation\Development\DiagnosticsCleanupSummary.md" />
     <None Include="Documentation\Development\FileHeaderPolicy.md" />
+    <None Include="Documentation\Development\GitIgnore-Modernization.md" />
     <None Include="Documentation\Development\ModulesDocumentationUpdateSummary.md" />
     <None Include="Documentation\Development\MonthlyReviewTemplate.md" />
     <None Include="Documentation\Development\Phase5DIImplementationComplete.md" />
@@ -188,6 +193,7 @@
     <None Include="Documentation\Development\ServicesModulePhase5Complete.md" />
     <None Include="Documentation\Development\TechnicalDebtDashboard.md" />
     <None Include="Documentation\Development\TrackTimePointerFix.md" />
+    <None Include="Documentation\Development\UTF8-Encoding-Fix.md" />
     <None Include="Documentation\Development\VolumePersistenceImplementation.md" />
     <None Include="Documentation\Modules\ClientsModuleUpdateSummary.md" />
     <None Include="Documentation\Modules\ConvertersModuleUpdateSummary.md" />
@@ -203,6 +209,8 @@
     <None Include="Documentation\Refactoring\SafeViewModelRefactoringPlan.md" />
     <None Include="Documentation\Refactoring\Step1-Complete.md" />
     <None Include="Documentation\Refactoring\Step2-Complete.md" />
+    <None Include="Documentation\Refactoring\Step2-Final-Complete-Summary.md" />
+    <None Include="Documentation\Refactoring\Step3-FirstMicroExtraction-Plan.md" />
     <None Include="Documentation\Testing\Step1-Infrastructure-TestChecklist.md" />
     <None Include="Documentation\Testing\Step2-Helpers-TestChecklist.md" />
     <None Include="extension.yaml">
@@ -242,10 +250,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ViewModels\Audio\" />
-    <Folder Include="ViewModels\Metadata\" />
-    <Folder Include="ViewModels\UI\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

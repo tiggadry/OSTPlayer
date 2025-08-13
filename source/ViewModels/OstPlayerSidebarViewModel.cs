@@ -190,6 +190,7 @@ using NAudio.Wave;
 using OstPlayer.Clients;
 using OstPlayer.Models;
 using OstPlayer.Utils;
+using OstPlayer.Utils.Helpers;
 using Playnite.SDK.Models;
 
 namespace OstPlayer.ViewModels
@@ -662,7 +663,7 @@ namespace OstPlayer.ViewModels
         #region Computed Properties for UI Binding
         
         /// <summary>Volume percentage display string (e.g., "75%").</summary>
-        public string VolumeDisplay => $"{(int)Volume}%";
+        public string VolumeDisplay => VolumeHelper.FormatPercentage(Volume);
         
         /// <summary>Current position formatted as MM:SS or "00:00" when not playing.</summary>
         public string CurrentTime => Position > 0 ? TimeSpan.FromSeconds(Position).ToString(@"mm\:ss") : "00:00";
