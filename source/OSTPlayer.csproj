@@ -71,6 +71,8 @@
     <Compile Include="Services\ServiceContainer.cs" />
     <Compile Include="Utils\AsyncMusicFileHelper.cs" />
     <Compile Include="Utils\DataGridColumnPersistence.cs" />
+    <Compile Include="Utils\Helpers\TimeHelper.cs" />
+    <Compile Include="Utils\Helpers\VolumeHelper.cs" />
     <Compile Include="Utils\Mp3MetadataReader.cs" />
     <Compile Include="Utils\MusicFileHelper.cs" />
     <Compile Include="Utils\MusicPlaybackService.cs" />
@@ -207,6 +209,7 @@
     <None Include="Documentation\Modules\ViewsModuleUpdateSummary.md" />
     <None Include="Documentation\README.md" />
     <None Include="Documentation\Refactoring\SafeViewModelRefactoringPlan.md" />
+    <None Include="Documentation\Refactoring\Step1-Complete.md" />
     <None Include="Documentation\Testing\Step1-Infrastructure-TestChecklist.md" />
     <None Include="extension.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
