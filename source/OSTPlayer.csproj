@@ -210,7 +210,9 @@
     <None Include="Documentation\Refactoring\Step1-Complete.md" />
     <None Include="Documentation\Refactoring\Step2-Complete.md" />
     <None Include="Documentation\Refactoring\Step2-Final-Complete-Summary.md" />
+    <None Include="Documentation\Refactoring\Step3-Complete.md" />
     <None Include="Documentation\Refactoring\Step3-FirstMicroExtraction-Plan.md" />
+    <None Include="Documentation\Refactoring\Step4-SecondMicroExtraction-Plan.md" />
     <None Include="Documentation\Testing\Step1-Infrastructure-TestChecklist.md" />
     <None Include="Documentation\Testing\Step2-Helpers-TestChecklist.md" />
     <None Include="extension.yaml">

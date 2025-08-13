@@ -666,7 +666,7 @@ namespace OstPlayer.ViewModels
         public string VolumeDisplay => VolumeHelper.FormatPercentage(Volume);
         
         /// <summary>Current position formatted as MM:SS or "00:00" when not playing.</summary>
-        public string CurrentTime => Position > 0 ? TimeSpan.FromSeconds(Position).ToString(@"mm\:ss") : "00:00";
+        public string CurrentTime => TimeHelper.FormatTime(Position);
         
         /// <summary>Total duration formatted as MM:SS or "--:--" when unknown.</summary>
         public string DurationTime => Duration > 0 ? TimeSpan.FromSeconds(Duration).ToString(@"mm\:ss") : "--:--";
