@@ -679,7 +679,7 @@ namespace OstPlayer.ViewModels {
         public string PlayPauseButtonContent => UIHelper.GetPlayPauseButtonSymbol(IsPlaying, IsPaused);
 
         /// <summary>Play/pause button tooltip based on current state.</summary>
-        public string PlayPauseButtonToolTip => (IsPlaying && !IsPaused) ? "Pause playback" : "Play selected track";
+        public string PlayPauseButtonToolTip => UIHelper.GetPlayPauseTooltip(IsPlaying, IsPaused);
 
         /// <summary>MP3 metadata toggle button text based on current visibility.</summary>
         public string Mp3MetadataToggleText => IsMp3MetadataVisible ? "Hide MP3 metadata" : "Show MP3 metadata";

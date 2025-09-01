@@ -225,6 +225,8 @@
     <None Include="Documentation\Refactoring\Step4-Complete.md" />
     <None Include="Documentation\Refactoring\Step5-Complete.md" />
     <None Include="Documentation\Refactoring\Step6-ButtonContentExtraction-Plan.md" />
+    <None Include="Documentation\Refactoring\Step6-Complete.md" />
+    <None Include="Documentation\Refactoring\Step7-ButtonTooltipExtraction-Plan.md" />
     <None Include="extension.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
