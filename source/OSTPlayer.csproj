@@ -228,7 +228,9 @@
     <None Include="Documentation\Refactoring\Step6-Complete.md" />
     <None Include="Documentation\Refactoring\Step7-ButtonTooltipExtraction-Plan.md" />
     <None Include="Documentation\Refactoring\Step7-Complete.md" />
+    <None Include="Documentation\Refactoring\Step8-Complete.md" />
     <None Include="Documentation\Refactoring\Step8-ToggleTextExtraction-Plan.md" />
+    <None Include="Documentation\Refactoring\Step9-10-Batch-Plan.md" />
     <None Include="extension.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

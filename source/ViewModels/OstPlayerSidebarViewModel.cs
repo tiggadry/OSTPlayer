@@ -685,7 +685,7 @@ namespace OstPlayer.ViewModels {
         public string Mp3MetadataToggleText => UIHelper.GetToggleText("MP3 metadata", IsMp3MetadataVisible);
 
         /// <summary>Discogs metadata toggle button text based on current visibility.</summary>
-        public string DiscogsMetadataToggleText => IsDiscogsMetadataVisible ? "Hide Discogs metadata" : "Show Discogs metadata";
+        public string DiscogsMetadataToggleText => UIHelper.GetToggleText("Discogs metadata", IsDiscogsMetadataVisible);
 
         /// <summary>Settings ViewModel for configuration access and binding.</summary>
         public OstPlayerSettingsViewModel SettingsViewModel { get; private set; }
