@@ -682,7 +682,7 @@ namespace OstPlayer.ViewModels {
         public string PlayPauseButtonToolTip => UIHelper.GetPlayPauseTooltip(IsPlaying, IsPaused);
 
         /// <summary>MP3 metadata toggle button text based on current visibility.</summary>
-        public string Mp3MetadataToggleText => IsMp3MetadataVisible ? "Hide MP3 metadata" : "Show MP3 metadata";
+        public string Mp3MetadataToggleText => UIHelper.GetToggleText("MP3 metadata", IsMp3MetadataVisible);
 
         /// <summary>Discogs metadata toggle button text based on current visibility.</summary>
         public string DiscogsMetadataToggleText => IsDiscogsMetadataVisible ? "Hide Discogs metadata" : "Show Discogs metadata";
