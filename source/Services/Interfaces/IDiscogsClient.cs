@@ -38,11 +38,11 @@
 // - No batch operation support
 //
 // FUTURE REFACTORING:
-// TODO: Add batch search operations for multiple queries
-// TODO: Implement rate limiting and retry logic
-// TODO: Add support for Discogs marketplace data
-// TODO: Create advanced search filters and options
-// TODO: Add caching support for repeated queries
+// FUTURE: Add batch search operations for multiple queries
+// FUTURE: Implement rate limiting and retry logic
+// FUTURE: Add support for Discogs marketplace data
+// FUTURE: Create advanced search filters and options
+// FUTURE: Add caching support for repeated queries
 // CONSIDER: Pagination support for large result sets
 // CONSIDER: Advanced error reporting with status codes
 // IDEA: Real-time Discogs data change notifications
@@ -69,23 +69,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using OstPlayer.Models;
 
-namespace OstPlayer.Services.Interfaces
-{
+namespace OstPlayer.Services.Interfaces {
     /// <summary>
     /// Interface for Discogs API client supporting dependency injection.
     /// </summary>
-    public interface IDiscogsClient
-    {
+    public interface IDiscogsClient {
         /// <summary>
         /// Searches Discogs database for releases matching the provided query.
         /// </summary>
         Task<List<DiscogsMetadataModel>> SearchReleaseAsync(string query, string token, CancellationToken cancellationToken = default);
-        
+
         /// <summary>
         /// Retrieves detailed metadata for a specific Discogs release.
         /// </summary>
         Task<DiscogsMetadataModel> GetReleaseDetailsAsync(string releaseId, string token, CancellationToken cancellationToken = default);
-        
+
         /// <summary>
         /// Performs health check on Discogs API service.
         /// </summary>

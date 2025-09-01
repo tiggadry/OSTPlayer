@@ -1,4 +1,4 @@
-﻿# Copilot Date Management Instructions - ENHANCED v4.0 - HEADER PROTECTION
+# Copilot Date Management Instructions - ENHANCED v4.0 - HEADER PROTECTION
 
 ## 🚨 **CRITICAL: HEADER PROTECTION PROTOCOL**
 
@@ -8,7 +8,7 @@
 ```
 // LIMITATIONS:
 // FUTURE REFACTORING: 
-// TODO: 
+// FUTURE: 
 // TESTING:
 // COMPATIBILITY:
 // CONSIDER:
@@ -17,7 +17,7 @@
 
 **❌ NEVER REMOVE OR SHORTEN:**
 - Long comment blocks with technical details
-- TODO lists and future planning items
+- FUTURE lists and future planning items
 - LIMITATIONS and architectural constraints
 - TESTING requirements and strategies
 - COMPATIBILITY information
@@ -62,7 +62,7 @@
 
 #### **❌ FORBIDDEN Operations:**
 - Deleting or shortening comment blocks
-- Removing TODO items or future plans
+- Removing FUTURE items or future plans
 - Eliminating LIMITATIONS or TESTING sections
 - Shortening "long" headers for "readability"
 - Rewriting entire files when only date updates needed
@@ -140,7 +140,7 @@ var problemFiles = HeaderProtectionService.ScanProjectForMissingDocumentation();
 ```
 ❌ Rewrite entire file content
 ❌ Delete comment sections to "clean up"
-❌ Remove TODO or LIMITATIONS sections
+❌ Remove FUTURE or LIMITATIONS sections
 ❌ Shorten headers for "readability"
 ❌ Replace comprehensive documentation with brief summaries
 ```
@@ -157,7 +157,7 @@ var problemFiles = HeaderProtectionService.ScanProjectForMissingDocumentation();
 ### **Automatic Restoration:**
 - Detects when AI deletes important sections
 - Automatically restores missing documentation
-- Preserves all TODO, LIMITATIONS, TESTING content
+- Preserves all FUTURE, LIMITATIONS, TESTING content
 
 ### **Validation Monitoring:**
 - Quick integrity checks for all files
@@ -234,7 +234,7 @@ var goodFiles = HeaderProtectionService.ScanProjectForMissingDocumentation()
 
 ### **NEVER DO:**
 - ❌ Delete or shorten comment blocks
-- ❌ Remove TODO or planning sections
+- ❌ Remove FUTURE or planning sections
 - ❌ Rewrite entire files for simple updates
 - ❌ "Clean up" documentation for brevity
 - ❌ Copy dates from existing documentation

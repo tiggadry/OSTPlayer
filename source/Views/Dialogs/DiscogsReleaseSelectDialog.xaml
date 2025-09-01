@@ -88,14 +88,14 @@ LIMITATIONS:
 - Fixed window size without responsive scaling
 
 FUTURE REFACTORING:
-TODO: Add loading spinner for async search operations
-TODO: Implement pagination for large result sets
-TODO: Add advanced search filters (year, format, label)
-TODO: Implement search result caching for performance
-TODO: Add keyboard navigation within result list
-TODO: Create resizable dialog with responsive layout
-TODO: Add search history and suggestions
-TODO: Implement batch selection capabilities
+FUTURE: Add loading spinner for async search operations
+FUTURE: Implement pagination for large result sets
+FUTURE: Add advanced search filters (year, format, label)
+FUTURE: Implement search result caching for performance
+FUTURE: Add keyboard navigation within result list
+FUTURE: Create resizable dialog with responsive layout
+FUTURE: Add search history and suggestions
+FUTURE: Implement batch selection capabilities
 CONSIDER: Preview mode for release details
 CONSIDER: Integration with user's Discogs collection
 IDEA: Advanced search with multiple criteria
@@ -156,7 +156,7 @@ DESIGN NOTES:
 - Null/fallback values prevent empty UI elements.
 - Compatible with Playnite theme integration.
 
-FUTURE TODO:
+FUTURE FUTURE:
 - Add loading indicator for async search.
 - Support paging for large result sets.
 - Show format/label for disambiguation.
@@ -172,70 +172,70 @@ AUTHORING CONVENTIONS:
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Select Discogs Release" Height="800" Width="600" WindowStartupLocation="CenterOwner">
-    <Grid Margin="10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <!-- Search bar -->
-            <RowDefinition Height="*"/>
-            <!-- List of results -->
-            <RowDefinition Height="Auto"/>
-            <!-- Action buttons -->
-        </Grid.RowDefinitions>
+  <Grid Margin="10">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <!-- Search bar -->
+      <RowDefinition Height="*"/>
+      <!-- List of results -->
+      <RowDefinition Height="Auto"/>
+      <!-- Action buttons -->
+    </Grid.RowDefinitions>
 
-        <!-- Search box section -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
-            <TextBox x:Name="SearchTextBox"
+    <!-- Search box section -->
+    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+      <TextBox x:Name="SearchTextBox"
                      Width="350"
                      Height="26"
                      VerticalAlignment="Center"
                      Margin="0,0,8,0"
                      KeyDown="SearchTextBox_KeyDown"/>
-            <Button Content="Search"
+      <Button Content="Search"
                     Width="80"
                     Height="26"
                     Click="SearchButton_Click"/>
-        </StackPanel>
+    </StackPanel>
 
-        <!-- List of search results -->
-        <ListBox x:Name="ReleaseListBox"
+    <!-- List of search results -->
+    <ListBox x:Name="ReleaseListBox"
                  Grid.Row="1"
                  SelectedIndex="0"
                  MouseDoubleClick="ReleaseListBox_MouseDoubleClick">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal" Margin="4">
-                        <!-- Cover image for the release -->
-                        <Image Source="{Binding CoverUrl, TargetNullValue='', FallbackValue=''}"
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <StackPanel Orientation="Horizontal" Margin="4">
+            <!-- Cover image for the release -->
+            <Image Source="{Binding CoverUrl, TargetNullValue='', FallbackValue=''}"
                                Width="60"
                                Height="60"
                                Margin="0,0,10,0"/>
-                        <StackPanel>
-                            <!-- Release title -->
-                            <TextBlock Text="{Binding Title, TargetNullValue='(no title)', FallbackValue='(no title)'}"
+            <StackPanel>
+              <!-- Release title -->
+              <TextBlock Text="{Binding Title, TargetNullValue='(no title)', FallbackValue='(no title)'}"
                                        FontWeight="Bold"/>
-                            <!-- Artist name -->
-                            <TextBlock Text="{Binding Artist, TargetNullValue='(no artist)', FallbackValue='(no artist)'}"/>
-                            <!-- Release date -->
-                            <TextBlock Text="{Binding Released, TargetNullValue='(no date)', FallbackValue='(no date)'}"/>
-                        </StackPanel>
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+              <!-- Artist name -->
+              <TextBlock Text="{Binding Artist, TargetNullValue='(no artist)', FallbackValue='(no artist)'}"/>
+              <!-- Release date -->
+              <TextBlock Text="{Binding Released, TargetNullValue='(no date)', FallbackValue='(no date)'}"/>
+            </StackPanel>
+          </StackPanel>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
 
-        <!-- OK / Cancel buttons -->
-        <StackPanel Grid.Row="2"
+    <!-- OK / Cancel buttons -->
+    <StackPanel Grid.Row="2"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right"
                     Margin="0,10,0,0">
-            <Button Content="OK"
+      <Button Content="OK"
                     Width="80"
                     Margin="0,0,10,0"
                     IsDefault="True"
                     Click="OkButton_Click"/>
-            <Button Content="Cancel"
+      <Button Content="Cancel"
                     Width="80"
                     IsCancel="True"/>
-        </StackPanel>
-    </Grid>
+    </StackPanel>
+  </Grid>
 </Window>

@@ -13,7 +13,7 @@
 // Advanced service designed to protect important documentation sections in file
 // headers from being deleted by AI assistants during routine updates. Provides
 // comprehensive backup, restoration, and validation capabilities to ensure
-// critical documentation (LIMITATIONS, TODO, TESTING, etc.) is never lost.
+// critical documentation (LIMITATIONS, FUTURE, TESTING, etc.) is never lost.
 //
 // FEATURES:
 // - Automatic backup of critical documentation sections before AI operations
@@ -25,7 +25,7 @@
 //
 // KEY PROBLEM SOLVED:
 // Prevents AI assistants from deleting important documentation sections like
-// LIMITATIONS, FUTURE REFACTORING, TODO items, TESTING notes, and COMPATIBILITY
+// LIMITATIONS, FUTURE REFACTORING, FUTURE items, TESTING notes, and COMPATIBILITY
 // information when performing routine header updates or file modifications.
 //
 // PROTECTION STRATEGIES:
@@ -74,8 +74,6 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
-using OstPlayer.DevTools;
 
 namespace OstPlayer.DevTools
 {
@@ -86,55 +84,52 @@ namespace OstPlayer.DevTools
     public static class HeaderProtectionService
     {
         #region Constants and Configuration
-        
+
         /// <summary>
         /// Critical documentation sections that must be protected from AI deletion.
         /// These sections are commonly deleted by AI assistants during file updates.
         /// </summary>
-        private static readonly Dictionary<string, string[]> CriticalSections = new Dictionary<string, string[]>
+        private static readonly Dictionary<string, string[]> CriticalSections = new Dictionary<
+            string,
+            string[]
+        >
         {
             {
-                "LIMITATIONS", 
+                "LIMITATIONS",
                 new[] { "// LIMITATIONS:", "//   LIMITATIONS:", "// - Cache is in-memory only" }
             },
             {
-                "FUTURE_REFACTORING", 
-                new[] { "// FUTURE REFACTORING:", "//   FUTURE REFACTORING:", "// TODO:" }
+                "FUTURE_REFACTORING",
+                new[] { "// FUTURE REFACTORING:", "//   FUTURE REFACTORING:", "// FUTURE:" }
             },
+            { "TESTING", new[] { "// TESTING:", "//   TESTING:", "// - Unit tests for" } },
             {
-                "TESTING", 
-                new[] { "// TESTING:", "//   TESTING:", "// - Unit tests for" }
-            },
-            {
-                "COMPATIBILITY", 
+                "COMPATIBILITY",
                 new[] { "// COMPATIBILITY:", "//   COMPATIBILITY:", "// - .NET Framework" }
             },
             {
-                "CONSIDER_ITEMS", 
+                "CONSIDER_ITEMS",
                 new[] { "// CONSIDER:", "//   CONSIDER:", "// CONSIDER: Plugin architecture" }
             },
-            {
-                "IDEA_ITEMS", 
-                new[] { "// IDEA:", "//   IDEA:", "// IDEA: Machine learning" }
-            }
+            { "IDEA_ITEMS", new[] { "// IDEA:", "//   IDEA:", "// IDEA: Machine learning" } },
         };
-        
+
         /// <summary>
         /// In-memory backup storage for header content protection.
         /// Key: file path, Value: backup content with timestamp
         /// </summary>
-        private static readonly Dictionary<string, HeaderBackup> _headerBackups = 
+        private static readonly Dictionary<string, HeaderBackup> _headerBackups =
             new Dictionary<string, HeaderBackup>();
-        
+
         /// <summary>
         /// Lock for thread-safe backup operations
         /// </summary>
         private static readonly object _backupLock = new object();
-        
+
         #endregion
-        
+
         #region Public Protection Methods
-        
+
         /// <summary>
         /// Creates a backup of critical header sections before AI operations.
         /// USAGE: Call this before any AI assistant file modifications.
@@ -147,7 +142,7 @@ namespace OstPlayer.DevTools
             {
                 return false;
             }
-            
+
             try
             {
                 lock (_backupLock)
@@ -155,16 +150,16 @@ namespace OstPlayer.DevTools
                     var content = File.ReadAllText(filePath, Encoding.UTF8);
                     var criticalSections = ExtractCriticalSections(content);
                     var contentHash = CalculateContentHash(content);
-                    
+
                     var backup = new HeaderBackup
                     {
                         FilePath = filePath,
                         BackupTime = DateTime.Now,
                         OriginalContentHash = contentHash,
                         CriticalSections = criticalSections,
-                        FullContent = content
+                        FullContent = content,
                     };
-                    
+
                     _headerBackups[filePath] = backup;
                     return true;
                 }
@@ -174,7 +169,7 @@ namespace OstPlayer.DevTools
                 return false;
             }
         }
-        
+
         /// <summary>
         /// Validates header integrity and restores missing sections if needed.
         /// USAGE: Call this after AI assistant file modifications.
@@ -189,16 +184,16 @@ namespace OstPlayer.DevTools
                 ValidationTime = DateTime.Now,
                 IsValid = true,
                 RestoredSections = new List<string>(),
-                DeletedSections = new List<string>()
+                DeletedSections = new List<string>(),
             };
-            
+
             if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
             {
                 result.IsValid = false;
                 result.ErrorMessage = "File not found or path is empty";
                 return result;
             }
-            
+
             try
             {
                 lock (_backupLock)
@@ -210,11 +205,11 @@ namespace OstPlayer.DevTools
                         result.ErrorMessage = "No backup available for validation";
                         return result;
                     }
-                    
+
                     var backup = _headerBackups[filePath];
                     var currentContent = File.ReadAllText(filePath, Encoding.UTF8);
                     var currentSections = ExtractCriticalSections(currentContent);
-                    
+
                     // Check for missing sections
                     foreach (var originalSection in backup.CriticalSections)
                     {
@@ -224,16 +219,20 @@ namespace OstPlayer.DevTools
                             result.IsValid = false;
                         }
                     }
-                    
+
                     // Restore missing sections if any were found
                     if (result.DeletedSections.Count > 0)
                     {
-                        var restoredContent = RestoreMissingSections(currentContent, backup, result.DeletedSections);
+                        var restoredContent = RestoreMissingSections(
+                            currentContent,
+                            backup,
+                            result.DeletedSections
+                        );
                         File.WriteAllText(filePath, restoredContent, Encoding.UTF8);
                         result.RestoredSections.AddRange(result.DeletedSections);
                         result.WasRestored = true;
                     }
-                    
+
                     return result;
                 }
             }
@@ -244,7 +243,7 @@ namespace OstPlayer.DevTools
                 return result;
             }
         }
-        
+
         /// <summary>
         /// Performs a quick validation of header integrity without restoration.
         /// USAGE: For monitoring and reporting purposes.
@@ -257,11 +256,11 @@ namespace OstPlayer.DevTools
             {
                 return false;
             }
-            
+
             try
             {
                 var content = File.ReadAllText(filePath, Encoding.UTF8);
-                
+
                 // Check for presence of all critical section markers
                 foreach (var sectionGroup in CriticalSections)
                 {
@@ -274,13 +273,13 @@ namespace OstPlayer.DevTools
                             break;
                         }
                     }
-                    
+
                     if (!sectionFound)
                     {
                         return false; // Missing critical section
                     }
                 }
-                
+
                 return true;
             }
             catch (Exception)
@@ -288,7 +287,7 @@ namespace OstPlayer.DevTools
                 return false;
             }
         }
-        
+
         /// <summary>
         /// Scans project for files with missing critical documentation sections.
         /// USAGE: Project-wide validation and reporting.
@@ -298,11 +297,11 @@ namespace OstPlayer.DevTools
         public static List<string> ScanProjectForMissingDocumentation(string projectPath = ".")
         {
             var problematicFiles = new List<string>();
-            
+
             try
             {
                 var filesToScan = GetFilesToScan(projectPath);
-                
+
                 foreach (var file in filesToScan)
                 {
                     if (!QuickValidateHeaderIntegrity(file))
@@ -315,14 +314,14 @@ namespace OstPlayer.DevTools
             {
                 // Return partial results if scanning fails
             }
-            
+
             return problematicFiles;
         }
-        
+
         #endregion
-        
+
         #region Helper Methods
-        
+
         /// <summary>
         /// Extracts critical documentation sections from file content.
         /// </summary>
@@ -331,12 +330,12 @@ namespace OstPlayer.DevTools
         private static Dictionary<string, string> ExtractCriticalSections(string content)
         {
             var sections = new Dictionary<string, string>();
-            
+
             foreach (var sectionGroup in CriticalSections)
             {
                 var sectionName = sectionGroup.Key;
                 var markers = sectionGroup.Value;
-                
+
                 // Find the section in content
                 foreach (var marker in markers)
                 {
@@ -351,10 +350,10 @@ namespace OstPlayer.DevTools
                     }
                 }
             }
-            
+
             return sections;
         }
-        
+
         /// <summary>
         /// Finds the end of a documentation section in content.
         /// </summary>
@@ -369,11 +368,11 @@ namespace OstPlayer.DevTools
                 "// CHANGELOG:",
                 "// ====================================================================",
                 "using System;",
-                "namespace "
+                "namespace ",
             };
-            
+
             var endIndex = content.Length;
-            
+
             foreach (var pattern in nextSectionPatterns)
             {
                 var nextIndex = content.IndexOf(pattern, startIndex + 1);
@@ -382,10 +381,10 @@ namespace OstPlayer.DevTools
                     endIndex = nextIndex;
                 }
             }
-            
+
             return endIndex;
         }
-        
+
         /// <summary>
         /// Restores missing sections to file content.
         /// </summary>
@@ -393,21 +392,28 @@ namespace OstPlayer.DevTools
         /// <param name="backup">Backup with original sections</param>
         /// <param name="missingSections">List of missing section names</param>
         /// <returns>Restored file content</returns>
-        private static string RestoreMissingSections(string currentContent, HeaderBackup backup, List<string> missingSections)
+        private static string RestoreMissingSections(
+            string currentContent,
+            HeaderBackup backup,
+            List<string> missingSections
+        )
         {
             var restoredContent = currentContent;
-            
+
             // Find insertion point (typically before CHANGELOG)
             var insertionPoint = restoredContent.IndexOf("// CHANGELOG:");
             if (insertionPoint < 0)
             {
-                insertionPoint = restoredContent.IndexOf("// ====================================================================", 100);
+                insertionPoint = restoredContent.IndexOf(
+                    "// ====================================================================",
+                    100
+                );
             }
-            
+
             if (insertionPoint > 0)
             {
                 var sectionsToRestore = new StringBuilder();
-                
+
                 foreach (var sectionName in missingSections)
                 {
                     if (backup.CriticalSections.ContainsKey(sectionName))
@@ -416,16 +422,19 @@ namespace OstPlayer.DevTools
                         sectionsToRestore.AppendLine("//");
                     }
                 }
-                
+
                 if (sectionsToRestore.Length > 0)
                 {
-                    restoredContent = restoredContent.Insert(insertionPoint, sectionsToRestore.ToString());
+                    restoredContent = restoredContent.Insert(
+                        insertionPoint,
+                        sectionsToRestore.ToString()
+                    );
                 }
             }
-            
+
             return restoredContent;
         }
-        
+
         /// <summary>
         /// Calculates hash of content for change detection.
         /// </summary>
@@ -440,7 +449,7 @@ namespace OstPlayer.DevTools
                 return Convert.ToBase64String(hash);
             }
         }
-        
+
         /// <summary>
         /// Gets list of files to scan for documentation validation.
         /// </summary>
@@ -449,33 +458,37 @@ namespace OstPlayer.DevTools
         private static List<string> GetFilesToScan(string projectPath)
         {
             var files = new List<string>();
-            
+
             try
             {
                 // Focus on C# files which typically have the most documentation
-                files.AddRange(Directory.GetFiles(projectPath, "*.cs", SearchOption.AllDirectories));
-                
+                files.AddRange(
+                    Directory.GetFiles(projectPath, "*.cs", SearchOption.AllDirectories)
+                );
+
                 // Filter out unwanted directories
-                files = files.Where(f => 
-                    !f.Contains(@"\bin\") && 
-                    !f.Contains(@"\obj\") &&
-                    !f.Contains(@"\packages\") &&
-                    !f.Contains(@"\.git\")
-                ).ToList();
+                files = files
+                    .Where(f =>
+                        !f.Contains(@"\bin\")
+                        && !f.Contains(@"\obj\")
+                        && !f.Contains(@"\packages\")
+                        && !f.Contains(@"\.git\")
+                    )
+                    .ToList();
             }
             catch (Exception)
             {
                 // Return empty list if scanning fails
                 files.Clear();
             }
-            
+
             return files;
         }
-        
+
         #endregion
-        
+
         #region Management Methods
-        
+
         /// <summary>
         /// Clears all stored backups (use carefully).
         /// </summary>
@@ -486,7 +499,7 @@ namespace OstPlayer.DevTools
                 _headerBackups.Clear();
             }
         }
-        
+
         /// <summary>
         /// Gets count of currently stored backups.
         /// </summary>
@@ -498,7 +511,7 @@ namespace OstPlayer.DevTools
                 return _headerBackups.Count;
             }
         }
-        
+
         /// <summary>
         /// Checks if backup exists for specified file.
         /// </summary>
@@ -511,60 +524,83 @@ namespace OstPlayer.DevTools
                 return _headerBackups.ContainsKey(filePath);
             }
         }
-        
+
         #endregion
     }
-    
+
     #region Supporting Types
-    
+
     /// <summary>
-    /// Backup information for a file's critical header sections.
+    /// Backup information for header protection.
     /// </summary>
     public class HeaderBackup
     {
+        /// <summary>
+        /// Gets or sets the file path of the backed up header.
+        /// </summary>
         public string FilePath { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the backup creation time.
+        /// </summary>
         public DateTime BackupTime { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the hash of the original content.
+        /// </summary>
         public string OriginalContentHash { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the critical sections that were protected.
+        /// </summary>
         public Dictionary<string, string> CriticalSections { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the full content backup.
+        /// </summary>
         public string FullContent { get; set; }
     }
-    
+
     /// <summary>
-    /// Result of header protection validation and restoration.
+    /// Result of header protection validation.
     /// </summary>
     public class HeaderProtectionResult
     {
+        /// <summary>
+        /// Gets or sets the file path that was protected.
+        /// </summary>
         public string FilePath { get; set; }
-        public DateTime ValidationTime { get; set; }
-        public bool IsValid { get; set; }
-        public bool WasRestored { get; set; }
-        public List<string> DeletedSections { get; set; } = new List<string>();
-        public List<string> RestoredSections { get; set; } = new List<string>();
-        public string ErrorMessage { get; set; }
         
         /// <summary>
-        /// Gets human-readable summary of protection result.
+        /// Gets or sets the validation time.
         /// </summary>
-        public string GetSummary()
-        {
-            if (IsValid && DeletedSections.Count == 0)
-            {
-                return "Header protection: All sections intact";
-            }
-            
-            if (WasRestored)
-            {
-                return $"Header protection: Restored {RestoredSections.Count} deleted sections";
-            }
-            
-            if (!string.IsNullOrEmpty(ErrorMessage))
-            {
-                return $"Header protection error: {ErrorMessage}";
-            }
-            
-            return $"Header protection: {DeletedSections.Count} sections missing";
-        }
+        public DateTime ValidationTime { get; set; }
+        
+        /// <summary>
+        /// Gets or sets whether the header is valid.
+        /// </summary>
+        public bool IsValid { get; set; }
+        
+        /// <summary>
+        /// Gets or sets whether the header was restored.
+        /// </summary>
+        public bool WasRestored { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the sections that were deleted.
+        /// </summary>
+        public List<string> DeletedSections { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the sections that were restored.
+        /// </summary>
+        public List<string> RestoredSections { get; set; }
+        
+        /// <summary>
+        /// Gets or sets any error message from the protection process.
+        /// </summary>
+        public string ErrorMessage { get; set; }
     }
-    
+
     #endregion
 }

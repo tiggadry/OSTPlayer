@@ -52,14 +52,14 @@
 // - Limited error reporting
 //
 // FUTURE REFACTORING:
-// TODO: Add support for additional audio formats (FLAC, OGG, WAV)
-// TODO: Implement recursive subdirectory scanning
-// TODO: Add file integrity validation
-// TODO: Implement async file operations for large directories
-// TODO: Add progress reporting for long operations
-// TODO: Extract path configuration to settings
-// TODO: Add file metadata caching for performance
-// TODO: Implement file watcher for real-time updates
+// FUTURE: Add support for additional audio formats (FLAC, OGG, WAV)
+// FUTURE: Implement recursive subdirectory scanning
+// FUTURE: Add file integrity validation
+// FUTURE: Implement async file operations for large directories
+// FUTURE: Add progress reporting for long operations
+// FUTURE: Extract path configuration to settings
+// FUTURE: Add file metadata caching for performance
+// FUTURE: Implement file watcher for real-time updates
 // CONSIDER: Creating interface for testability
 // CONSIDER: Adding configurable file filters
 // IDEA: Support for multiple music folder locations
@@ -93,16 +93,14 @@ using System.Linq;
 using Playnite.SDK;
 using Playnite.SDK.Models;
 
-namespace OstPlayer.Utils
-{
+namespace OstPlayer.Utils {
     /// <summary>
     /// Static utility class for discovering and managing music files associated with games in Playnite.
     /// ARCHITECTURE: File system abstraction layer for game music discovery
     /// PERFORMANCE: Optimized for single-pass operations with minimal I/O
     /// EXTENSIBILITY: Designed for easy addition of new audio format support
     /// </summary>
-    public static class MusicFileHelper
-    {
+    public static class MusicFileHelper {
         #region Public API Methods
 
         /// <summary>
@@ -114,8 +112,7 @@ namespace OstPlayer.Utils
         /// <param name="api">Playnite API instance for path resolution</param>
         /// <param name="game">Game entity from Playnite database</param>
         /// <returns>Full path to music directory, or null if directory doesn't exist</returns>
-        public static string GetGameMusicPath(IPlayniteAPI api, Game game)
-        {
+        public static string GetGameMusicPath(IPlayniteAPI api, Game game) {
             // INPUT VALIDATION: Early exit for null game prevents downstream errors
             if (game == null)
                 return null;
@@ -146,24 +143,22 @@ namespace OstPlayer.Utils
         /// <param name="api">Playnite API instance for path resolution</param>
         /// <param name="game">Game entity from Playnite database</param>
         /// <returns>Sorted list of full file paths to MP3 files</returns>
-        public static List<string> GetGameMusicFiles(IPlayniteAPI api, Game game)
-        {
+        public static List<string> GetGameMusicFiles(IPlayniteAPI api, Game game) {
             // PATH RESOLUTION: Delegate to GetGameMusicPath for consistent logic
             // EARLY EXIT: If no music path exists, return empty list immediately
             var musicPath = GetGameMusicPath(api, game);
             if (string.IsNullOrEmpty(musicPath))
                 return new List<string>();  // Consistent empty result
 
-            try
-            {
+            try {
                 // FILE ENUMERATION: Search for MP3 files in music directory
                 // PATTERN: "*.mp3" - case sensitive on Linux, case insensitive on Windows
                 // SCOPE: TopDirectoryOnly - doesn't search subdirectories for performance
                 // CONSIDERATION: Could extend to support subdirectory scanning for organized collections
                 var files = Directory.GetFiles(musicPath, "*.mp3", SearchOption.TopDirectoryOnly);
-                
+
                 // SORTING STRATEGY: Alphabetical by filename without extension
-                // REASONING: 
+                // REASONING:
                 // - More user-friendly than full path sorting
                 // - Handles track numbering naturally ("01-Title", "02-Title")
                 // - Consistent across different path lengths
@@ -172,16 +167,15 @@ namespace OstPlayer.Utils
                     .OrderBy(f => Path.GetFileNameWithoutExtension(f))  // Remove .mp3 for cleaner sort
                     .ToList();
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 // EXCEPTION HANDLING: Comprehensive catch for various failure scenarios
                 // POSSIBLE EXCEPTIONS:
                 // - UnauthorizedAccessException: Insufficient permissions
                 // - DirectoryNotFoundException: Directory deleted after existence check
-                // - SecurityException: Security policy restrictions  
+                // - SecurityException: Security policy restrictions
                 // - IOException: General I/O errors (network drives, etc.)
                 // - PathTooLongException: Extremely long file paths
-                
+
                 // GRACEFUL DEGRADATION: Return empty list to maintain application stability
                 // ALTERNATIVE: Could log specific exception types for debugging
                 // BENEFIT: Caller doesn't need to handle exceptions, can focus on business logic
@@ -233,7 +227,7 @@ namespace OstPlayer.Utils
 
         6. CONFIGURABLE PATHS:
            - Support for custom music folder locations
-           - Multiple music folder support per game  
+           - Multiple music folder support per game
            - User-configurable folder structure
 
         7. CACHING LAYER:
@@ -267,7 +261,7 @@ namespace OstPlayer.Utils
 
         3. I/O OPERATIONS:
            - Single Directory.Exists() call for path validation
-           - Single Directory.GetFiles() call for enumeration  
+           - Single Directory.GetFiles() call for enumeration
            - No individual file access or metadata reading
            - Efficient for directories with reasonable file counts (<1000 files)
 

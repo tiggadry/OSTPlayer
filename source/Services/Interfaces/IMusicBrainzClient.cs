@@ -38,11 +38,11 @@
 // - No cover art service integration
 //
 // FUTURE REFACTORING:
-// TODO: Add advanced search parameters and filters
-// TODO: Implement multiple search result support
-// TODO: Add MusicBrainz cover art service integration
-// TODO: Create batch search operations
-// TODO: Add support for recording and work lookups
+// FUTURE: Add advanced search parameters and filters
+// FUTURE: Implement multiple search result support
+// FUTURE: Add MusicBrainz cover art service integration
+// FUTURE: Create batch search operations
+// FUTURE: Add support for recording and work lookups
 // CONSIDER: MBID (MusicBrainz ID) based lookups
 // CONSIDER: Related entity search (artist, label, etc.)
 // IDEA: Real-time MusicBrainz data synchronization
@@ -68,18 +68,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using OstPlayer.Models;
 
-namespace OstPlayer.Services.Interfaces
-{
+namespace OstPlayer.Services.Interfaces {
     /// <summary>
     /// Interface for MusicBrainz API client supporting dependency injection.
     /// </summary>
-    public interface IMusicBrainzClient
-    {
+    public interface IMusicBrainzClient {
         /// <summary>
         /// Searches MusicBrainz database for releases matching the provided artist and album.
         /// </summary>
         Task<MusicBrainzMetadataModel> SearchReleaseAsync(string artist, string album, CancellationToken cancellationToken = default);
-        
+
         /// <summary>
         /// Performs health check on MusicBrainz API service.
         /// </summary>

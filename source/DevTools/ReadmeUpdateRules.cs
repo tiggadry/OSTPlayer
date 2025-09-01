@@ -48,10 +48,10 @@
 // - Efficient string pattern matching algorithms
 //
 // FUTURE REFACTORING:
-// TODO: Add machine learning for adaptive rule refinement
-// TODO: Implement user-customizable rule configuration
-// TODO: Add rule performance analytics and optimization
-// TODO: Create visual rule dependency mapping
+// FUTURE: Add machine learning for adaptive rule refinement
+// FUTURE: Implement user-customizable rule configuration
+// FUTURE: Add rule performance analytics and optimization
+// FUTURE: Create visual rule dependency mapping
 // CONSIDER: Integration with version control for change pattern learning
 // CONSIDER: Real-time rule effectiveness monitoring
 //
@@ -75,37 +75,86 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace OstPlayer.DevTools
-{
+namespace OstPlayer.DevTools {
     /// <summary>
-    /// Update context information for rule evaluation
+    /// Context information for README updates.
     /// </summary>
-    public class UpdateContext
-    {
+    public class UpdateContext {
+        /// <summary>
+        /// Gets or sets the path of the changed file.
+        /// </summary>
         public string ChangedFile { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the path to the README file.
+        /// </summary>
         public string ReadmePath { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the type of README.
+        /// </summary>
         public ReadmeType ReadmeType { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the time of the change.
+        /// </summary>
         public DateTime ChangeTime { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the description of the change.
+        /// </summary>
         public string ChangeDescription { get; set; }
+        
+        /// <summary>
+        /// Gets or sets whether this is a structural change.
+        /// </summary>
         public bool IsStructuralChange { get; set; }
+        
+        /// <summary>
+        /// Gets or sets whether this is a new file.
+        /// </summary>
         public bool IsNewFile { get; set; }
+        
+        /// <summary>
+        /// Gets or sets whether this is a deleted file.
+        /// </summary>
         public bool IsDeletedFile { get; set; }
     }
 
     /// <summary>
-    /// Rule evaluation result
+    /// Result of rule evaluation for README updates.
     /// </summary>
-    public class RuleEvaluationResult
-    {
+    public class RuleEvaluationResult {
+        /// <summary>
+        /// Gets or sets whether the README should be updated.
+        /// </summary>
         public bool ShouldUpdate { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the reason for the update decision.
+        /// </summary>
         public string Reason { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the priority of the update.
+        /// </summary>
         public int Priority { get; set; }
-        public string[] SuggestedActions { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the list of suggested actions.
+        /// </summary>
+        public List<string> SuggestedActions { get; set; }
+        
+        /// <summary>
+        /// Gets or sets additional metadata for the evaluation.
+        /// </summary>
         public Dictionary<string, object> Metadata { get; set; }
 
-        public RuleEvaluationResult()
-        {
-            SuggestedActions = new string[0];
+        /// <summary>
+        /// Initializes a new instance of the RuleEvaluationResult class.
+        /// </summary>
+        public RuleEvaluationResult() {
+            SuggestedActions = new List<string>();
             Metadata = new Dictionary<string, object>();
         }
     }
@@ -113,11 +162,9 @@ namespace OstPlayer.DevTools
     /// <summary>
     /// Smart README update rules engine for intelligent automation
     /// </summary>
-    public static class ReadmeUpdateRules
-    {
+    public static class ReadmeUpdateRules {
         // Compiled regex patterns for performance
-        private static readonly Dictionary<string, Regex> CompiledPatterns = new Dictionary<string, Regex>
-        {
+        private static readonly Dictionary<string, Regex> CompiledPatterns = new Dictionary<string, Regex> {
             ["ModuleFile"] = new Regex(@"^(ViewModels|Models|Utils|Services|Clients|Views|Converters|DevTools)[/\\].*\.(cs|xaml)$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
             ["ModuleSummary"] = new Regex(@"Documentation[/\\]Modules[/\\].*ModuleUpdateSummary\.md$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
             ["NavigationReadme"] = new Regex(@"Documentation[/\\].*[/\\]README\.md$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
@@ -138,30 +185,25 @@ namespace OstPlayer.DevTools
         /// <param name="readmePath">Path to the README file</param>
         /// <param name="changedFile">Path to the changed file</param>
         /// <returns>Rule evaluation result with decision and metadata</returns>
-        public static RuleEvaluationResult ShouldUpdateReadme(string readmePath, string changedFile)
-        {
-            try
-            {
+        public static RuleEvaluationResult ShouldUpdateReadme(string readmePath, string changedFile) {
+            try {
                 var context = CreateUpdateContext(readmePath, changedFile);
                 var cacheKey = $"{readmePath}|{changedFile}";
 
                 // Check cache first
-                if (RuleCache.ContainsKey(cacheKey))
-                {
+                if (RuleCache.ContainsKey(cacheKey)) {
                     return RuleCache[cacheKey];
                 }
 
                 var result = EvaluateUpdateRules(context);
-                
+
                 // Cache result
                 CacheResult(cacheKey, result);
-                
+
                 return result;
             }
-            catch (Exception ex)
-            {
-                return new RuleEvaluationResult
-                {
+            catch (Exception ex) {
+                return new RuleEvaluationResult {
                     ShouldUpdate = false,
                     Reason = $"Error evaluating rules: {ex.Message}",
                     Priority = 0
@@ -175,12 +217,10 @@ namespace OstPlayer.DevTools
         /// <param name="changedFile">Path to the changed file</param>
         /// <param name="readmeFiles">List of README files to evaluate</param>
         /// <returns>Dictionary of README paths to evaluation results</returns>
-        public static Dictionary<string, RuleEvaluationResult> EvaluateMultipleReadmes(string changedFile, IEnumerable<string> readmeFiles)
-        {
+        public static Dictionary<string, RuleEvaluationResult> EvaluateMultipleReadmes(string changedFile, IEnumerable<string> readmeFiles) {
             var results = new Dictionary<string, RuleEvaluationResult>();
 
-            foreach (var readmePath in readmeFiles)
-            {
+            foreach (var readmePath in readmeFiles) {
                 results[readmePath] = ShouldUpdateReadme(readmePath, changedFile);
             }
 
@@ -192,8 +232,7 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="changedFile">Path to the changed file</param>
         /// <returns>List of README paths ordered by update priority</returns>
-        public static List<string> GetPrioritizedReadmeUpdates(string changedFile)
-        {
+        public static List<string> GetPrioritizedReadmeUpdates(string changedFile) {
             var allReadmes = DocumentationManager.GetAllReadmeFiles();
             var evaluations = EvaluateMultipleReadmes(changedFile, allReadmes);
 
@@ -214,10 +253,8 @@ namespace OstPlayer.DevTools
         /// <param name="readmePath">Path to README file</param>
         /// <param name="changedFile">Path to changed file</param>
         /// <returns>Update context for rule evaluation</returns>
-        private static UpdateContext CreateUpdateContext(string readmePath, string changedFile)
-        {
-            return new UpdateContext
-            {
+        private static UpdateContext CreateUpdateContext(string readmePath, string changedFile) {
+            return new UpdateContext {
                 ChangedFile = changedFile,
                 ReadmePath = readmePath,
                 ReadmeType = DocumentationManager.GetReadmeType(readmePath),
@@ -234,13 +271,11 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="context">Update context</param>
         /// <returns>Rule evaluation result</returns>
-        private static RuleEvaluationResult EvaluateUpdateRules(UpdateContext context)
-        {
+        private static RuleEvaluationResult EvaluateUpdateRules(UpdateContext context) {
             var result = new RuleEvaluationResult();
 
             // Evaluate rules based on README type
-            switch (context.ReadmeType)
-            {
+            switch (context.ReadmeType) {
                 case ReadmeType.Root:
                     result = EvaluateRootReadmeRules(context);
                     break;
@@ -275,37 +310,33 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="context">Update context</param>
         /// <returns>Rule evaluation result</returns>
-        private static RuleEvaluationResult EvaluateRootReadmeRules(UpdateContext context)
-        {
+        private static RuleEvaluationResult EvaluateRootReadmeRules(UpdateContext context) {
             var result = new RuleEvaluationResult();
 
             // High priority: New major documentation structure
-            if (CompiledPatterns["NavigationReadme"].IsMatch(context.ChangedFile))
-            {
+            if (CompiledPatterns["NavigationReadme"].IsMatch(context.ChangedFile)) {
                 result.ShouldUpdate = true;
                 result.Reason = "Major documentation structure change detected";
                 result.Priority = 10;
-                result.SuggestedActions = new[] { "Update documentation structure overview", "Refresh navigation links" };
+                result.SuggestedActions = new List<string> { "Update documentation structure overview", "Refresh navigation links" };
                 return result;
             }
 
             // Medium priority: New module summaries
-            if (CompiledPatterns["ModuleSummary"].IsMatch(context.ChangedFile))
-            {
+            if (CompiledPatterns["ModuleSummary"].IsMatch(context.ChangedFile)) {
                 result.ShouldUpdate = true;
                 result.Reason = "New module summary added";
                 result.Priority = 7;
-                result.SuggestedActions = new[] { "Update module navigation section" };
+                result.SuggestedActions = new List<string> { "Update module navigation section" };
                 return result;
             }
 
             // Low priority: New categories
-            if (CompiledPatterns["CategoryDocument"].IsMatch(context.ChangedFile) && context.IsNewFile)
-            {
+            if (CompiledPatterns["CategoryDocument"].IsMatch(context.ChangedFile) && context.IsNewFile) {
                 result.ShouldUpdate = true;
                 result.Reason = "New documentation category detected";
                 result.Priority = 5;
-                result.SuggestedActions = new[] { "Consider adding category to main navigation" };
+                result.SuggestedActions = new List<string> { "Consider adding category to main navigation" };
                 return result;
             }
 
@@ -319,38 +350,34 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="context">Update context</param>
         /// <returns>Rule evaluation result</returns>
-        private static RuleEvaluationResult EvaluateNavigationReadmeRules(UpdateContext context)
-        {
+        private static RuleEvaluationResult EvaluateNavigationReadmeRules(UpdateContext context) {
             var result = new RuleEvaluationResult();
             var readmeCategory = ExtractCategoryFromReadmePath(context.ReadmePath);
 
             // High priority: New files in same category
-            if (IsSameCategoryChange(context.ChangedFile, readmeCategory))
-            {
+            if (IsSameCategoryChange(context.ChangedFile, readmeCategory)) {
                 result.ShouldUpdate = true;
                 result.Reason = $"New content added to {readmeCategory} category";
                 result.Priority = 9;
-                result.SuggestedActions = new[] { $"Add {Path.GetFileName(context.ChangedFile)} to {readmeCategory} navigation" };
+                result.SuggestedActions = new List<string> { $"Add {Path.GetFileName(context.ChangedFile)} to {readmeCategory} navigation" };
                 return result;
             }
 
             // Medium priority: Module summaries for Modules README
-            if (readmeCategory == "Modules" && CompiledPatterns["ModuleSummary"].IsMatch(context.ChangedFile))
-            {
+            if (readmeCategory == "Modules" && CompiledPatterns["ModuleSummary"].IsMatch(context.ChangedFile)) {
                 result.ShouldUpdate = true;
                 result.Reason = "Module summary updated";
                 result.Priority = 8;
-                result.SuggestedActions = new[] { "Update module summary links" };
+                result.SuggestedActions = new List<string> { "Update module summary links" };
                 return result;
             }
 
             // Low priority: Related structural changes
-            if (context.IsStructuralChange && IsRelatedToCategory(context.ChangedFile, readmeCategory))
-            {
+            if (context.IsStructuralChange && IsRelatedToCategory(context.ChangedFile, readmeCategory)) {
                 result.ShouldUpdate = true;
                 result.Reason = "Related structural change detected";
                 result.Priority = 4;
-                result.SuggestedActions = new[] { "Review navigation structure" };
+                result.SuggestedActions = new List<string> { "Review navigation structure" };
                 return result;
             }
 
@@ -364,41 +391,36 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="context">Update context</param>
         /// <returns>Rule evaluation result</returns>
-        private static RuleEvaluationResult EvaluateTechnicalReadmeRules(UpdateContext context)
-        {
+        private static RuleEvaluationResult EvaluateTechnicalReadmeRules(UpdateContext context) {
             var result = new RuleEvaluationResult();
             var moduleFromReadme = ExtractModuleFromReadmePath(context.ReadmePath);
             var moduleFromFile = ExtractModuleFromFilePath(context.ChangedFile);
 
             // High priority: New files in same module
-            if (moduleFromReadme == moduleFromFile && CompiledPatterns["ModuleFile"].IsMatch(context.ChangedFile))
-            {
+            if (moduleFromReadme == moduleFromFile && CompiledPatterns["ModuleFile"].IsMatch(context.ChangedFile)) {
                 result.ShouldUpdate = true;
                 result.Reason = $"New file added to {moduleFromReadme} module";
                 result.Priority = 10;
-                result.SuggestedActions = new[] { $"Add {Path.GetFileName(context.ChangedFile)} to module file list" };
+                result.SuggestedActions = new List<string> { $"Add {Path.GetFileName(context.ChangedFile)} to module file list" };
                 return result;
             }
 
             // Medium priority: DevTools changes for DevTools README
-            if (moduleFromReadme == "DevTools" && CompiledPatterns["DevToolsFile"].IsMatch(context.ChangedFile))
-            {
+            if (moduleFromReadme == "DevTools" && CompiledPatterns["DevToolsFile"].IsMatch(context.ChangedFile)) {
                 result.ShouldUpdate = true;
                 result.Reason = "DevTools utility updated";
                 result.Priority = 8;
-                result.SuggestedActions = new[] { "Update DevTools capabilities section" };
+                result.SuggestedActions = new List<string> { "Update DevTools capabilities section" };
                 return result;
             }
 
             // Low priority: Configuration changes affecting module
-            if (CompiledPatterns["ConfigurationFile"].IsMatch(context.ChangedFile) && 
-                context.ChangedFile.Contains(moduleFromReadme))
-            {
+            if (CompiledPatterns["ConfigurationFile"].IsMatch(context.ChangedFile) &&
+                context.ChangedFile.Contains(moduleFromReadme)) {
                 result.ShouldUpdate = true;
                 result.Reason = "Module configuration changed";
                 result.Priority = 3;
-                result.SuggestedActions = new[] { "Review module configuration notes" };
-                return result;
+                result.SuggestedActions = new List<string> { "Review module configuration notes" };
             }
 
             result.ShouldUpdate = false;
@@ -411,28 +433,25 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="context">Update context</param>
         /// <returns>Rule evaluation result</returns>
-        private static RuleEvaluationResult EvaluateCategoryReadmeRules(UpdateContext context)
-        {
+        private static RuleEvaluationResult EvaluateCategoryReadmeRules(UpdateContext context) {
             var result = new RuleEvaluationResult();
             var categoryFromReadme = ExtractCategoryFromReadmePath(context.ReadmePath);
 
             // High priority: New documents in same category
-            if (IsSameCategoryChange(context.ChangedFile, categoryFromReadme) && context.IsNewFile)
-            {
+            if (IsSameCategoryChange(context.ChangedFile, categoryFromReadme) && context.IsNewFile) {
                 result.ShouldUpdate = true;
                 result.Reason = $"New document added to {categoryFromReadme} category";
                 result.Priority = 9;
-                result.SuggestedActions = new[] { $"Add {Path.GetFileNameWithoutExtension(context.ChangedFile)} to document list" };
+                result.SuggestedActions = new List<string> { $"Add {Path.GetFileNameWithoutExtension(context.ChangedFile)} to document list" };
                 return result;
             }
 
             // Medium priority: Subcategory changes
-            if (IsSubcategoryChange(context.ChangedFile, categoryFromReadme))
-            {
+            if (IsSubcategoryChange(context.ChangedFile, categoryFromReadme)) {
                 result.ShouldUpdate = true;
                 result.Reason = "Subcategory content changed";
                 result.Priority = 6;
-                result.SuggestedActions = new[] { "Review subcategory organization" };
+                result.SuggestedActions = new List<string> { "Review subcategory organization" };
                 return result;
             }
 
@@ -446,17 +465,15 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="context">Update context</param>
         /// <returns>Rule evaluation result</returns>
-        private static RuleEvaluationResult EvaluateDefaultRules(UpdateContext context)
-        {
+        private static RuleEvaluationResult EvaluateDefaultRules(UpdateContext context) {
             var result = new RuleEvaluationResult();
 
             // Conservative approach - only update for clear structural changes
-            if (context.IsStructuralChange)
-            {
+            if (context.IsStructuralChange) {
                 result.ShouldUpdate = true;
                 result.Reason = "Structural change detected - manual review recommended";
                 result.Priority = 2;
-                result.SuggestedActions = new[] { "Manual review of README content" };
+                result.SuggestedActions = new List<string> { "Manual review of README content" };
                 return result;
             }
 
@@ -474,8 +491,7 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="changedFile">Path to changed file</param>
         /// <returns>True if structural change, false otherwise</returns>
-        private static bool IsStructuralChange(string changedFile)
-        {
+        private static bool IsStructuralChange(string changedFile) {
             return changedFile.Contains("/README.md") ||
                    changedFile.Contains("\\README.md") ||
                    changedFile.Contains("ModuleUpdateSummary.md") ||
@@ -488,8 +504,7 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="changedFile">Path to changed file</param>
         /// <returns>True if new file, false otherwise</returns>
-        private static bool IsNewFile(string changedFile)
-        {
+        private static bool IsNewFile(string changedFile) {
             // In a real implementation, this would check version control or file system timestamps
             // For now, assume any file change could be new
             return File.Exists(changedFile);
@@ -500,8 +515,7 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="changedFile">Path to changed file</param>
         /// <returns>True if deleted file, false otherwise</returns>
-        private static bool IsDeletedFile(string changedFile)
-        {
+        private static bool IsDeletedFile(string changedFile) {
             // In a real implementation, this would check version control
             return !File.Exists(changedFile);
         }
@@ -511,13 +525,11 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="changedFile">Path to changed file</param>
         /// <returns>Change description</returns>
-        private static string GenerateChangeDescription(string changedFile)
-        {
+        private static string GenerateChangeDescription(string changedFile) {
             var fileName = Path.GetFileName(changedFile);
             var extension = Path.GetExtension(changedFile).ToLower();
-            
-            switch (extension)
-            {
+
+            switch (extension) {
                 case ".cs":
                     return $"Source code file {fileName} modified";
                 case ".md":
@@ -536,14 +548,11 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="readmePath">Path to README file</param>
         /// <returns>Category name or empty string</returns>
-        private static string ExtractCategoryFromReadmePath(string readmePath)
-        {
+        private static string ExtractCategoryFromReadmePath(string readmePath) {
             var normalizedPath = readmePath.Replace('\\', '/');
-            if (normalizedPath.StartsWith("Documentation/"))
-            {
+            if (normalizedPath.StartsWith("Documentation/")) {
                 var parts = normalizedPath.Split('/');
-                if (parts.Length >= 2)
-                {
+                if (parts.Length >= 2) {
                     return parts[1];
                 }
             }
@@ -555,15 +564,12 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="readmePath">Path to README file</param>
         /// <returns>Module name or empty string</returns>
-        private static string ExtractModuleFromReadmePath(string readmePath)
-        {
+        private static string ExtractModuleFromReadmePath(string readmePath) {
             var normalizedPath = readmePath.Replace('\\', '/');
             var parts = normalizedPath.Split('/');
-            if (parts.Length >= 1)
-            {
+            if (parts.Length >= 1) {
                 var potentialModule = parts[0];
-                if (IsModuleName(potentialModule))
-                {
+                if (IsModuleName(potentialModule)) {
                     return potentialModule;
                 }
             }
@@ -575,14 +581,11 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="filePath">Path to file</param>
         /// <returns>Module name or empty string</returns>
-        private static string ExtractModuleFromFilePath(string filePath)
-        {
+        private static string ExtractModuleFromFilePath(string filePath) {
             var normalizedPath = filePath.Replace('\\', '/');
             var parts = normalizedPath.Split('/');
-            foreach (var part in parts)
-            {
-                if (IsModuleName(part))
-                {
+            foreach (var part in parts) {
+                if (IsModuleName(part)) {
                     return part;
                 }
             }
@@ -594,8 +597,7 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="name">Name to check</param>
         /// <returns>True if module name, false otherwise</returns>
-        private static bool IsModuleName(string name)
-        {
+        private static bool IsModuleName(string name) {
             var modules = new[] { "ViewModels", "Models", "Utils", "Services", "Clients", "Views", "Converters", "DevTools" };
             return modules.Contains(name, StringComparer.OrdinalIgnoreCase);
         }
@@ -606,8 +608,7 @@ namespace OstPlayer.DevTools
         /// <param name="changedFile">Path to changed file</param>
         /// <param name="category">Category name</param>
         /// <returns>True if same category, false otherwise</returns>
-        private static bool IsSameCategoryChange(string changedFile, string category)
-        {
+        private static bool IsSameCategoryChange(string changedFile, string category) {
             if (string.IsNullOrEmpty(category))
                 return false;
 
@@ -621,15 +622,13 @@ namespace OstPlayer.DevTools
         /// <param name="changedFile">Path to changed file</param>
         /// <param name="category">Category name</param>
         /// <returns>True if related, false otherwise</returns>
-        private static bool IsRelatedToCategory(string changedFile, string category)
-        {
+        private static bool IsRelatedToCategory(string changedFile, string category) {
             if (string.IsNullOrEmpty(category))
                 return false;
 
             // Check for indirect relationships
             var categoryLower = category.ToLower();
-            switch (categoryLower)
-            {
+            switch (categoryLower) {
                 case "modules":
                     return changedFile.Contains("ModuleUpdateSummary.md");
                 case "development":
@@ -647,16 +646,14 @@ namespace OstPlayer.DevTools
         /// <param name="changedFile">Path to changed file</param>
         /// <param name="category">Category name</param>
         /// <returns>True if subcategory change, false otherwise</returns>
-        private static bool IsSubcategoryChange(string changedFile, string category)
-        {
+        private static bool IsSubcategoryChange(string changedFile, string category) {
             if (string.IsNullOrEmpty(category))
                 return false;
 
             var normalizedFile = changedFile.Replace('\\', '/');
             var categoryPattern = $"Documentation/{category}/";
-            
-            if (normalizedFile.StartsWith(categoryPattern, StringComparison.OrdinalIgnoreCase))
-            {
+
+            if (normalizedFile.StartsWith(categoryPattern, StringComparison.OrdinalIgnoreCase)) {
                 var remainingPath = normalizedFile.Substring(categoryPattern.Length);
                 return remainingPath.Contains('/'); // Has subdirectory
             }
@@ -669,11 +666,9 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="cacheKey">Cache key</param>
         /// <param name="result">Result to cache</param>
-        private static void CacheResult(string cacheKey, RuleEvaluationResult result)
-        {
+        private static void CacheResult(string cacheKey, RuleEvaluationResult result) {
             // Clean cache if it's getting old
-            if (DateTime.Now - _cacheLastCleaned > TimeSpan.FromMinutes(10))
-            {
+            if (DateTime.Now - _cacheLastCleaned > TimeSpan.FromMinutes(10)) {
                 RuleCache.Clear();
                 _cacheLastCleaned = DateTime.Now;
             }

@@ -1,4 +1,4 @@
-﻿// ====================================================================
+// ====================================================================
 // FILE: MetadataCache.cs
 // PROJECT: OstPlayer - Playnite Plugin for Game Soundtrack Management
 // MODULE: Services
@@ -65,14 +65,14 @@
 // - No cross-process cache sharing
 //
 // FUTURE REFACTORING:
-// TODO: Add persistent cache storage with SQLite backend
-// TODO: Implement distributed cache support for multiple instances
-// TODO: Add cache compression for large metadata objects
-// TODO: Implement adaptive TTL based on metadata source reliability
-// TODO: Add cache replication and synchronization across devices
-// TODO: Implement cache analytics and optimization recommendations
-// TODO: Add custom serialization for efficient storage
-// TODO: Implement cache partitioning for better performance isolation
+// FUTURE: Add persistent cache storage with SQLite backend
+// FUTURE: Implement distributed cache support for multiple instances
+// FUTURE: Add cache compression for large metadata objects
+// FUTURE: Implement adaptive TTL based on metadata source reliability
+// FUTURE: Add cache replication and synchronization across devices
+// FUTURE: Implement cache analytics and optimization recommendations
+// FUTURE: Add custom serialization for efficient storage
+// FUTURE: Implement cache partitioning for better performance isolation
 // CONSIDER: Adding cache encryption for sensitive metadata
 // CONSIDER: Implementing cache pre-warming based on user behavior
 // IDEA: Machine learning for optimal cache configuration
@@ -97,10 +97,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using OstPlayer.Models;
 using OstPlayer.Utils.Performance;
-using OstPlayer.Services;
 using Playnite.SDK;
 
 namespace OstPlayer.Services
@@ -115,37 +113,37 @@ namespace OstPlayer.Services
         /// TTL for track-level metadata (shorter due to frequent changes)
         /// </summary>
         public TimeSpan TrackMetadataTTL { get; set; } = TimeSpan.FromHours(1);
-        
+
         /// <summary>
         /// TTL for album-level metadata (medium stability)
         /// </summary>
         public TimeSpan AlbumMetadataTTL { get; set; } = TimeSpan.FromHours(6);
-        
+
         /// <summary>
         /// TTL for artist-level metadata (high stability)
         /// </summary>
         public TimeSpan ArtistMetadataTTL { get; set; } = TimeSpan.FromHours(24);
-        
+
         /// <summary>
         /// TTL for external API metadata (varies by source reliability)
         /// </summary>
         public TimeSpan ExternalMetadataTTL { get; set; } = TimeSpan.FromHours(12);
-        
+
         /// <summary>
         /// Maximum number of cached items per type
         /// </summary>
         public int MaxCacheSize { get; set; } = 1000;
-        
+
         /// <summary>
         /// Interval for background cleanup operations
         /// </summary>
         public TimeSpan CleanupInterval { get; set; } = TimeSpan.FromMinutes(5);
-        
+
         /// <summary>
         /// Enable memory pressure-aware cache sizing
         /// </summary>
         public bool EnableMemoryPressureAdjustment { get; set; } = true;
-        
+
         /// <summary>
         /// Enable cache warming for frequently accessed items
         /// </summary>
@@ -153,29 +151,59 @@ namespace OstPlayer.Services
     }
 
     /// <summary>
-    /// Metadata cache performance metrics for monitoring and optimization.
+    /// Metrics for metadata cache performance monitoring.
     /// </summary>
     public class MetadataCacheMetrics
     {
+        /// <summary>
+        /// Gets or sets statistics for the track cache.
+        /// </summary>
         public CacheStatistics TrackCache { get; set; }
-        public CacheStatistics AlbumCache { get; set; }
-        public CacheStatistics ArtistCache { get; set; }
-        public CacheStatistics ExternalCache { get; set; }
         
+        /// <summary>
+        /// Gets or sets statistics for the album cache.
+        /// </summary>
+        public CacheStatistics AlbumCache { get; set; }
+        
+        /// <summary>
+        /// Gets or sets statistics for the artist cache.
+        /// </summary>
+        public CacheStatistics ArtistCache { get; set; }
+        
+        /// <summary>
+        /// Gets or sets statistics for the external cache.
+        /// </summary>
+        public CacheStatistics ExternalCache { get; set; }
+
+        /// <summary>
+        /// Gets the overall hit ratio across all caches.
+        /// </summary>
         public double OverallHitRatio
         {
             get
             {
-                var totalRequests = TrackCache.TotalRequests + AlbumCache.TotalRequests + 
-                                  ArtistCache.TotalRequests + ExternalCache.TotalRequests;
-                var totalHits = TrackCache.CacheHits + AlbumCache.CacheHits + 
-                              ArtistCache.CacheHits + ExternalCache.CacheHits;
+                var totalRequests =
+                    TrackCache.TotalRequests
+                    + AlbumCache.TotalRequests
+                    + ArtistCache.TotalRequests
+                    + ExternalCache.TotalRequests;
+                var totalHits =
+                    TrackCache.CacheHits
+                    + AlbumCache.CacheHits
+                    + ArtistCache.CacheHits
+                    + ExternalCache.CacheHits;
                 return totalRequests > 0 ? (double)totalHits / totalRequests : 0.0;
             }
         }
-        
-        public int TotalCacheSize => TrackCache.CurrentSize + AlbumCache.CurrentSize + 
-                                   ArtistCache.CurrentSize + ExternalCache.CurrentSize;
+
+        /// <summary>
+        /// Gets the total cache size across all caches.
+        /// </summary>
+        public int TotalCacheSize =>
+            TrackCache.CurrentSize
+            + AlbumCache.CurrentSize
+            + ArtistCache.CurrentSize
+            + ExternalCache.CurrentSize;
     }
 
     /// <summary>
@@ -186,27 +214,21 @@ namespace OstPlayer.Services
     /// </summary>
     public class MetadataCache : IDisposable
     {
-        #region Private Fields
-
+        // Private fields
         private readonly MetadataCacheConfig _config;
         private readonly ErrorHandlingService _errorHandler;
         private readonly ILogger _logger;
-        
+
         // Specialized caches for different metadata types
         private readonly TTLCache<string, TrackMetadataModel> _trackCache;
         private readonly TTLCache<string, AlbumMetadataModel> _albumCache;
-        private readonly TTLCache<string, object> _artistCache; // Generic for future artist model
-        private readonly TTLCache<string, object> _externalCache; // For API responses
-        
+        private readonly TTLCache<string, object> _artistCache;
+        private readonly TTLCache<string, object> _externalCache;
+
         // Cache warming and analytics
         private readonly Dictionary<string, DateTime> _accessPatterns;
         private readonly object _patternsLock = new object();
-        
         private volatile bool _disposed = false;
-
-        #endregion
-
-        #region Constructor and Initialization
 
         /// <summary>
         /// Initializes the metadata cache with specified configuration.
@@ -218,39 +240,45 @@ namespace OstPlayer.Services
             _config = config ?? new MetadataCacheConfig();
             _errorHandler = new ErrorHandlingService();
             _logger = LogManager.GetLogger();
-            
+
             _logger.Info("Initializing MetadataCache with TTL support...");
-            
+
             try
             {
                 // Initialize specialized caches with type-specific TTL
                 _trackCache = new TTLCache<string, TrackMetadataModel>(
-                    _config.MaxCacheSize, 
-                    _config.TrackMetadataTTL, 
+                    _config.MaxCacheSize,
+                    _config.TrackMetadataTTL,
                     _config.CleanupInterval,
-                    _config.EnableMemoryPressureAdjustment);
-                
+                    _config.EnableMemoryPressureAdjustment
+                );
+
                 _albumCache = new TTLCache<string, AlbumMetadataModel>(
-                    _config.MaxCacheSize, 
-                    _config.AlbumMetadataTTL, 
+                    _config.MaxCacheSize,
+                    _config.AlbumMetadataTTL,
                     _config.CleanupInterval,
-                    _config.EnableMemoryPressureAdjustment);
-                
+                    _config.EnableMemoryPressureAdjustment
+                );
+
                 _artistCache = new TTLCache<string, object>(
                     _config.MaxCacheSize / 2, // Fewer artists than tracks
-                    _config.ArtistMetadataTTL, 
+                    _config.ArtistMetadataTTL,
                     _config.CleanupInterval,
-                    _config.EnableMemoryPressureAdjustment);
-                
+                    _config.EnableMemoryPressureAdjustment
+                );
+
                 _externalCache = new TTLCache<string, object>(
-                    _config.MaxCacheSize, 
-                    _config.ExternalMetadataTTL, 
+                    _config.MaxCacheSize,
+                    _config.ExternalMetadataTTL,
                     _config.CleanupInterval,
-                    _config.EnableMemoryPressureAdjustment);
-                
+                    _config.EnableMemoryPressureAdjustment
+                );
+
                 _accessPatterns = new Dictionary<string, DateTime>();
-                
-                _logger.Info($"MetadataCache initialized successfully with {_config.MaxCacheSize} max items per cache");
+
+                _logger.Info(
+                    $"MetadataCache initialized successfully with {_config.MaxCacheSize} max items per cache"
+                );
             }
             catch (Exception ex)
             {
@@ -259,10 +287,6 @@ namespace OstPlayer.Services
                 throw;
             }
         }
-
-        #endregion
-
-        #region Track Metadata Caching
 
         /// <summary>
         /// Retrieves track metadata from cache.
@@ -273,18 +297,19 @@ namespace OstPlayer.Services
         /// <returns>Cached track metadata or null if not found/expired</returns>
         public TrackMetadataModel GetTrackMetadata(string filePath)
         {
-            if (string.IsNullOrEmpty(filePath)) return null;
-            
+            if (string.IsNullOrEmpty(filePath))
+                return null;
+
             try
             {
                 TrackAccessPattern(filePath);
-                
+
                 if (_trackCache.TryGet(filePath, out var metadata))
                 {
                     _logger.Debug($"Track metadata cache hit for: {filePath}");
                     return metadata;
                 }
-                
+
                 _logger.Debug($"Track metadata cache miss for: {filePath}");
                 return null;
             }
@@ -303,10 +328,15 @@ namespace OstPlayer.Services
         /// <param name="filePath">File path as cache key</param>
         /// <param name="metadata">Track metadata to cache</param>
         /// <param name="customTTL">Custom TTL override (optional)</param>
-        public void CacheTrackMetadata(string filePath, TrackMetadataModel metadata, TimeSpan? customTTL = null)
+        public void CacheTrackMetadata(
+            string filePath,
+            TrackMetadataModel metadata,
+            TimeSpan? customTTL = null
+        )
         {
-            if (string.IsNullOrEmpty(filePath) || metadata == null) return;
-            
+            if (string.IsNullOrEmpty(filePath) || metadata == null)
+                return;
+
             try
             {
                 _trackCache.Add(filePath, metadata, customTTL);
@@ -319,10 +349,6 @@ namespace OstPlayer.Services
             }
         }
 
-        #endregion
-
-        #region Album Metadata Caching
-
         /// <summary>
         /// Retrieves album metadata from cache.
         /// TTL: Medium expiration for album-level stability
@@ -332,8 +358,9 @@ namespace OstPlayer.Services
         /// <returns>Cached album metadata or null if not found/expired</returns>
         public AlbumMetadataModel GetAlbumMetadata(string albumKey)
         {
-            if (string.IsNullOrEmpty(albumKey)) return null;
-            
+            if (string.IsNullOrEmpty(albumKey))
+                return null;
+
             try
             {
                 if (_albumCache.TryGet(albumKey, out var metadata))
@@ -341,7 +368,7 @@ namespace OstPlayer.Services
                     _logger.Debug($"Album metadata cache hit for: {albumKey}");
                     return metadata;
                 }
-                
+
                 _logger.Debug($"Album metadata cache miss for: {albumKey}");
                 return null;
             }
@@ -359,10 +386,15 @@ namespace OstPlayer.Services
         /// <param name="albumKey">Album identifier</param>
         /// <param name="metadata">Album metadata to cache</param>
         /// <param name="customTTL">Custom TTL override (optional)</param>
-        public void CacheAlbumMetadata(string albumKey, AlbumMetadataModel metadata, TimeSpan? customTTL = null)
+        public void CacheAlbumMetadata(
+            string albumKey,
+            AlbumMetadataModel metadata,
+            TimeSpan? customTTL = null
+        )
         {
-            if (string.IsNullOrEmpty(albumKey) || metadata == null) return;
-            
+            if (string.IsNullOrEmpty(albumKey) || metadata == null)
+                return;
+
             try
             {
                 _albumCache.Add(albumKey, metadata, customTTL);
@@ -390,10 +422,6 @@ namespace OstPlayer.Services
             return $"{normalizedArtist}::{normalizedAlbum}";
         }
 
-        #endregion
-
-        #region External Metadata Caching
-
         /// <summary>
         /// Caches external API response data (Discogs, MusicBrainz, etc.).
         /// TTL: Configurable based on external source reliability
@@ -403,10 +431,15 @@ namespace OstPlayer.Services
         /// <param name="cacheKey">External API cache key</param>
         /// <param name="metadata">External metadata to cache</param>
         /// <param name="customTTL">Custom TTL for this source</param>
-        public void CacheExternalMetadata<T>(string cacheKey, T metadata, TimeSpan? customTTL = null)
+        public void CacheExternalMetadata<T>(
+            string cacheKey,
+            T metadata,
+            TimeSpan? customTTL = null
+        )
         {
-            if (string.IsNullOrEmpty(cacheKey) || metadata == null) return;
-            
+            if (string.IsNullOrEmpty(cacheKey) || metadata == null)
+                return;
+
             try
             {
                 _externalCache.Add(cacheKey, metadata, customTTL);
@@ -428,8 +461,9 @@ namespace OstPlayer.Services
         /// <returns>Cached external metadata or default(T) if not found</returns>
         public T GetExternalMetadata<T>(string cacheKey)
         {
-            if (string.IsNullOrEmpty(cacheKey)) return default(T);
-            
+            if (string.IsNullOrEmpty(cacheKey))
+                return default(T);
+
             try
             {
                 if (_externalCache.TryGet(cacheKey, out var metadata) && metadata is T)
@@ -437,7 +471,7 @@ namespace OstPlayer.Services
                     _logger.Debug($"External metadata cache hit for: {cacheKey}");
                     return (T)metadata;
                 }
-                
+
                 _logger.Debug($"External metadata cache miss for: {cacheKey}");
                 return default(T);
             }
@@ -447,10 +481,6 @@ namespace OstPlayer.Services
                 return default(T);
             }
         }
-
-        #endregion
-
-        #region Cache Management Operations
 
         /// <summary>
         /// Clears all cached metadata across all cache types.
@@ -462,17 +492,17 @@ namespace OstPlayer.Services
             try
             {
                 _logger.Info("Clearing all metadata caches...");
-                
+
                 _trackCache.Clear();
                 _albumCache.Clear();
                 _artistCache.Clear();
                 _externalCache.Clear();
-                
+
                 lock (_patternsLock)
                 {
                     _accessPatterns.Clear();
                 }
-                
+
                 _logger.Info("All metadata caches cleared successfully");
             }
             catch (Exception ex)
@@ -490,8 +520,9 @@ namespace OstPlayer.Services
         /// <returns>True if removed, false if not found</returns>
         public bool RemoveTrackMetadata(string filePath)
         {
-            if (string.IsNullOrEmpty(filePath)) return false;
-            
+            if (string.IsNullOrEmpty(filePath))
+                return false;
+
             try
             {
                 var removed = _trackCache.Remove(filePath);
@@ -521,7 +552,7 @@ namespace OstPlayer.Services
                 _albumCache.AdjustForMemoryPressure();
                 _artistCache.AdjustForMemoryPressure();
                 _externalCache.AdjustForMemoryPressure();
-                
+
                 _logger.Debug("Cache sizes adjusted for memory pressure");
             }
             catch (Exception ex)
@@ -529,10 +560,6 @@ namespace OstPlayer.Services
                 _logger.Error(ex, "Error adjusting caches for memory pressure");
             }
         }
-
-        #endregion
-
-        #region Cache Analytics and Monitoring
 
         /// <summary>
         /// Gets comprehensive cache performance metrics.
@@ -549,7 +576,7 @@ namespace OstPlayer.Services
                     TrackCache = _trackCache.GetStatistics(),
                     AlbumCache = _albumCache.GetStatistics(),
                     ArtistCache = _artistCache.GetStatistics(),
-                    ExternalCache = _externalCache.GetStatistics()
+                    ExternalCache = _externalCache.GetStatistics(),
                 };
             }
             catch (Exception ex)
@@ -568,7 +595,10 @@ namespace OstPlayer.Services
         {
             try
             {
-                return _trackCache.Count + _albumCache.Count + _artistCache.Count + _externalCache.Count;
+                return _trackCache.Count
+                    + _albumCache.Count
+                    + _artistCache.Count
+                    + _externalCache.Count;
             }
             catch (Exception ex)
             {
@@ -576,10 +606,6 @@ namespace OstPlayer.Services
                 return 0;
             }
         }
-
-        #endregion
-
-        #region Cache Warming and Access Patterns
 
         /// <summary>
         /// Records access pattern for cache warming optimization.
@@ -589,20 +615,21 @@ namespace OstPlayer.Services
         /// <param name="filePath">File path being accessed</param>
         private void TrackAccessPattern(string filePath)
         {
-            if (!_config.EnableCacheWarming) return;
-            
+            if (!_config.EnableCacheWarming)
+                return;
+
             try
             {
                 lock (_patternsLock)
                 {
                     _accessPatterns[filePath] = DateTime.UtcNow;
-                    
+
                     // Cleanup old patterns periodically (keep last 24 hours)
                     if (_accessPatterns.Count > 1000)
                     {
                         var cutoff = DateTime.UtcNow.AddHours(-24);
                         var keysToRemove = new List<string>();
-                        
+
                         foreach (var kvp in _accessPatterns)
                         {
                             if (kvp.Value < cutoff)
@@ -610,7 +637,7 @@ namespace OstPlayer.Services
                                 keysToRemove.Add(kvp.Key);
                             }
                         }
-                        
+
                         foreach (var key in keysToRemove)
                         {
                             _accessPatterns.Remove(key);
@@ -635,7 +662,7 @@ namespace OstPlayer.Services
         {
             var result = new List<string>();
             var cutoff = DateTime.UtcNow.Subtract(timeWindow);
-            
+
             try
             {
                 lock (_patternsLock)
@@ -653,13 +680,9 @@ namespace OstPlayer.Services
             {
                 _logger.Error(ex, "Error getting frequently accessed files");
             }
-            
+
             return result;
         }
-
-        #endregion
-
-        #region IDisposable Implementation
 
         /// <summary>
         /// Releases all cache resources and performs cleanup.
@@ -681,12 +704,12 @@ namespace OstPlayer.Services
                 try
                 {
                     _logger.Info("Disposing MetadataCache...");
-                    
+
                     _trackCache?.Dispose();
                     _albumCache?.Dispose();
                     _artistCache?.Dispose();
                     _externalCache?.Dispose();
-                    
+
                     _logger.Info("MetadataCache disposed successfully");
                 }
                 catch (Exception ex)
@@ -699,7 +722,5 @@ namespace OstPlayer.Services
                 }
             }
         }
-
-        #endregion
     }
 }

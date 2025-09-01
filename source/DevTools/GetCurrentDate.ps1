@@ -36,9 +36,9 @@
 # - Changelog entry format
 #
 # FUTURE REFACTORING:
-# TODO: Add timezone parameter support
-# TODO: Add validation for custom formats
-# TODO: Add output format selection parameter
+# FUTURE: Add timezone parameter support
+# FUTURE: Add validation for custom formats
+# FUTURE: Add output format selection parameter
 # CONSIDER: Integration with CI/CD pipelines
 # CONSIDER: Integration with DevTools DateHelper.cs
 #

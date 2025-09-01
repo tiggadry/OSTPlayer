@@ -49,11 +49,11 @@
 // - Binary visibility logic only
 //
 // FUTURE REFACTORING:
-// TODO: Add whitespace trimming option via parameter
-// TODO: Implement ConvertBack for two-way binding scenarios
-// TODO: Add support for Visibility.Hidden state
-// TODO: Consider generic text validation converter
-// TODO: Add minimum length parameter support
+// FUTURE: Add whitespace trimming option via parameter
+// FUTURE: Implement ConvertBack for two-way binding scenarios
+// FUTURE: Add support for Visibility.Hidden state
+// FUTURE: Consider generic text validation converter
+// FUTURE: Add minimum length parameter support
 // CONSIDER: Regex pattern matching capability
 // IDEA: Multi-value converter for complex string conditions
 //
@@ -85,8 +85,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace OstPlayer.Converters
-{
+namespace OstPlayer.Converters {
     /// <summary>
     /// Converts a string to Visibility. Returns Collapsed if the string is null or empty, otherwise Visible.
     /// Used, for example, to display an element only if the text is filled in.
@@ -96,13 +95,11 @@ namespace OstPlayer.Converters
     ///   Used, for example, to display the cover image from Discogs (Visibility binding to CoverUrl).
     /// </summary>
     [ValueConversion(typeof(string), typeof(Visibility))]
-    public class NullOrEmptyToVisibilityConverter : IValueConverter
-    {
+    public class NullOrEmptyToVisibilityConverter : IValueConverter {
         /// <summary>
         /// If the input value is null or an empty string, returns Collapsed, otherwise Visible.
         /// </summary>
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
             var str = value as string;
             return string.IsNullOrEmpty(str) ? Visibility.Collapsed : Visibility.Visible;
         }
@@ -110,8 +107,7 @@ namespace OstPlayer.Converters
         /// <summary>
         /// Not implemented, backward conversion is not needed.
         /// </summary>
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
             throw new NotImplementedException();
         }
     }

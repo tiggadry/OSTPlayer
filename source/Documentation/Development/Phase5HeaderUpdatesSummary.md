@@ -74,7 +74,7 @@
 - **Consistent dating**: All Phase 5 work properly dated
 
 ### **Documentation Preservation**
-- ? **All TODO sections** preserved and enhanced
+- ? **All FUTURE sections** preserved and enhanced
 - ? **All LIMITATIONS sections** maintained
 - ? **All FUTURE REFACTORING** plans preserved
 - ? **All TESTING requirements** documented
@@ -156,7 +156,7 @@
 
 ### **Preserved Documentation Sections**
 - ? **FUTURE REFACTORING** - All planning information maintained
-- ? **TODO lists** - Complete task tracking preserved
+- ? **FUTURE lists** - Complete task tracking preserved
 - ? **LIMITATIONS** - Architectural constraints documented
 - ? **TESTING requirements** - Test strategies maintained
 - ? **COMPATIBILITY** - Platform and framework requirements

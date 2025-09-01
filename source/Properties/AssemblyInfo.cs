@@ -1,12 +1,13 @@
-﻿using System.Reflection;
-using System.Runtime.CompilerServices;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("OstPlayer - Playnite Plugin for Game Soundtrack Management")]
-[assembly: AssemblyDescription("Advanced Playnite plugin enabling seamless game soundtrack management with metadata integration, audio playback, and external service connectivity. Features modern MVVM architecture with complete SOLID principles compliance.")]
+[assembly: AssemblyDescription(
+    "Advanced Playnite plugin enabling seamless game soundtrack management with metadata integration, audio playback, and external service connectivity. Features modern MVVM architecture with complete SOLID principles compliance."
+)]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("TiggAdry")]
 [assembly: AssemblyProduct("OstPlayer")]

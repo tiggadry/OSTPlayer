@@ -12,7 +12,7 @@
 // PURPOSE:
 // Core audio playback engine using NAudio for MP3 file playback.
 // Provides comprehensive playback control, progress tracking, volume management,
-// and event-driven architecture for UI integration. Now includes async/await 
+// and event-driven architecture for UI integration. Now includes async/await
 // support for improved UI responsiveness and standardized error handling.
 // **v1.2.1**: Enhanced position seeking with validation and edge case handling
 //
@@ -64,17 +64,17 @@
 // - No gapless playback between tracks
 //
 // FUTURE REFACTORING:
-// TODO: Add support for additional audio formats (FLAC, OGG, WAV)
-// TODO: Implement gapless playback for seamless transitions
-// TODO: Add audio effects and equalizer functionality
-// TODO: Extract interface for cross-platform implementations
-// TODO: Add playlist queue management
-// TODO: Implement fade-in/fade-out effects
-// TODO: Add spectrum analysis and visualization support
-// TODO: Implement audio normalization
-// TODO: Add crossfade between tracks
-// TODO: Support for multi-channel audio
-// TODO: Migrate more operations to async patterns
+// FUTURE: Add support for additional audio formats (FLAC, OGG, WAV)
+// FUTURE: Implement gapless playback for seamless transitions
+// FUTURE: Add audio effects and equalizer functionality
+// FUTURE: Extract interface for cross-platform implementations
+// FUTURE: Add playlist queue management
+// FUTURE: Implement fade-in/fade-out effects
+// FUTURE: Add spectrum analysis and visualization support
+// FUTURE: Implement audio normalization
+// FUTURE: Add crossfade between tracks
+// FUTURE: Support for multi-channel audio
+// FUTURE: Migrate more operations to async patterns
 // CONSIDER: Plugin architecture for audio effects
 // CONSIDER: Integration with Windows audio session management
 // IDEA: Real-time audio analysis for beat detection
@@ -92,9 +92,6 @@
 // - PlaybackStarted: Fired when playback begins
 // - PlaybackPaused: Fired when playback is paused
 // - PlaybackStopped: Fired when playback stops (manual or natural)
-// - PlaybackEnded: Fired when track reaches end naturally
-// - PositionChanged: Fired during progress updates
-// - DurationChanged: Fired when new track is loaded
 //
 // COMPATIBILITY:
 // - .NET Framework 4.6.2
@@ -111,9 +108,9 @@
 // ====================================================================
 
 using System;
-using NAudio.Wave;
-using System.Windows.Threading;
 using System.Threading.Tasks;
+using System.Windows.Threading;
+using NAudio.Wave;
 using OstPlayer.Services;
 
 namespace OstPlayer.Utils
@@ -126,115 +123,88 @@ namespace OstPlayer.Utils
     /// </summary>
     public class MusicPlaybackService : IDisposable
     {
-        #region Private Fields - NAudio Components and State Management
-        
-        // NAudio playback device (e.g., WaveOutEvent)
-        // THREADING: WaveOutEvent is thread-safe and handles output on background threads
-        // LIFECYCLE: Must be properly disposed to avoid DirectSound/WASAPI resource leaks
+        // Private Fields - NAudio Components and State Management
         private IWavePlayer waveOut;
-        
+
         // NAudio audio file reader for MP3 playback
         // MEMORY: Streams file content, so large files don't load entirely into RAM
         // THREAD SAFETY: Not thread-safe - all access must be on main thread
         private AudioFileReader audioFileReader;
-        
+
         // Timer for updating playback progress (position)
         // FREQUENCY: 100ms intervals provide smooth UI updates (10 FPS)
         // PERFORMANCE: Dispatcher timer runs on UI thread for direct property binding
         private readonly DispatcherTimer progressTimer;
-        
+
         // Centralized error handling service
         private readonly ErrorHandlingService errorHandler;
-        
-        #endregion
-        
-        #region Private Fields - Playback State Flags
-        
+
+        // Private Fields - Playback State Flags
         // Indicates if playback is currently paused
         // DIFFERENCE: Paused != Stopped (paused retains position, stopped resets to 0)
         // UI IMPACT: Affects play/pause button appearance and behavior
         private bool isPaused = false;
-        
+
         // Indicates if playback is currently active
         // LIFECYCLE: true from Play() until Stop() or natural end
         // EVENT CORRELATION: Changes trigger UI state updates via events
         private bool isPlaying = false;
-        
+
         // Flag to distinguish manual stop from natural end
         // PURPOSE: Prevents event firing during programmatic operations
         // USE CASE: User clicking Stop vs track ending naturally
         private bool isManualStop = false;
-        
+
         // Flag to indicate stopping for track change (should not trigger events)
         // PURPOSE: Suppresses UI events during automatic track transitions
         // WORKFLOW: Set before Stop(), cleared after cleanup
         private bool isStoppingForTrackChange = false;
-        
+
         // True if user is dragging the progress slider (UI)
         // PURPOSE: Prevents timer from updating position during user interaction
         // UI SYNCHRONIZATION: Avoids slider jumping during drag operations
         private bool isUserDragging = false;
-        
-        #endregion
-        
-        #region Private Fields - Audio Parameters
-        
+
+        // Private Fields - Audio Parameters
         // Playback volume (0.0 - 1.0)
         // RANGE: NAudio expects float values between 0.0 (silent) and 1.0 (full volume)
         // DEFAULT: 0.5 (50%) provides reasonable starting volume
         private double volume = 0.5;
-        
+
         // Path to the currently loaded audio file
         // PURPOSE: Enables resume functionality and track change detection
         // COMPARISON: Used to determine if Play() request is for same file (resume) or new file
         private string currentFilePath = null;
-        
-        #endregion
 
-        #region Events - UI Communication and State Notifications
+        #region Public Events
 
         /// <summary>
-        /// Raised when playback is stopped (either manually or at end of file).
-        /// TIMING: After cleanup is complete and state is reset
-        /// SUPPRESSION: Can be suppressed during track transitions to avoid UI flicker
+        /// Fired when playback is stopped.
         /// </summary>
         public event EventHandler PlaybackStopped;
-        
+
         /// <summary>
-        /// Raised when playback is started or resumed.
-        /// TIMING: After NAudio initialization is complete and audio is flowing
-        /// UI BINDING: Typically bound to play/pause button state and progress bar visibility
+        /// Fired when playback is started.
         /// </summary>
         public event EventHandler PlaybackStarted;
-        
+
         /// <summary>
-        /// Raised when playback is paused.
-        /// DIFFERENCE: Pause preserves position, Stop resets position to zero
-        /// RESUME: Paused playback can be resumed with Play() using same file path
+        /// Fired when playback is paused.
         /// </summary>
         public event EventHandler PlaybackPaused;
-        
+
         /// <summary>
-        /// Raised when playback position changes (timer tick).
-        /// FREQUENCY: Every 100ms during active playback
-        /// PARAMETER: Current position in seconds as double
-        /// UI BINDING: Used for progress bar updates and time display
+        /// Fired when playback position changes.
         /// </summary>
         public event EventHandler<double> PositionChanged;
-        
+
         /// <summary>
-        /// Raised when a new file is loaded and duration is known.
-        /// TIMING: After AudioFileReader initialization when total time is available
-        /// PARAMETER: Total duration in seconds as double
-        /// UI BINDING: Used for progress bar maximum value and duration display
+        /// Fired when track duration is determined.
         /// </summary>
         public event EventHandler<double> DurationChanged;
-        
+
         /// <summary>
-        /// Raised when playback ends naturally (not by manual stop or pause).
-        /// PURPOSE: Triggers automatic advancement to next track in playlist
-        /// DIFFERENCE: PlaybackEnded (natural) vs PlaybackStopped (manual/programmatic)
-        /// AUTO-PLAY: This event drives the auto-play next track functionality
+        /// Fired when current track ends naturally.
         /// </summary>
         public event EventHandler PlaybackEnded;
 
@@ -247,9 +217,9 @@ namespace OstPlayer.Utils
         public MusicPlaybackService()
         {
             errorHandler = new ErrorHandlingService();
-            
+
             progressTimer = new DispatcherTimer();
-            progressTimer.Interval = TimeSpan.FromMilliseconds(100);  // 10 FPS update rate
+            progressTimer.Interval = TimeSpan.FromMilliseconds(100); // 10 FPS update rate
             progressTimer.Tick += ProgressTimer_Tick;
         }
 
@@ -282,8 +252,8 @@ namespace OstPlayer.Utils
             try
             {
                 // RESUME LOGIC: Check if this is a resume operation for the same file
-            // CONDITIONS: Must be paused (not stopped) and same file path
-            // POSITION: If startPosition specified, it overrides current position
+                // CONDITIONS: Must be paused (not stopped) and same file path
+                // POSITION: If startPosition specified, it overrides current position
                 if (isPaused && waveOut != null && filePath == currentFilePath)
                 {
                     // Resume operation with error handling
@@ -291,13 +261,13 @@ namespace OstPlayer.Utils
                     {
                         if (startPosition.HasValue && audioFileReader != null)
                         {
-                    // SEEK OPERATION: Set playback position before resuming with validation
-                    // RANGE CHECK: Validate position is within bounds before seeking
+                            // SEEK OPERATION: Set playback position before resuming with validation
+                            // RANGE CHECK: Validate position is within bounds before seeking
                             var validatedPosition = ValidateSeekPosition(startPosition.Value);
                             audioFileReader.CurrentTime = TimeSpan.FromSeconds(validatedPosition);
                         }
-                        
-                // RESUME PLAYBACK: Continue from current or specified position
+
+                        // RESUME PLAYBACK: Continue from current or specified position
                         waveOut.Play();
                         isPaused = false;
                         isPlaying = true;
@@ -313,20 +283,23 @@ namespace OstPlayer.Utils
                     }
                 }
 
-            // NEW FILE PLAYBACK: Stop any previous playback and release resources
-            // RESOURCE CLEANUP: Essential to avoid DirectSound/WASAPI conflicts
-            // EVENT SUPPRESSION: Suppress events during track change to avoid UI confusion
+                // NEW FILE PLAYBACK: Stop any previous playback and release resources
+                // RESOURCE CLEANUP: Essential to avoid DirectSound/WASAPI conflicts
+                // EVENT SUPPRESSION: Suppress events during track change to avoid UI confusion
                 if (waveOut != null || audioFileReader != null)
                 {
                     isStoppingForTrackChange = true;
-                    Stop(true);  // suppressPlaybackStoppedEvent = true
+                    Stop(true); // suppressPlaybackStoppedEvent = true
                     isStoppingForTrackChange = false;
                 }
 
                 // FILE VALIDATION: Check if file exists before attempting to load
                 if (!System.IO.File.Exists(filePath))
                 {
-                    errorHandler.HandlePlaybackError(new System.IO.FileNotFoundException("Audio file not found."), filePath);
+                    errorHandler.HandlePlaybackError(
+                        new System.IO.FileNotFoundException("Audio file not found."),
+                        filePath
+                    );
                     return;
                 }
 
@@ -334,14 +307,14 @@ namespace OstPlayer.Utils
                 // REASON: Previous AudioFileReader disposal might not be complete
                 // IMPROVEMENT: Better UX than Thread.Sleep - doesn't block UI thread
                 await Task.Delay(50);
-                
+
                 try
                 {
                     // AUDIO INITIALIZATION: Create NAudio objects for playback
                     // ORDER: AudioFileReader first (provides audio stream), then WaveOut (plays stream)
                     audioFileReader = new AudioFileReader(filePath);
                     audioFileReader.Volume = (float)volume;
-                    
+
                     // POSITION SETUP: Set start position if specified with validation
                     // TIMING: Must be done after AudioFileReader creation but before playback
                     if (startPosition.HasValue)
@@ -349,21 +322,21 @@ namespace OstPlayer.Utils
                         var validatedPosition = ValidateSeekPosition(startPosition.Value);
                         audioFileReader.CurrentTime = TimeSpan.FromSeconds(validatedPosition);
                     }
-                    
+
                     // PLAYBACK DEVICE: WaveOutEvent for non-blocking audio output
                     // THREADING: Handles audio output on background thread
                     waveOut = new WaveOutEvent();
                     waveOut.Init(audioFileReader);
                     waveOut.PlaybackStopped += WaveOut_PlaybackStopped;
                     waveOut.Play();
-                    
+
                     // STATE MANAGEMENT: Update internal state and notify UI
                     currentFilePath = filePath;
                     isPlaying = true;
                     isPaused = false;
                     isManualStop = false;
                     progressTimer.Start();
-                    
+
                     // UI NOTIFICATIONS: Inform subscribers about new audio state
                     DurationChanged?.Invoke(this, audioFileReader.TotalTime.TotalSeconds);
                     PlaybackStarted?.Invoke(this, EventArgs.Empty);
@@ -420,17 +393,17 @@ namespace OstPlayer.Utils
             {
                 isManualStop = true;
                 bool wasPlaying = isPlaying;
-                
+
                 CleanupResources();
-                
+
                 // STATE RESET: Clear all playback state variables
                 isPlaying = false;
                 isPaused = false;
                 currentFilePath = null;
-                
+
                 // UI NOTIFICATION: Inform UI that position has reset
                 PositionChanged?.Invoke(this, 0);
-                
+
                 // CONDITIONAL EVENT: Only fire PlaybackStopped if requested and was actually playing
                 if (wasPlaying && !suppressPlaybackStoppedEvent)
                 {
@@ -473,7 +446,7 @@ namespace OstPlayer.Utils
                         waveOut = null;
                     }
                 }
-                
+
                 // AUDIO READER CLEANUP: Close file handle and release memory
                 if (audioFileReader != null)
                 {
@@ -484,14 +457,16 @@ namespace OstPlayer.Utils
                     catch (Exception ex)
                     {
                         // Log cleanup errors but don't propagate them
-                        System.Diagnostics.Debug.WriteLine($"AudioFileReader cleanup error: {ex.Message}");
+                        System.Diagnostics.Debug.WriteLine(
+                            $"AudioFileReader cleanup error: {ex.Message}"
+                        );
                     }
                     finally
                     {
                         audioFileReader = null;
                     }
                 }
-                
+
                 progressTimer?.Stop();
             }
             catch (Exception ex)
@@ -513,8 +488,8 @@ namespace OstPlayer.Utils
             try
             {
                 volume = value;
-                
-            // IMMEDIATE APPLICATION: Apply to currently loaded audio if available
+
+                // IMMEDIATE APPLICATION: Apply to currently loaded audio if available
                 if (audioFileReader != null)
                 {
                     audioFileReader.Volume = (float)volume;
@@ -551,7 +526,7 @@ namespace OstPlayer.Utils
                 return 0;
             }
         }
-        
+
         /// <summary>
         /// Gets the total duration of the loaded audio file in seconds.
         /// AVAILABILITY: Only valid after successful audio file loading
@@ -587,7 +562,7 @@ namespace OstPlayer.Utils
                 {
                     var validatedPosition = ValidateSeekPosition(seconds);
                     audioFileReader.CurrentTime = TimeSpan.FromSeconds(validatedPosition);
-                    
+
                     // Fire position changed event with the validated position
                     PositionChanged?.Invoke(this, validatedPosition);
                 }
@@ -612,22 +587,22 @@ namespace OstPlayer.Utils
                 return 0;
 
             var duration = audioFileReader.TotalTime.TotalSeconds;
-            
+
             // Clamp to minimum of 0
             if (requestedPosition < 0)
                 return 0;
-            
+
             // Add a small buffer before the end to prevent issues with seeking to the very end
             // NAudio can have issues when seeking to the exact end of a file
             const double endBuffer = 0.1; // 100ms buffer before end
             var maxValidPosition = Math.Max(0, duration - endBuffer);
-            
+
             // If seeking beyond the valid range, clamp to maximum valid position
             if (requestedPosition >= maxValidPosition && duration > endBuffer)
             {
                 return maxValidPosition;
             }
-            
+
             return requestedPosition;
         }
 
@@ -686,35 +661,35 @@ namespace OstPlayer.Utils
                 bool wasManualStop = isManualStop;
                 bool wasStoppingForTrackChange = isStoppingForTrackChange;
                 bool wasPlaying = isPlaying;
-                
+
                 // RESET FLAGS: Clear manual stop flag for next operation
                 isManualStop = false;
-                
+
                 // SKIP EVENT CONDITIONS: Don't fire events for internal operations
-            // 1. wasManualStop: User explicitly stopped playback (Stop button)
-            // 2. wasStoppingForTrackChange: Internal cleanup during track switching  
-            // 3. !wasPlaying: Spurious event from NAudio (defensive programming)
+                // 1. wasManualStop: User explicitly stopped playback (Stop button)
+                // 2. wasStoppingForTrackChange: Internal cleanup during track switching
+                // 3. !wasPlaying: Spurious event from NAudio (defensive programming)
                 if (wasManualStop || wasStoppingForTrackChange || !wasPlaying)
                 {
                     return;
                 }
-                
+
                 // NATURAL END PROCESSING: Track reached end, trigger auto-play
-            // SEQUENCE: Cleanup first, then reset state, then fire event
-            
-            // RESOURCE CLEANUP: Clean up NAudio resources immediately
+                // SEQUENCE: Cleanup first, then reset state, then fire event
+
+                // RESOURCE CLEANUP: Clean up NAudio resources immediately
                 CleanupResources();
-                
+
                 // STATE RESET: Clear playback state variables
                 isPlaying = false;
                 isPaused = false;
                 currentFilePath = null;
-                
+
                 // UI NOTIFICATION: Reset position display to beginning
                 PositionChanged?.Invoke(this, 0);
-                
+
                 // AUTO-PLAY TRIGGER: Fire PlaybackEnded for automatic track progression
-            // HANDLER: ViewModel typically handles this to advance to next track
+                // HANDLER: ViewModel typically handles this to advance to next track
                 PlaybackEnded?.Invoke(this, EventArgs.Empty);
             }
             catch (Exception ex)

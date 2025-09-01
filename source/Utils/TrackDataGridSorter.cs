@@ -52,12 +52,12 @@
 // - Limited to three-column sorting (number, title, duration)
 //
 // FUTURE REFACTORING:
-// TODO: Add support for custom sort column definitions
-// TODO: Implement grouped sorting (by album, artist, etc.)
-// TODO: Add sort performance metrics and optimization
-// TODO: Support for user-defined sort preferences persistence
-// TODO: Add sort history and quick-sort presets
-// TODO: Implement fuzzy matching for similar track titles
+// FUTURE: Add support for custom sort column definitions
+// FUTURE: Implement grouped sorting (by album, artist, etc.)
+// FUTURE: Add sort performance metrics and optimization
+// FUTURE: Support for user-defined sort preferences persistence
+// FUTURE: Add sort history and quick-sort presets
+// FUTURE: Implement fuzzy matching for similar track titles
 // CONSIDER: Integration with Windows Explorer-style column sorting
 // CONSIDER: Add support for multi-criteria sorting with weights
 // IDEA: Machine learning-based "smart sorting" based on user behavior
@@ -89,7 +89,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Windows.Data;
 using OstPlayer.Models;
 
 namespace OstPlayer.Utils
@@ -110,16 +109,20 @@ namespace OstPlayer.Utils
         /// <param name="ascending">Sort direction (true for ascending, false for descending)</param>
         /// <returns>New sorted observable collection</returns>
         public static ObservableCollection<TrackListItem> SortByTrackNumber(
-            IEnumerable<TrackListItem> tracks, bool ascending = true)
+            IEnumerable<TrackListItem> tracks,
+            bool ascending = true
+        )
         {
             if (tracks == null)
                 return new ObservableCollection<TrackListItem>();
 
             var sorted = ascending
-                ? tracks.OrderBy(t => t.TrackNumber == 0 ? uint.MaxValue : t.TrackNumber)
-                       .ThenBy(t => t.TrackTitle ?? "", StringComparer.OrdinalIgnoreCase)
-                : tracks.OrderByDescending(t => t.TrackNumber == 0 ? 0 : t.TrackNumber)
-                       .ThenBy(t => t.TrackTitle ?? "", StringComparer.OrdinalIgnoreCase);
+                ? tracks
+                    .OrderBy(t => t.TrackNumber == 0 ? uint.MaxValue : t.TrackNumber)
+                    .ThenBy(t => t.TrackTitle ?? "", StringComparer.OrdinalIgnoreCase)
+                : tracks
+                    .OrderByDescending(t => t.TrackNumber == 0 ? 0 : t.TrackNumber)
+                    .ThenBy(t => t.TrackTitle ?? "", StringComparer.OrdinalIgnoreCase);
 
             return new ObservableCollection<TrackListItem>(sorted);
         }
@@ -132,14 +135,19 @@ namespace OstPlayer.Utils
         /// <param name="ascending">Sort direction (true for ascending, false for descending)</param>
         /// <returns>New sorted observable collection</returns>
         public static ObservableCollection<TrackListItem> SortByTitle(
-            IEnumerable<TrackListItem> tracks, bool ascending = true)
+            IEnumerable<TrackListItem> tracks,
+            bool ascending = true
+        )
         {
             if (tracks == null)
                 return new ObservableCollection<TrackListItem>();
 
             var sorted = ascending
                 ? tracks.OrderBy(t => t.TrackTitle ?? "", StringComparer.CurrentCultureIgnoreCase)
-                : tracks.OrderByDescending(t => t.TrackTitle ?? "", StringComparer.CurrentCultureIgnoreCase);
+                : tracks.OrderByDescending(
+                    t => t.TrackTitle ?? "",
+                    StringComparer.CurrentCultureIgnoreCase
+                );
 
             return new ObservableCollection<TrackListItem>(sorted);
         }
@@ -152,16 +160,20 @@ namespace OstPlayer.Utils
         /// <param name="ascending">Sort direction (true for ascending, false for descending)</param>
         /// <returns>New sorted observable collection</returns>
         public static ObservableCollection<TrackListItem> SortByDuration(
-            IEnumerable<TrackListItem> tracks, bool ascending = true)
+            IEnumerable<TrackListItem> tracks,
+            bool ascending = true
+        )
         {
             if (tracks == null)
                 return new ObservableCollection<TrackListItem>();
 
             var sorted = ascending
-                ? tracks.OrderBy(t => t.DurationSeconds)
-                       .ThenBy(t => t.TrackTitle ?? "", StringComparer.OrdinalIgnoreCase)
-                : tracks.OrderByDescending(t => t.DurationSeconds)
-                       .ThenBy(t => t.TrackTitle ?? "", StringComparer.OrdinalIgnoreCase);
+                ? tracks
+                    .OrderBy(t => t.DurationSeconds)
+                    .ThenBy(t => t.TrackTitle ?? "", StringComparer.OrdinalIgnoreCase)
+                : tracks
+                    .OrderByDescending(t => t.DurationSeconds)
+                    .ThenBy(t => t.TrackTitle ?? "", StringComparer.OrdinalIgnoreCase);
 
             return new ObservableCollection<TrackListItem>(sorted);
         }
@@ -182,8 +194,11 @@ namespace OstPlayer.Utils
         /// <returns>New sorted observable collection</returns>
         public static ObservableCollection<TrackListItem> SortMultiColumn(
             IEnumerable<TrackListItem> tracks,
-            SortColumn primarySort, bool primaryAscending,
-            SortColumn? secondarySort = null, bool secondaryAscending = true)
+            SortColumn primarySort,
+            bool primaryAscending,
+            SortColumn? secondarySort = null,
+            bool secondaryAscending = true
+        )
         {
             if (tracks == null)
                 return new ObservableCollection<TrackListItem>();
@@ -206,7 +221,11 @@ namespace OstPlayer.Utils
         /// Applies sort for a specific column to the query.
         /// </summary>
         private static IOrderedQueryable<TrackListItem> ApplySortColumn(
-            IQueryable<TrackListItem> query, SortColumn column, bool ascending, bool isPrimary)
+            IQueryable<TrackListItem> query,
+            SortColumn column,
+            bool ascending,
+            bool isPrimary
+        )
         {
             switch (column)
             {
@@ -221,23 +240,39 @@ namespace OstPlayer.Utils
                     {
                         var orderedQuery = (IOrderedQueryable<TrackListItem>)query;
                         return ascending
-                            ? orderedQuery.ThenBy(t => t.TrackNumber == 0 ? uint.MaxValue : t.TrackNumber)
-                            : orderedQuery.ThenByDescending(t => t.TrackNumber == 0 ? 0 : t.TrackNumber);
+                            ? orderedQuery.ThenBy(t =>
+                                t.TrackNumber == 0 ? uint.MaxValue : t.TrackNumber
+                            )
+                            : orderedQuery.ThenByDescending(t =>
+                                t.TrackNumber == 0 ? 0 : t.TrackNumber
+                            );
                     }
 
                 case SortColumn.Title:
                     if (isPrimary)
                     {
                         return ascending
-                            ? query.OrderBy(t => t.TrackTitle ?? "", StringComparer.CurrentCultureIgnoreCase)
-                            : query.OrderByDescending(t => t.TrackTitle ?? "", StringComparer.CurrentCultureIgnoreCase);
+                            ? query.OrderBy(
+                                t => t.TrackTitle ?? "",
+                                StringComparer.CurrentCultureIgnoreCase
+                            )
+                            : query.OrderByDescending(
+                                t => t.TrackTitle ?? "",
+                                StringComparer.CurrentCultureIgnoreCase
+                            );
                     }
                     else
                     {
                         var orderedQuery = (IOrderedQueryable<TrackListItem>)query;
                         return ascending
-                            ? orderedQuery.ThenBy(t => t.TrackTitle ?? "", StringComparer.CurrentCultureIgnoreCase)
-                            : orderedQuery.ThenByDescending(t => t.TrackTitle ?? "", StringComparer.CurrentCultureIgnoreCase);
+                            ? orderedQuery.ThenBy(
+                                t => t.TrackTitle ?? "",
+                                StringComparer.CurrentCultureIgnoreCase
+                            )
+                            : orderedQuery.ThenByDescending(
+                                t => t.TrackTitle ?? "",
+                                StringComparer.CurrentCultureIgnoreCase
+                            );
                     }
 
                 case SortColumn.Duration:
@@ -271,7 +306,11 @@ namespace OstPlayer.Utils
         /// <param name="collectionView">CollectionView to apply sorting to</param>
         /// <param name="column">Column to sort by</param>
         /// <param name="ascending">Sort direction</param>
-        public static void ApplyCollectionViewSort(ICollectionView collectionView, SortColumn column, bool ascending)
+        public static void ApplyCollectionViewSort(
+            ICollectionView collectionView,
+            SortColumn column,
+            bool ascending
+        )
         {
             if (collectionView == null)
                 return;
@@ -307,7 +346,9 @@ namespace OstPlayer.Utils
             {
                 // Note: CollectionView doesn't directly support custom comparers
                 // This would require using CollectionViewSource with custom sorting
-                System.Diagnostics.Debug.WriteLine($"Custom comparer for {column} not fully implemented in CollectionView");
+                System.Diagnostics.Debug.WriteLine(
+                    $"Custom comparer for {column} not fully implemented in CollectionView"
+                );
             }
         }
 
@@ -350,10 +391,12 @@ namespace OstPlayer.Utils
         {
             /// <summary>Track number column</summary>
             TrackNumber,
+
             /// <summary>Track title column</summary>
             Title,
+
             /// <summary>Track duration column</summary>
-            Duration
+            Duration,
         }
 
         #endregion

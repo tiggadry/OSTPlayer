@@ -1,0 +1,1 @@
+CR5C:\Playnite\_github\OstPlayer\source\OstPlayer.csprojò	CSharp7_3

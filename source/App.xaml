@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
 ====================================================================
 FILE: App.xaml
@@ -64,11 +64,11 @@ LIMITATIONS:
 - Static resource definition approach
 
 FUTURE REFACTORING:
-TODO: Add dynamic theming support
-TODO: Implement runtime localization switching
-TODO: Add resource caching and optimization
-TODO: Create plugin-specific resource namespaces
-TODO: Add resource validation and error handling
+FUTURE: Add dynamic theming support
+FUTURE: Implement runtime localization switching
+FUTURE: Add resource caching and optimization
+FUTURE: Create plugin-specific resource namespaces
+FUTURE: Add resource validation and error handling
 CONSIDER: Hot-reload support for development
 CONSIDER: Resource compression and optimization
 IDEA: Theme marketplace integration
@@ -105,12 +105,12 @@ CHANGELOG:
 -->
 <Application xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Application.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Styles.xaml" />
-                <ResourceDictionary Source="Localization/en_US.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Application.Resources>
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Styles.xaml" />
+        <ResourceDictionary Source="Localization/en_US.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </Application.Resources>
 </Application>

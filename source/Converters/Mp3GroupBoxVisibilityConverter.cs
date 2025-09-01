@@ -57,11 +57,11 @@
 // - Binary visibility logic only
 //
 // FUTURE REFACTORING:
-// TODO: Add parameter support for custom field validation
-// TODO: Implement ConvertBack for two-way binding scenarios
-// TODO: Add support for additional metadata field validation
-// TODO: Consider generic metadata section visibility converter
-// TODO: Add minimum data threshold configuration
+// FUTURE: Add parameter support for custom field validation
+// FUTURE: Implement ConvertBack for two-way binding scenarios
+// FUTURE: Add support for additional metadata field validation
+// FUTURE: Consider generic metadata section visibility converter
+// FUTURE: Add minimum data threshold configuration
 // CONSIDER: Extracting to configurable multi-condition converter
 // IDEA: Parameter-based field priority and validation rules
 //
@@ -93,8 +93,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace OstPlayer.Converters
-{
+namespace OstPlayer.Converters {
     /// <summary>
     /// MultiValueConverter for the Visibility of the GroupBox with MP3 metadata.
     /// Displays the GroupBox only if IsMp3MetadataVisible == true and TrackTitle is filled in.
@@ -103,13 +102,11 @@ namespace OstPlayer.Converters
     /// - OstPlayerSidebarView.xaml: Used as a resource with the key "Mp3GroupBoxVisibilityConverter".
     ///   Used in MultiBinding for the Visibility of the GroupBox with MP3 metadata.
     /// </summary>
-    public class Mp3GroupBoxVisibilityConverter : IMultiValueConverter
-    {
+    public class Mp3GroupBoxVisibilityConverter : IMultiValueConverter {
         /// <summary>
         /// Returns Visible only if IsMp3MetadataVisible == true and TrackTitle is not empty.
         /// </summary>
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-        {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
             // values[0] = IsMp3MetadataVisible (bool)
             // values[1] = TrackTitle (string)
             bool isVisible = values[0] is bool b && b;
@@ -120,8 +117,7 @@ namespace OstPlayer.Converters
         /// <summary>
         /// Not implemented, backward conversion is not needed.
         /// </summary>
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) {
             throw new NotImplementedException();
         }
     }

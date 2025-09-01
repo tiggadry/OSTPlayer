@@ -1,0 +1,1 @@
+fRXC:\Playnite\_github\OstPlayer\UnitTestProject_OstPlayer\UnitTestProject_OstPlayer.csprojò	CSharp7_3

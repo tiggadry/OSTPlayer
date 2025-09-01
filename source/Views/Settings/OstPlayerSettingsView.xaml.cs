@@ -1,4 +1,4 @@
-﻿// ====================================================================
+// ====================================================================
 // FILE: OstPlayerSettingsView.xaml.cs
 // PROJECT: OstPlayer - Playnite Plugin for Game Soundtrack Management
 // MODULE: Views
@@ -56,11 +56,11 @@
 // - No standalone usage capabilities
 //
 // FUTURE REFACTORING:
-// TODO: Add validation feedback UI elements if needed
-// TODO: Implement custom control templates for better styling
-// TODO: Add accessibility improvements and keyboard navigation
-// TODO: Consider adding input validation indicators
-// TODO: Extract to reusable settings control library
+// FUTURE: Add validation feedback UI elements if needed
+// FUTURE: Implement custom control templates for better styling
+// FUTURE: Add accessibility improvements and keyboard navigation
+// FUTURE: Consider adding input validation indicators
+// FUTURE: Extract to reusable settings control library
 // CONSIDER: Adding real-time validation feedback
 // CONSIDER: Custom styling and theming support
 // IDEA: Settings import/export UI features
@@ -93,8 +93,14 @@ using System.Windows.Controls;
 
 namespace OstPlayer.Views.Settings
 {
+    /// <summary>
+    /// Interaction logic for OstPlayerSettingsView.xaml
+    /// </summary>
     public partial class OstPlayerSettingsView : UserControl
     {
+        /// <summary>
+        /// Initializes a new instance of the OstPlayerSettingsView class.
+        /// </summary>
         public OstPlayerSettingsView()
         {
             InitializeComponent();

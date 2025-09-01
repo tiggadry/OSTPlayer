@@ -55,11 +55,11 @@
 // - Single track playback at a time
 //
 // FUTURE REFACTORING:
-// TODO: Add cross-platform audio engine support
-// TODO: Implement multi-track mixing capabilities
-// TODO: Add audio effects and filters
-// TODO: Implement audio streaming for large files
-// TODO: Add audio format conversion capabilities
+// FUTURE: Add cross-platform audio engine support
+// FUTURE: Implement multi-track mixing capabilities
+// FUTURE: Add audio effects and filters
+// FUTURE: Implement audio streaming for large files
+// FUTURE: Add audio format conversion capabilities
 // CONSIDER: Plugin architecture for audio engines
 // CONSIDER: Advanced audio processing features
 // IDEA: Real-time audio analysis and visualization
@@ -91,21 +91,19 @@ using OstPlayer.Services.Interfaces;
 using OstPlayer.Utils;
 using Playnite.SDK;
 
-namespace OstPlayer.Services
-{
+namespace OstPlayer.Services {
     /// <summary>
     /// Audio service implementing IAudioService interface for Phase 5 dependency injection.
     /// Provides comprehensive audio playback operations with event-driven architecture.
     /// </summary>
-    public class AudioService : IAudioService, IDisposable
-    {
+    public class AudioService : IAudioService, IDisposable {
         #region Private Fields (Injected Dependencies)
-        
+
         private readonly ILogger logger;
         private readonly ErrorHandlingService errorHandler;
         private readonly MusicPlaybackService playbackService;
         private volatile bool disposed = false;
-        
+
         // Audio state tracking
         private AudioState currentState = AudioState.Stopped;
         private double currentVolume = 0.5;
@@ -113,14 +111,14 @@ namespace OstPlayer.Services
         private double currentDuration = 0.0;
         private string currentFile = string.Empty;
         private bool isUserDragging = false;
-        
+
         // Supported audio formats
         private readonly string[] supportedFormats = { ".mp3", ".wav", ".flac", ".aac", ".wma" };
-        
+
         #endregion
-        
+
         #region Constructor (Dependency Injection)
-        
+
         /// <summary>
         /// Initializes the audio service with dependency injection.
         /// All dependencies are resolved automatically by the DI container.
@@ -131,58 +129,49 @@ namespace OstPlayer.Services
         public AudioService(
             ILogger logger = null,
             ErrorHandlingService errorHandler = null,
-            MusicPlaybackService playbackService = null)
-        {
+            MusicPlaybackService playbackService = null) {
             // Initialize dependencies with fallbacks for backward compatibility
             this.logger = logger ?? LogManager.GetLogger();
             this.errorHandler = errorHandler ?? new ErrorHandlingService();
             this.playbackService = playbackService ?? new MusicPlaybackService();
-            
-            try
-            {
+
+            try {
                 this.logger.Info("AudioService initializing with dependency injection...");
-                
+
                 // Subscribe to playback service events
                 InitializeEventHandlers();
-                
+
                 this.logger.Info("AudioService initialized successfully with DI");
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 this.logger.Error(ex, "Failed to initialize AudioService with dependency injection");
                 this.errorHandler.HandlePlaybackError(ex, "AudioService Initialization");
                 throw;
             }
         }
-        
+
         #endregion
-        
+
         #region IAudioService Properties Implementation
-        
+
         /// <summary>Current audio playback state.</summary>
-        public AudioState State
-        {
+        public AudioState State {
             get => currentState;
-            private set
-            {
-                if (currentState != value)
-                {
+            private set {
+                if (currentState != value) {
                     currentState = value;
                     StateChanged?.Invoke(this, value);
                     logger.Debug($"Audio state changed to: {value}");
                 }
             }
         }
-        
+
         /// <summary>Current volume level (0.0 to 1.0).</summary>
-        public double Volume
-        {
+        public double Volume {
             get => currentVolume;
-            set
-            {
+            set {
                 var clampedValue = Math.Max(0.0, Math.Min(1.0, value));
-                if (Math.Abs(currentVolume - clampedValue) > 0.001)
-                {
+                if (Math.Abs(currentVolume - clampedValue) > 0.001) {
                     currentVolume = clampedValue;
                     playbackService?.SetVolume(clampedValue);
                     VolumeChanged?.Invoke(this, clampedValue);
@@ -190,115 +179,98 @@ namespace OstPlayer.Services
                 }
             }
         }
-        
+
         /// <summary>Current playback position in seconds.</summary>
-        public double Position
-        {
+        public double Position {
             get => currentPosition;
-            set
-            {
-                if (!isUserDragging && Math.Abs(currentPosition - value) > 0.1)
-                {
+            set {
+                if (!isUserDragging && Math.Abs(currentPosition - value) > 0.1) {
                     currentPosition = value;
                     PositionChanged?.Invoke(this, value);
                 }
             }
         }
-        
+
         /// <summary>Total duration of current track in seconds.</summary>
-        public double Duration
-        {
+        public double Duration {
             get => currentDuration;
-            private set
-            {
-                if (Math.Abs(currentDuration - value) > 0.1)
-                {
+            private set {
+                if (Math.Abs(currentDuration - value) > 0.1) {
                     currentDuration = value;
                     DurationChanged?.Invoke(this, value);
                     logger.Debug($"Duration determined: {value:F1} seconds");
                 }
             }
         }
-        
+
         /// <summary>Currently loaded file path.</summary>
-        public string CurrentFile
-        {
+        public string CurrentFile {
             get => currentFile;
-            private set
-            {
+            private set {
                 currentFile = value ?? string.Empty;
                 logger.Debug($"Current file changed to: {currentFile}");
             }
         }
-        
+
         /// <summary>Whether user is currently dragging position slider.</summary>
-        public bool IsUserDragging
-        {
+        public bool IsUserDragging {
             get => isUserDragging;
-            set
-            {
+            set {
                 isUserDragging = value;
                 playbackService?.SetUserDragging(value);
                 logger.Debug($"User dragging state: {value}");
             }
         }
-        
+
         #endregion
-        
+
         #region IAudioService Playback Control Implementation
-        
+
         /// <summary>
         /// Loads and plays audio file asynchronously.
         /// </summary>
-        public async Task PlayAsync(string filePath, double? startPosition = null, CancellationToken cancellationToken = default)
-        {
+        public async Task PlayAsync(string filePath, double? startPosition = null, CancellationToken cancellationToken = default) {
             if (disposed)
                 throw new ObjectDisposedException(nameof(AudioService));
-                
-            if (string.IsNullOrEmpty(filePath))
-            {
+
+            if (string.IsNullOrEmpty(filePath)) {
                 logger.Warn("PlayAsync called with null or empty file path");
                 return;
             }
-            
-            try
-            {
+
+            try {
                 cancellationToken.ThrowIfCancellationRequested();
-                
+
                 logger.Info($"Starting playback: {Path.GetFileName(filePath)}");
                 State = AudioState.Loading;
-                
+
                 // Validate file exists and format is supported
-                if (!File.Exists(filePath))
-                {
+                if (!File.Exists(filePath)) {
                     throw new FileNotFoundException($"Audio file not found: {filePath}");
                 }
-                
-                if (!IsFormatSupported(filePath))
-                {
+
+                if (!IsFormatSupported(filePath)) {
                     throw new NotSupportedException($"Audio format not supported: {Path.GetExtension(filePath)}");
                 }
-                
+
                 // Stop current playback if any
                 await StopAsync(cancellationToken);
-                
+
                 // Update current file
                 CurrentFile = filePath;
-                
+
                 // Start playback through service
                 await playbackService.PlayAsync(filePath, startPosition);
-                
+
                 State = AudioState.Playing;
                 logger.Info($"Playback started successfully: {Path.GetFileName(filePath)}");
             }
-            catch (OperationCanceledException)
-            {
+            catch (OperationCanceledException) {
                 logger.Info($"Playback cancelled for: {Path.GetFileName(filePath)}");
                 State = AudioState.Stopped;
                 throw;
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 logger.Error(ex, $"Failed to start playback: {Path.GetFileName(filePath)}");
                 State = AudioState.Error;
                 ErrorOccurred?.Invoke(this, ex.Message);
@@ -306,88 +278,75 @@ namespace OstPlayer.Services
                 throw;
             }
         }
-        
+
         /// <summary>
         /// Pauses current playback.
         /// </summary>
-        public async Task PauseAsync(CancellationToken cancellationToken = default)
-        {
+        public async Task PauseAsync(CancellationToken cancellationToken = default) {
             if (disposed)
                 throw new ObjectDisposedException(nameof(AudioService));
-                
-            try
-            {
+
+            try {
                 cancellationToken.ThrowIfCancellationRequested();
-                
-                if (State == AudioState.Playing)
-                {
+
+                if (State == AudioState.Playing) {
                     await Task.Run(() => playbackService.Pause(), cancellationToken);
                     State = AudioState.Paused;
                     logger.Info("Playback paused");
                 }
             }
-            catch (OperationCanceledException)
-            {
+            catch (OperationCanceledException) {
                 logger.Info("Pause operation cancelled");
                 throw;
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 logger.Error(ex, "Failed to pause playback");
                 State = AudioState.Error;
                 ErrorOccurred?.Invoke(this, ex.Message);
                 throw;
             }
         }
-        
+
         /// <summary>
         /// Resumes paused playback.
         /// </summary>
-        public async Task ResumeAsync(CancellationToken cancellationToken = default)
-        {
+        public async Task ResumeAsync(CancellationToken cancellationToken = default) {
             if (disposed)
                 throw new ObjectDisposedException(nameof(AudioService));
-                
-            try
-            {
+
+            try {
                 cancellationToken.ThrowIfCancellationRequested();
-                
-                if (State == AudioState.Paused)
-                {
+
+                if (State == AudioState.Paused) {
                     // Use PlayAsync with current file to resume - MusicPlaybackService handles resume logic internally
                     await Task.Run(() => playbackService.Play(CurrentFile), cancellationToken);
                     State = AudioState.Playing;
                     logger.Info("Playback resumed");
                 }
             }
-            catch (OperationCanceledException)
-            {
+            catch (OperationCanceledException) {
                 logger.Info("Resume operation cancelled");
                 throw;
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 logger.Error(ex, "Failed to resume playback");
                 State = AudioState.Error;
                 ErrorOccurred?.Invoke(this, ex.Message);
                 throw;
             }
         }
-        
+
         /// <summary>
         /// Stops current playback and releases resources.
         /// </summary>
-        public async Task StopAsync(CancellationToken cancellationToken = default)
-        {
+        public async Task StopAsync(CancellationToken cancellationToken = default) {
             if (disposed)
                 throw new ObjectDisposedException(nameof(AudioService));
-                
-            try
-            {
+
+            try {
                 cancellationToken.ThrowIfCancellationRequested();
-                
-                if (State != AudioState.Stopped)
-                {
+
+                if (State != AudioState.Stopped) {
                     await Task.Run(() => playbackService.Stop(), cancellationToken);
                     State = AudioState.Stopped;
                     Position = 0.0;
@@ -395,251 +354,219 @@ namespace OstPlayer.Services
                     logger.Info("Playback stopped");
                 }
             }
-            catch (OperationCanceledException)
-            {
+            catch (OperationCanceledException) {
                 logger.Info("Stop operation cancelled");
                 throw;
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 logger.Error(ex, "Failed to stop playback");
                 State = AudioState.Error;
                 ErrorOccurred?.Invoke(this, ex.Message);
                 throw;
             }
         }
-        
+
         /// <summary>
         /// Seeks to specific position in track.
         /// </summary>
-        public async Task SeekAsync(double position, CancellationToken cancellationToken = default)
-        {
+        public async Task SeekAsync(double position, CancellationToken cancellationToken = default) {
             if (disposed)
                 throw new ObjectDisposedException(nameof(AudioService));
-                
-            try
-            {
+
+            try {
                 cancellationToken.ThrowIfCancellationRequested();
-                
+
                 var clampedPosition = Math.Max(0.0, Math.Min(Duration, position));
-                
-                await Task.Run(() =>
-                {
+
+                await Task.Run(() => {
                     playbackService.SetPosition(clampedPosition);
                     currentPosition = clampedPosition;
                 }, cancellationToken);
-                
+
                 PositionChanged?.Invoke(this, clampedPosition);
                 logger.Debug($"Seeked to position: {clampedPosition:F1} seconds");
             }
-            catch (OperationCanceledException)
-            {
+            catch (OperationCanceledException) {
                 logger.Info("Seek operation cancelled");
                 throw;
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 logger.Error(ex, $"Failed to seek to position: {position}");
                 ErrorOccurred?.Invoke(this, ex.Message);
                 throw;
             }
         }
-        
+
         #endregion
-        
+
         #region IAudioService Volume and Settings Implementation
-        
+
         /// <summary>
         /// Sets volume level with validation.
         /// </summary>
-        public async Task SetVolumeAsync(double volume, CancellationToken cancellationToken = default)
-        {
+        public async Task SetVolumeAsync(double volume, CancellationToken cancellationToken = default) {
             if (disposed)
                 throw new ObjectDisposedException(nameof(AudioService));
-                
-            try
-            {
+
+            try {
                 cancellationToken.ThrowIfCancellationRequested();
-                
-                await Task.Run(() =>
-                {
+
+                await Task.Run(() => {
                     Volume = volume; // Uses property setter with validation
                 }, cancellationToken);
             }
-            catch (OperationCanceledException)
-            {
+            catch (OperationCanceledException) {
                 logger.Info("Set volume operation cancelled");
                 throw;
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 logger.Error(ex, $"Failed to set volume: {volume}");
                 throw;
             }
         }
-        
+
         /// <summary>
         /// Applies audio settings and configuration.
         /// </summary>
-        public async Task ApplySettingsAsync(OstPlayerSettings settings, CancellationToken cancellationToken = default)
-        {
+        public async Task ApplySettingsAsync(OstPlayerSettings settings, CancellationToken cancellationToken = default) {
             if (disposed)
                 throw new ObjectDisposedException(nameof(AudioService));
-                
+
             if (settings == null)
                 return;
-                
-            try
-            {
+
+            try {
                 cancellationToken.ThrowIfCancellationRequested();
-                
-                await Task.Run(() =>
-                {
+
+                await Task.Run(() => {
                     // Apply volume setting
                     Volume = settings.DefaultVolume / 100.0; // Convert from percentage
-                    
+
                     logger.Info($"Audio settings applied - Volume: {Volume:P1}");
                 }, cancellationToken);
             }
-            catch (OperationCanceledException)
-            {
+            catch (OperationCanceledException) {
                 logger.Info("Apply settings operation cancelled");
                 throw;
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 logger.Error(ex, "Failed to apply audio settings");
                 throw;
             }
         }
-        
+
         #endregion
-        
+
         #region IAudioService Events Implementation
-        
+
         /// <summary>Fired when playback state changes.</summary>
         public event EventHandler<AudioState> StateChanged;
-        
+
         /// <summary>Fired when playback position changes.</summary>
         public event EventHandler<double> PositionChanged;
-        
+
         /// <summary>Fired when track duration is determined.</summary>
         public event EventHandler<double> DurationChanged;
-        
+
         /// <summary>Fired when volume changes.</summary>
         public event EventHandler<double> VolumeChanged;
-        
+
         /// <summary>Fired when current track ends.</summary>
         public event EventHandler TrackEnded;
-        
+
         /// <summary>Fired when audio error occurs.</summary>
         public event EventHandler<string> ErrorOccurred;
-        
+
         #endregion
-        
+
         #region IAudioService Utility Methods Implementation
-        
+
         /// <summary>
         /// Gets supported audio formats.
         /// </summary>
-        public string[] GetSupportedFormats()
-        {
+        public string[] GetSupportedFormats() {
             return (string[])supportedFormats.Clone();
         }
-        
+
         /// <summary>
         /// Validates if file format is supported.
         /// </summary>
-        public bool IsFormatSupported(string filePath)
-        {
+        public bool IsFormatSupported(string filePath) {
             if (string.IsNullOrEmpty(filePath))
                 return false;
-                
+
             var extension = Path.GetExtension(filePath).ToLowerInvariant();
             return supportedFormats.Contains(extension);
         }
-        
+
         /// <summary>
         /// Gets audio engine information.
         /// </summary>
-        public async Task<AudioEngineInfo> GetEngineInfoAsync(CancellationToken cancellationToken = default)
-        {
+        public async Task<AudioEngineInfo> GetEngineInfoAsync(CancellationToken cancellationToken = default) {
             if (disposed)
                 throw new ObjectDisposedException(nameof(AudioService));
-                
-            try
-            {
-                return await Task.Run(() =>
-                {
+
+            try {
+                return await Task.Run(() => {
                     cancellationToken.ThrowIfCancellationRequested();
-                    
-                    return new AudioEngineInfo
-                    {
+
+                    return new AudioEngineInfo {
                         EngineName = "NAudio",
-                        Version = "2.x", // TODO: Get actual version
+                        Version = "2.x", // FUTURE: Get actual version
                         SupportedFormats = GetSupportedFormats(),
                         IsInitialized = playbackService != null,
                         Status = State.ToString()
                     };
                 }, cancellationToken);
             }
-            catch (OperationCanceledException)
-            {
+            catch (OperationCanceledException) {
                 logger.Info("Get engine info operation cancelled");
                 throw;
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 logger.Error(ex, "Failed to get audio engine info");
                 throw;
             }
         }
-        
+
         /// <summary>
         /// Performs health check on audio engine.
         /// </summary>
-        public async Task<bool> CheckHealthAsync(CancellationToken cancellationToken = default)
-        {
+        public async Task<bool> CheckHealthAsync(CancellationToken cancellationToken = default) {
             if (disposed)
                 return false;
-                
-            try
-            {
-                return await Task.Run(() =>
-                {
+
+            try {
+                return await Task.Run(() => {
                     cancellationToken.ThrowIfCancellationRequested();
-                    
+
                     // Basic health checks
-                    var isHealthy = playbackService != null && 
+                    var isHealthy = playbackService != null &&
                                    State != AudioState.Error;
-                    
+
                     logger.Debug($"Audio engine health check: {(isHealthy ? "Healthy" : "Unhealthy")}");
                     return isHealthy;
                 }, cancellationToken);
             }
-            catch (OperationCanceledException)
-            {
+            catch (OperationCanceledException) {
                 logger.Info("Health check operation cancelled");
                 throw;
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 logger.Error(ex, "Failed to perform audio engine health check");
                 return false;
             }
         }
-        
+
         #endregion
-        
+
         #region Private Event Handlers
-        
+
         /// <summary>
         /// Initializes event handlers for the playback service.
         /// </summary>
-        private void InitializeEventHandlers()
-        {
-            if (playbackService != null)
-            {
+        private void InitializeEventHandlers() {
+            if (playbackService != null) {
                 playbackService.PlaybackStarted += OnPlaybackStarted;
                 playbackService.PlaybackPaused += OnPlaybackPaused;
                 playbackService.PlaybackStopped += OnPlaybackStopped;
@@ -648,14 +575,12 @@ namespace OstPlayer.Services
                 playbackService.DurationChanged += OnDurationChanged;
             }
         }
-        
+
         /// <summary>
         /// Cleans up event handlers for proper disposal.
         /// </summary>
-        private void CleanupEventHandlers()
-        {
-            if (playbackService != null)
-            {
+        private void CleanupEventHandlers() {
+            if (playbackService != null) {
                 playbackService.PlaybackStarted -= OnPlaybackStarted;
                 playbackService.PlaybackPaused -= OnPlaybackPaused;
                 playbackService.PlaybackStopped -= OnPlaybackStopped;
@@ -664,78 +589,73 @@ namespace OstPlayer.Services
                 playbackService.DurationChanged -= OnDurationChanged;
             }
         }
-        
-        private void OnPlaybackStarted(object sender, EventArgs e)
-        {
+
+        private void OnPlaybackStarted(object sender, EventArgs e) {
             State = AudioState.Playing;
         }
-        
-        private void OnPlaybackPaused(object sender, EventArgs e)
-        {
+
+        private void OnPlaybackPaused(object sender, EventArgs e) {
             State = AudioState.Paused;
         }
-        
-        private void OnPlaybackStopped(object sender, EventArgs e)
-        {
+
+        private void OnPlaybackStopped(object sender, EventArgs e) {
             State = AudioState.Stopped;
             Position = 0.0;
         }
-        
-        private void OnPlaybackEnded(object sender, EventArgs e)
-        {
+
+        private void OnPlaybackEnded(object sender, EventArgs e) {
             State = AudioState.Stopped;
             Position = 0.0;
             TrackEnded?.Invoke(this, EventArgs.Empty);
         }
-        
-        private void OnPositionChanged(object sender, double position)
-        {
+
+        private void OnPositionChanged(object sender, double position) {
             Position = position;
         }
-        
-        private void OnDurationChanged(object sender, double duration)
-        {
+
+        private void OnDurationChanged(object sender, double duration) {
             Duration = duration;
         }
-        
+
         #endregion
-        
+
         #region IDisposable Implementation
-        
-        public void Dispose()
-        {
+
+        /// <summary>
+        /// Releases all resources used by the AudioService.
+        /// </summary>
+        public void Dispose() {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-        
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposed && disposing)
-            {
-                try
-                {
+
+        /// <summary>
+        /// Releases the unmanaged resources used by the AudioService and optionally releases the managed resources.
+        /// </summary>
+        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing) {
+            if (!disposed && disposing) {
+                try {
                     logger.Info("Disposing AudioService...");
-                    
+
                     // Cleanup event handlers
                     CleanupEventHandlers();
-                    
+
                     // Stop playback and dispose service
                     playbackService?.Stop();
                     playbackService?.Dispose();
-                    
+
                     logger.Info("AudioService disposed successfully");
                 }
-                catch (Exception ex)
-                {
+                catch (Exception ex) {
                     logger.Error(ex, "Error disposing AudioService");
                 }
-                finally
-                {
+                finally {
                     disposed = true;
                 }
             }
         }
-        
+
         #endregion
     }
 }

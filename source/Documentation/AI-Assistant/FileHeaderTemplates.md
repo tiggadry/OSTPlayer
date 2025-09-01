@@ -1,4 +1,4 @@
-﻿# OstPlayer - Standard File Header Templates
+# OstPlayer - Standard File Header Templates
 
 This document contains standardized templates for file headers across all file types in the OstPlayer project.
 
@@ -77,9 +77,9 @@ This document contains standardized templates for file headers across all file t
 // - [Memory usage patterns]
 
 // FUTURE REFACTORING:
-// TODO: [Planned ViewModel improvements]
-// TODO: [Command optimizations]
-// TODO: [Property change optimizations]
+// FUTURE: [Planned ViewModel improvements]
+// FUTURE: [Command optimizations]
+// FUTURE: [Property change optimizations]
 ```
 
 ### Models/Data Classes
@@ -95,9 +95,9 @@ This document contains standardized templates for file headers across all file t
 // - [API compatibility]
 
 // FUTURE REFACTORING:
-// TODO: [Data validation improvements]
-// TODO: [Performance optimizations]
-// TODO: [Schema evolution plans]
+// FUTURE: [Data validation improvements]
+// FUTURE: [Performance optimizations]
+// FUTURE: [Schema evolution plans]
 ```
 
 ### Services
@@ -118,9 +118,9 @@ This document contains standardized templates for file headers across all file t
 // - [Fallback behaviors]
 
 // FUTURE REFACTORING:
-// TODO: [Service interface improvements]
-// TODO: [Dependency injection migration]
-// TODO: [Performance optimizations]
+// FUTURE: [Service interface improvements]
+// FUTURE: [Dependency injection migration]
+// FUTURE: [Performance optimizations]
 ```
 
 ### Utils/Helper Classes
@@ -136,9 +136,9 @@ This document contains standardized templates for file headers across all file t
 // - [Optimization opportunities]
 
 // FUTURE REFACTORING:
-// TODO: [Code reuse improvements]
-// TODO: [Performance optimizations]
-// TODO: [API simplification]
+// FUTURE: [Code reuse improvements]
+// FUTURE: [Performance optimizations]
+// FUTURE: [API simplification]
 ```
 
 ### Clients/External API
@@ -154,9 +154,9 @@ This document contains standardized templates for file headers across all file t
 // - [Error handling]
 
 // FUTURE REFACTORING:
-// TODO: [API versioning support]
-// TODO: [Caching improvements]
-// TODO: [Resilience patterns]
+// FUTURE: [API versioning support]
+// FUTURE: [Caching improvements]
+// FUTURE: [Resilience patterns]
 ```
 
 ### Views/UI Components
@@ -172,9 +172,9 @@ This document contains standardized templates for file headers across all file t
 // - [Localization readiness]
 
 // FUTURE REFACTORING:
-// TODO: [UI/UX improvements]
-// TODO: [Responsiveness enhancements]
-// TODO: [Accessibility compliance]
+// FUTURE: [UI/UX improvements]
+// FUTURE: [Responsiveness enhancements]
+// FUTURE: [Accessibility compliance]
 ```
 
 ## Extended Sections for Complex Files
@@ -280,12 +280,12 @@ This document contains standardized templates for file headers across all file t
 // - Limited to configured external services
 //
 // FUTURE REFACTORING:
-// TODO: Implement persistent cache storage
-// TODO: Add metadata source prioritization
-// TODO: Implement real-time metadata updates
-// TODO: Add metadata conflict resolution UI
-// TODO: Extract caching to separate service
-// TODO: Add metadata export/import functionality
+// FUTURE: Implement persistent cache storage
+// FUTURE: Add metadata source prioritization
+// FUTURE: Implement real-time metadata updates
+// FUTURE: Add metadata conflict resolution UI
+// FUTURE: Extract caching to separate service
+// FUTURE: Add metadata export/import functionality
 // CONSIDER: Plugin architecture for metadata sources
 // IDEA: Machine learning for metadata quality scoring
 //

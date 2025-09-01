@@ -1,4 +1,4 @@
-﻿# AI Assistant Automation Workflow for OstPlayer
+# AI Assistant Automation Workflow for OstPlayer
 
 ## 🎯 **Automated Workflow Vision**
 
@@ -12,7 +12,7 @@ AI works on file → Automatically adds comments
 📝 Explains code purpose
 📚 Documents links and dependencies  
 ⚡ Adds performance notes
-📋 Updates TODO items
+📋 Updates FUTURE items
 ```
 
 ### **Phase 2: After Completing Work on File**

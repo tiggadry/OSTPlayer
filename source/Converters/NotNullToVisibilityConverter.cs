@@ -1,3 +1,6 @@
+// <copyright file="NotNullToVisibilityConverter.cs" company="OstPlayer">
+// Copyright (c) OstPlayer. All rights reserved.
+// </copyright>
 // ====================================================================
 // FILE: NotNullToVisibilityConverter.cs
 // PROJECT: OstPlayer - Playnite Plugin for Game Soundtrack Management
@@ -49,11 +52,11 @@
 // - No culture-specific behavior
 //
 // FUTURE REFACTORING:
-// TODO: Add parameter support for inversion behavior
-// TODO: Implement ConvertBack for two-way binding scenarios
-// TODO: Add support for Visibility.Hidden state
-// TODO: Consider value type vs reference type distinction
-// TODO: Add custom null-equivalent value support
+// FUTURE: Add parameter support for inversion behavior
+// FUTURE: Implement ConvertBack for two-way binding scenarios
+// FUTURE: Add support for Visibility.Hidden state
+// FUTURE: Consider value type vs reference type distinction
+// FUTURE: Add custom null-equivalent value support
 // CONSIDER: Combining with other object validation converters
 // IDEA: Parameter-based custom visibility states
 //
@@ -80,34 +83,46 @@
 // 2025-08-06 v1.0.0 - Initial implementation with non-null to visibility conversion
 // ====================================================================
 
-using System;
-using System.Globalization;
-using System.Windows;
-using System.Windows.Data;
+namespace OstPlayer.Converters {
+    using System;
+    using System.Globalization;
+    using System.Windows;
+    using System.Windows.Data;
 
-namespace OstPlayer.Converters
-{
     /// <summary>
     /// Converts a non-null object to Visibility. Returns Visible if the object is not null, otherwise Collapsed.
     /// Suitable for displaying elements only if the object is set (e.g., DiscogsMetadata).
     /// </summary>
     [ValueConversion(typeof(object), typeof(Visibility))]
-    public class NotNullToVisibilityConverter : IValueConverter
-    {
+    public class NotNullToVisibilityConverter : IValueConverter {
         /// <summary>
         /// If the input value is not null, returns Visible, otherwise Collapsed.
         /// </summary>
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
+        /// <param name="value">The source value to evaluate for non-null state (any object type).</param>
+        /// <param name="targetType">The target type (should be Visibility, but not enforced).</param>
+        /// <param name="parameter">Optional parameter (currently unused, reserved for future enhancements).</param>
+        /// <param name="culture">Culture information for localization (unused in this converter).</param>
+        /// <returns>
+        /// <see cref="Visibility.Visible"/> if value is not null,
+        /// <see cref="Visibility.Collapsed"/> if value is null.
+        /// </returns>
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
             return value != null ? Visibility.Visible : Visibility.Collapsed;
         }
 
         /// <summary>
         /// Not implemented, backward conversion is not needed.
         /// </summary>
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
+        /// <param name="value">The Visibility value to convert back.</param>
+        /// <param name="targetType">The target type for backward conversion.</param>
+        /// <param name="parameter">Optional parameter (unused).</param>
+        /// <param name="culture">Culture information (unused).</param>
+        /// <returns>Nothing - throws NotImplementedException.</returns>
+        /// <exception cref="NotImplementedException">
+        /// Always thrown as this converter is designed for one-way binding only.
+        /// </exception>
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
+            throw new NotImplementedException("NotNullToVisibilityConverter does not support backward conversion. Use one-way binding or implement a custom two-way converter if needed.");
         }
     }
 }

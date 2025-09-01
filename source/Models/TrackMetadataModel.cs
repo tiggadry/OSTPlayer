@@ -59,14 +59,14 @@
 // - No conflict resolution between sources
 //
 // FUTURE REFACTORING:
-// TODO: Implement IMetadataModel interface
-// TODO: Add metadata source tracking per property
-// TODO: Implement validation and data quality scoring
-// TODO: Add conflict resolution between metadata sources
-// TODO: Support multiple cover images and artwork types
-// TODO: Add metadata change tracking and audit trail
-// TODO: Implement lazy loading for expensive properties
-// TODO: Add metadata merging rules and priority system
+// FUTURE: Implement IMetadataModel interface
+// FUTURE: Add metadata source tracking per property
+// FUTURE: Implement validation and data quality scoring
+// FUTURE: Add conflict resolution between metadata sources
+// FUTURE: Support multiple cover images and artwork types
+// FUTURE: Add metadata change tracking and audit trail
+// FUTURE: Implement lazy loading for expensive properties
+// FUTURE: Add metadata merging rules and priority system
 // CONSIDER: Breaking into separate track and album models
 // CONSIDER: Adding metadata confidence scoring
 // IDEA: Real-time metadata synchronization across sources
@@ -97,27 +97,94 @@
 using System.Collections.Generic;
 using System.Windows.Media.Imaging;
 
-namespace OstPlayer.Models
-{
-    // Represents unified metadata for a single track, aggregating data from various sources.
-    public class TrackMetadataModel
-    {
+namespace OstPlayer.Models {
+    /// <summary>
+    /// Represents unified metadata for a single track, aggregating data from various sources.
+    /// </summary>
+    public class TrackMetadataModel {
+        /// <summary>
+        /// Gets or sets the cover art image for the track.
+        /// </summary>
         public BitmapImage Cover { get; set; }
+
+        /// <summary>
+        /// Gets or sets the title of the track.
+        /// </summary>
         public string Title { get; set; }
+
+        /// <summary>
+        /// Gets or sets the artist name.
+        /// </summary>
         public string Artist { get; set; }
+
+        /// <summary>
+        /// Gets or sets the album name.
+        /// </summary>
         public string Album { get; set; }
+
+        /// <summary>
+        /// Gets or sets the year of release.
+        /// </summary>
         public string Year { get; set; }
+
+        /// <summary>
+        /// Gets or sets the genre of the track.
+        /// </summary>
         public string Genre { get; set; }
+
+        /// <summary>
+        /// Gets or sets any comments or additional information about the track.
+        /// </summary>
         public string Comment { get; set; }
+
+        /// <summary>
+        /// Gets or sets the duration of the track.
+        /// </summary>
         public string Duration { get; set; }
+
+        /// <summary>
+        /// Gets or sets the track number within the album.
+        /// </summary>
         public uint TrackNumber { get; set; }
+
+        /// <summary>
+        /// Gets or sets the total number of tracks in the album.
+        /// </summary>
         public uint TotalTracks { get; set; }
+
+        /// <summary>
+        /// Gets or sets the source of the metadata (e.g., "MP3", "Discogs", "MusicBrainz").
+        /// </summary>
         public string Source { get; set; }
+
+        /// <summary>
+        /// Gets or sets the release ID from external sources.
+        /// </summary>
         public string ReleaseId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the country of release.
+        /// </summary>
         public string Country { get; set; }
+
+        /// <summary>
+        /// Gets or sets the release status.
+        /// </summary>
         public string Status { get; set; }
+
+        /// <summary>
+        /// Gets or sets the musical style.
+        /// </summary>
         public string Style { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Discogs URL for this track or album.
+        /// </summary>
         public string DiscogsUrl { get; set; }
+
+        /// <summary>
+        /// Gets or sets the list of track titles in the album.
+        /// </summary>
         public List<string> Tracklist { get; set; }
     }
 }

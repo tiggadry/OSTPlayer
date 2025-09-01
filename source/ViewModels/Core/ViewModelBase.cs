@@ -61,12 +61,12 @@
 // - No dependency injection integration (manual composition)
 //
 // FUTURE REFACTORING:
-// TODO: Add built-in validation infrastructure
-// TODO: Implement async command support
-// TODO: Add dependency injection integration
-// TODO: Implement ViewModel state persistence
-// TODO: Add property change batching for performance
-// TODO: Implement undo/redo support infrastructure
+// FUTURE: Add built-in validation infrastructure
+// FUTURE: Implement async command support
+// FUTURE: Add dependency injection integration
+// FUTURE: Implement ViewModel state persistence
+// FUTURE: Add property change batching for performance
+// FUTURE: Implement undo/redo support infrastructure
 // CONSIDER: Adding reactive extensions (Rx.NET) integration
 // CONSIDER: Implementing property change interception
 // IDEA: Automatic property dependency tracking
@@ -92,19 +92,17 @@ using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace OstPlayer.ViewModels.Core
-{
+namespace OstPlayer.ViewModels.Core {
     /// <summary>
     /// Base class for all ViewModels providing essential MVVM infrastructure.
     /// Implements INotifyPropertyChanged and IDisposable patterns for consistent
     /// ViewModel behavior across the application.
-    /// 
+    ///
     /// Part of the OstPlayerSidebarViewModel refactoring initiative to extract
     /// monolithic ViewModel into focused, specialized ViewModels following
     /// Single Responsibility Principle.
     /// </summary>
-    public abstract class ViewModelBase : INotifyPropertyChanged, IDisposable
-    {
+    public abstract class ViewModelBase : INotifyPropertyChanged, IDisposable {
         #region Private Fields
 
         /// <summary>
@@ -152,16 +150,14 @@ namespace OstPlayer.ViewModels.Core
         ///         OnPropertyChanged(); // Automatically uses "Title"
         ///     }
         /// }
-        /// 
+        ///
         /// // Or explicit property name:
         /// OnPropertyChanged(nameof(ComputedProperty));
         /// </code>
         /// </example>
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) {
             // Thread-safe event invocation with disposal check
-            if (!_disposed)
-            {
+            if (!_disposed) {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
         }
@@ -189,8 +185,7 @@ namespace OstPlayer.ViewModels.Core
         /// }
         /// </code>
         /// </example>
-        protected virtual bool SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
-        {
+        protected virtual bool SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = null) {
             // Early exit if disposed
             if (_disposed)
                 return false;
@@ -214,8 +209,7 @@ namespace OstPlayer.ViewModels.Core
         /// Sets up basic ViewModel infrastructure and calls virtual Initialize method
         /// for derived class-specific initialization.
         /// </summary>
-        protected ViewModelBase()
-        {
+        protected ViewModelBase() {
             // Call virtual initialization method for derived classes
             Initialize();
         }
@@ -224,12 +218,11 @@ namespace OstPlayer.ViewModels.Core
         /// Virtual initialization method for derived classes to override.
         /// Called during construction to allow derived ViewModels to perform
         /// their specific initialization logic.
-        /// 
+        ///
         /// Override this method instead of constructor for initialization logic
         /// that may need to be re-executed or that depends on virtual methods.
         /// </summary>
-        protected virtual void Initialize()
-        {
+        protected virtual void Initialize() {
             // Default implementation is empty - derived classes override as needed
         }
 
@@ -237,12 +230,11 @@ namespace OstPlayer.ViewModels.Core
         /// Virtual cleanup method for derived classes to override.
         /// Called during disposal to allow derived ViewModels to perform
         /// their specific cleanup logic before base disposal.
-        /// 
+        ///
         /// Override this method to cleanup ViewModel-specific resources,
         /// event subscriptions, timers, or other disposable objects.
         /// </summary>
-        protected virtual void Cleanup()
-        {
+        protected virtual void Cleanup() {
             // Default implementation is empty - derived classes override as needed
         }
 
@@ -258,10 +250,8 @@ namespace OstPlayer.ViewModels.Core
         /// <exception cref="ObjectDisposedException">
         /// Thrown when the ViewModel has been disposed
         /// </exception>
-        protected void ThrowIfDisposed()
-        {
-            if (_disposed)
-            {
+        protected void ThrowIfDisposed() {
+            if (_disposed) {
                 throw new ObjectDisposedException(GetType().Name);
             }
         }
@@ -279,12 +269,11 @@ namespace OstPlayer.ViewModels.Core
         /// <summary>
         /// Performs application-defined tasks associated with freeing,
         /// releasing, or resetting unmanaged resources.
-        /// 
+        ///
         /// Implements the standard Disposable pattern with virtual Dispose method
         /// for proper inheritance support.
         /// </summary>
-        public void Dispose()
-        {
+        public void Dispose() {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
@@ -292,7 +281,7 @@ namespace OstPlayer.ViewModels.Core
         /// <summary>
         /// Releases the unmanaged resources used by the ViewModel and optionally
         /// releases the managed resources.
-        /// 
+        ///
         /// Virtual method allows derived classes to properly implement disposal
         /// of their specific resources while maintaining proper disposal order.
         /// </summary>
@@ -300,16 +289,11 @@ namespace OstPlayer.ViewModels.Core
         /// True to release both managed and unmanaged resources;
         /// false to release only unmanaged resources.
         /// </param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                lock (_disposeLock)
-                {
-                    if (!_disposed)
-                    {
-                        if (disposing)
-                        {
+        protected virtual void Dispose(bool disposing) {
+            if (!_disposed) {
+                lock (_disposeLock) {
+                    if (!_disposed) {
+                        if (disposing) {
                             // Call virtual cleanup method for derived classes
                             Cleanup();
 
@@ -333,8 +317,7 @@ namespace OstPlayer.ViewModels.Core
         /// Includes type name and disposal status.
         /// </summary>
         /// <returns>String representation suitable for debugging</returns>
-        public override string ToString()
-        {
+        public override string ToString() {
             return $"{GetType().Name} (Disposed: {_disposed})";
         }
 

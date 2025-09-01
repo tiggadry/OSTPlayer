@@ -1,4 +1,4 @@
-﻿# OstPlayer File Header Updates - Final Summary
+# OstPlayer File Header Updates - Final Summary
 
 ## Overview
 Successfully updated file headers across the OstPlayer project to standardize documentation, correct authorship, and provide comprehensive development information in English with accurate creation dates.
@@ -94,7 +94,7 @@ Successfully updated file headers across the OstPlayer project to standardize do
 - Industry-standard header format
 - Comprehensive feature descriptions
 - Clear dependency mapping
-- Structured TODO management
+- Structured FUTURE management
 
 ### 2. **Accurate Information**
 - Correct author attribution (TiggAdry)
@@ -103,7 +103,7 @@ Successfully updated file headers across the OstPlayer project to standardize do
 - Truth in documentation
 
 ### 3. **Future Planning**
-- Extensive TODO lists for each file
+- Extensive FUTURE lists for each file
 - Strategic CONSIDER items
 - Innovative IDEA suggestions
 - Clear technical debt tracking
@@ -134,6 +134,6 @@ Successfully updated file headers across the OstPlayer project to standardize do
 1. **Update UPDATED field** when making significant changes
 2. **Add changelog entries** as real development progresses
 3. **Increment VERSION** with actual releases
-4. **Keep TODO lists current** and actionable
+4. **Keep FUTURE lists current** and actionable
 
 This documentation framework now provides a solid foundation for the OstPlayer project with honest, accurate information that will serve as a reliable reference for future development.

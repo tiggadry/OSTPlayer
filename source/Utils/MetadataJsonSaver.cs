@@ -57,14 +57,14 @@
 // - No atomic operations for multiple file writes
 //
 // FUTURE REFACTORING:
-// TODO: Add comprehensive error handling for file I/O failures
-// TODO: Implement JSON schema validation for data integrity
-// TODO: Add atomic operations for multiple metadata saves
-// TODO: Extract to configurable storage provider interface
-// TODO: Add metadata versioning and migration support
-// TODO: Implement async file operations for better performance
-// TODO: Add file locking for concurrent access scenarios
-// TODO: Extract path resolution to separate utility
+// FUTURE: Add comprehensive error handling for file I/O failures
+// FUTURE: Implement JSON schema validation for data integrity
+// FUTURE: Add atomic operations for multiple metadata saves
+// FUTURE: Extract to configurable storage provider interface
+// FUTURE: Add metadata versioning and migration support
+// FUTURE: Implement async file operations for better performance
+// FUTURE: Add file locking for concurrent access scenarios
+// FUTURE: Extract path resolution to separate utility
 // CONSIDER: Database storage as alternative to file-based approach
 // CONSIDER: Adding metadata backup and versioning
 // IDEA: Metadata compression for large collections
@@ -95,8 +95,8 @@
 using System;
 using System.IO;
 using Newtonsoft.Json;
-using Playnite.SDK;
 using OstPlayer.Models;
+using Playnite.SDK;
 
 namespace OstPlayer.Utils
 {
@@ -127,7 +127,7 @@ namespace OstPlayer.Utils
         {
             // PATH RESOLUTION: Get standardized music files directory
             var metadataDir = GetMusicFilesDirectory(databaseId, playniteApi);
-            
+
             // DIRECTORY PREPARATION: Ensure target directory exists
             // CREATION: Creates full directory tree if any part is missing
             EnsureDirectoryExists(metadataDir);
@@ -224,11 +224,11 @@ namespace OstPlayer.Utils
             // - {databaseId}: Unique folder per game (prevents conflicts)
             // - Music Files: OstPlayer-specific folder for audio data
             return Path.Combine(
-                api.Paths.ConfigurationPath,  // Base Playnite configuration directory
-                "ExtraMetadata",              // Standard metadata container
-                "games",                      // Game-specific data container
-                databaseId.ToString(),        // Unique game directory (GUID string)
-                "Music Files"                 // OstPlayer music and metadata folder
+                api.Paths.ConfigurationPath, // Base Playnite configuration directory
+                "ExtraMetadata", // Standard metadata container
+                "games", // Game-specific data container
+                databaseId.ToString(), // Unique game directory (GUID string)
+                "Music Files" // OstPlayer music and metadata folder
             );
         }
 

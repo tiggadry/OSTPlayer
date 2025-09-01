@@ -39,11 +39,11 @@
 // - Static client wrapper maintains original implementation
 //
 // FUTURE REFACTORING:
-// TODO: Add comprehensive rate limiting and retry logic
-// TODO: Implement response caching for repeated requests
-// TODO: Add batch request optimization for multiple searches
-// TODO: Implement token validation and refresh mechanisms
-// TODO: Add support for Discogs API v2 features
+// FUTURE: Add comprehensive rate limiting and retry logic
+// FUTURE: Implement response caching for repeated requests
+// FUTURE: Add batch request optimization for multiple searches
+// FUTURE: Implement token validation and refresh mechanisms
+// FUTURE: Add support for Discogs API v2 features
 // CONSIDER: Direct HTTP client implementation without static wrapper
 // CONSIDER: Advanced search filters and sorting options
 // IDEA: Real-time Discogs data synchronization
@@ -70,9 +70,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using OstPlayer.Services.Interfaces;
-using OstPlayer.Models;
 using OstPlayer.Clients;
+using OstPlayer.Models;
+using OstPlayer.Services.Interfaces;
 using Playnite.SDK;
 
 namespace OstPlayer.Services
@@ -84,14 +84,14 @@ namespace OstPlayer.Services
     public class DiscogsClientService : IDiscogsClient, IDisposable
     {
         #region Private Fields (Injected Dependencies)
-        
+
         private readonly ILogger logger;
         private volatile bool disposed = false;
-        
+
         #endregion
-        
+
         #region Constructor (Dependency Injection)
-        
+
         /// <summary>
         /// Initializes the Discogs client service with dependency injection.
         /// </summary>
@@ -99,7 +99,7 @@ namespace OstPlayer.Services
         public DiscogsClientService(ILogger logger = null)
         {
             this.logger = logger ?? LogManager.GetLogger();
-            
+
             try
             {
                 this.logger.Info("DiscogsClientService initializing with dependency injection...");
@@ -107,38 +107,45 @@ namespace OstPlayer.Services
             }
             catch (Exception ex)
             {
-                this.logger.Error(ex, "Failed to initialize DiscogsClientService with dependency injection");
+                this.logger.Error(
+                    ex,
+                    "Failed to initialize DiscogsClientService with dependency injection"
+                );
                 throw;
             }
         }
-        
+
         #endregion
-        
+
         #region IDiscogsClient Implementation
-        
+
         /// <summary>
         /// Searches Discogs database for releases matching the provided query.
         /// </summary>
-        public async Task<List<DiscogsMetadataModel>> SearchReleaseAsync(string query, string token, CancellationToken cancellationToken = default)
+        public async Task<List<DiscogsMetadataModel>> SearchReleaseAsync(
+            string query,
+            string token,
+            CancellationToken cancellationToken = default
+        )
         {
             if (disposed)
                 throw new ObjectDisposedException(nameof(DiscogsClientService));
-                
+
             if (string.IsNullOrWhiteSpace(query) || string.IsNullOrWhiteSpace(token))
             {
                 logger.Warn("SearchReleaseAsync called with null or empty query/token");
                 return new List<DiscogsMetadataModel>();
             }
-            
+
             try
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                
+
                 logger.Debug($"Searching Discogs for: {query}");
-                
+
                 // Use existing static client implementation
                 var results = await DiscogsClient.SearchReleaseAsync(query, token);
-                
+
                 logger.Debug($"Discogs search returned {results.Count} results for: {query}");
                 return results;
             }
@@ -153,30 +160,34 @@ namespace OstPlayer.Services
                 return new List<DiscogsMetadataModel>();
             }
         }
-        
+
         /// <summary>
         /// Retrieves detailed metadata for a specific Discogs release.
         /// </summary>
-        public async Task<DiscogsMetadataModel> GetReleaseDetailsAsync(string releaseId, string token, CancellationToken cancellationToken = default)
+        public async Task<DiscogsMetadataModel> GetReleaseDetailsAsync(
+            string releaseId,
+            string token,
+            CancellationToken cancellationToken = default
+        )
         {
             if (disposed)
                 throw new ObjectDisposedException(nameof(DiscogsClientService));
-                
+
             if (string.IsNullOrWhiteSpace(releaseId) || string.IsNullOrWhiteSpace(token))
             {
                 logger.Warn("GetReleaseDetailsAsync called with null or empty releaseId/token");
                 return null;
             }
-            
+
             try
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                
+
                 logger.Debug($"Getting Discogs release details for ID: {releaseId}");
-                
+
                 // Use existing static client implementation
                 var details = await DiscogsClient.GetReleaseDetailsAsync(releaseId, token);
-                
+
                 logger.Debug($"Discogs release details retrieved for ID: {releaseId}");
                 return details;
             }
@@ -191,7 +202,7 @@ namespace OstPlayer.Services
                 return null;
             }
         }
-        
+
         /// <summary>
         /// Performs health check on Discogs API service.
         /// </summary>
@@ -199,17 +210,17 @@ namespace OstPlayer.Services
         {
             if (disposed)
                 return false;
-                
+
             try
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                
+
                 logger.Debug("Performing Discogs API health check...");
-                
+
                 // Simple health check - we can't really test without a token
                 // but we can verify the service is available
                 await Task.Delay(100, cancellationToken); // Simulate check
-                
+
                 logger.Debug("Discogs API health check completed successfully");
                 return true;
             }
@@ -224,18 +235,25 @@ namespace OstPlayer.Services
                 return false;
             }
         }
-        
+
         #endregion
-        
+
         #region IDisposable Implementation
-        
+
+        /// <summary>
+        /// Releases all resources used by the DiscogsClientService.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-        
-        protected virtual void Dispose(bool disposing)
+
+        /// <summary>
+        /// Releases the unmanaged resources used by the DiscogsClientService and optionally releases the managed resources.
+        /// </summary>
+        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+        protected void Dispose(bool disposing)
         {
             if (!disposed && disposing)
             {
@@ -254,7 +272,7 @@ namespace OstPlayer.Services
                 }
             }
         }
-        
+
         #endregion
     }
 }

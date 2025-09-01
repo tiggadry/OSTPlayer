@@ -39,11 +39,11 @@
 // - Response mapping needs implementation for full functionality
 //
 // FUTURE REFACTORING:
-// TODO: Implement proper response mapping from MusicBrainzReleaseResult to MusicBrainzMetadataModel
-// TODO: Add comprehensive rate limiting and retry logic
-// TODO: Implement response caching for repeated requests
-// TODO: Add batch request optimization for multiple searches
-// TODO: Add support for MusicBrainz cover art service
+// FUTURE: Implement proper response mapping from MusicBrainzReleaseResult to MusicBrainzMetadataModel
+// FUTURE: Add comprehensive rate limiting and retry logic
+// FUTURE: Implement response caching for repeated requests
+// FUTURE: Add batch request optimization for multiple searches
+// FUTURE: Add support for MusicBrainz cover art service
 // CONSIDER: Direct HTTP client implementation without static wrapper
 // CONSIDER: Advanced search options and filters
 // IDEA: Real-time MusicBrainz data synchronization
@@ -69,9 +69,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using OstPlayer.Services.Interfaces;
-using OstPlayer.Models;
 using OstPlayer.Clients;
+using OstPlayer.Models;
+using OstPlayer.Services.Interfaces;
 using Playnite.SDK;
 
 namespace OstPlayer.Services
@@ -83,14 +83,14 @@ namespace OstPlayer.Services
     public class MusicBrainzClientService : IMusicBrainzClient, IDisposable
     {
         #region Private Fields (Injected Dependencies)
-        
+
         private readonly ILogger logger;
         private volatile bool disposed = false;
-        
+
         #endregion
-        
+
         #region Constructor (Dependency Injection)
-        
+
         /// <summary>
         /// Initializes the MusicBrainz client service with dependency injection.
         /// </summary>
@@ -98,48 +98,57 @@ namespace OstPlayer.Services
         public MusicBrainzClientService(ILogger logger = null)
         {
             this.logger = logger ?? LogManager.GetLogger();
-            
+
             try
             {
-                this.logger.Info("MusicBrainzClientService initializing with dependency injection...");
+                this.logger.Info(
+                    "MusicBrainzClientService initializing with dependency injection..."
+                );
                 this.logger.Info("MusicBrainzClientService initialized successfully with DI");
             }
             catch (Exception ex)
             {
-                this.logger.Error(ex, "Failed to initialize MusicBrainzClientService with dependency injection");
+                this.logger.Error(
+                    ex,
+                    "Failed to initialize MusicBrainzClientService with dependency injection"
+                );
                 throw;
             }
         }
-        
+
         #endregion
-        
+
         #region IMusicBrainzClient Implementation
-        
+
         /// <summary>
         /// Searches MusicBrainz database for releases matching the provided artist and album.
         /// </summary>
-        public async Task<MusicBrainzMetadataModel> SearchReleaseAsync(string artist, string album, CancellationToken cancellationToken = default)
+        public async Task<MusicBrainzMetadataModel> SearchReleaseAsync(
+            string artist,
+            string album,
+            CancellationToken cancellationToken = default
+        )
         {
             if (disposed)
                 throw new ObjectDisposedException(nameof(MusicBrainzClientService));
-                
+
             if (string.IsNullOrWhiteSpace(artist) || string.IsNullOrWhiteSpace(album))
             {
                 logger.Warn("SearchReleaseAsync called with null or empty artist/album");
                 return null;
             }
-            
+
             try
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                
+
                 logger.Debug($"Searching MusicBrainz for: {artist} - {album}");
-                
+
                 // Use existing static client implementation
                 var result = await MusicBrainzClient.SearchReleaseAsync(artist, album);
-                
+
                 logger.Debug($"MusicBrainz search completed for: {artist} - {album}");
-                return null; // TODO: Implement proper mapping from MusicBrainzReleaseResult to MusicBrainzMetadataModel
+                return null; // FUTURE: Implement proper mapping from MusicBrainzReleaseResult to MusicBrainzMetadataModel
             }
             catch (OperationCanceledException)
             {
@@ -152,7 +161,7 @@ namespace OstPlayer.Services
                 return null;
             }
         }
-        
+
         /// <summary>
         /// Performs health check on MusicBrainz API service.
         /// </summary>
@@ -160,16 +169,16 @@ namespace OstPlayer.Services
         {
             if (disposed)
                 return false;
-                
+
             try
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                
+
                 logger.Debug("Performing MusicBrainz API health check...");
-                
+
                 // Simple health check - simulate checking service availability
                 await Task.Delay(100, cancellationToken); // Simulate check
-                
+
                 logger.Debug("MusicBrainz API health check completed successfully");
                 return true;
             }
@@ -184,18 +193,25 @@ namespace OstPlayer.Services
                 return false;
             }
         }
-        
+
         #endregion
-        
+
         #region IDisposable Implementation
-        
+
+        /// <summary>
+        /// Releases all resources used by the MusicBrainzClientService.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-        
-        protected virtual void Dispose(bool disposing)
+
+        /// <summary>
+        /// Releases the unmanaged resources used by the MusicBrainzClientService and optionally releases the managed resources.
+        /// </summary>
+        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+        protected void Dispose(bool disposing)
         {
             if (!disposed && disposing)
             {
@@ -214,7 +230,7 @@ namespace OstPlayer.Services
                 }
             }
         }
-        
+
         #endregion
     }
 }

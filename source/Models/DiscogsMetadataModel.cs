@@ -73,15 +73,15 @@
 // - No metadata validation
 //
 // FUTURE REFACTORING:
-// TODO: Implement IMetadataModel interface for consistency
-// TODO: Add support for multi-disc releases
-// TODO: Implement metadata validation attributes
-// TODO: Add position information to tracks (A1, B2, etc.)
-// TODO: Normalize format and label values
-// TODO: Extract to shared metadata namespace
-// TODO: Add INotifyPropertyChanged for live binding
-// TODO: Implement metadata quality scoring
-// TODO: Add metadata merging capabilities
+// FUTURE: Implement IMetadataModel interface for consistency
+// FUTURE: Add support for multi-disc releases
+// FUTURE: Implement metadata validation attributes
+// FUTURE: Add position information to tracks (A1, B2, etc.)
+// FUTURE: Normalize format and label values
+// FUTURE: Extract to shared metadata namespace
+// FUTURE: Add INotifyPropertyChanged for live binding
+// FUTURE: Implement metadata quality scoring
+// FUTURE: Add metadata merging capabilities
 // CONSIDER: Using record types for immutability (C# 9+)
 // CONSIDER: Adding validation attributes
 // IDEA: Automatic metadata conflict resolution
@@ -109,24 +109,39 @@
 // ====================================================================
 
 using System.Collections.Generic;
+using System.Windows.Media.Imaging;
 
-namespace OstPlayer.Models
-{
-    // Unified metadata structure for Discogs releases
-    public class DiscogsMetadataModel
-    {
-        // Release title (e.g., "The Dark Side of the Moon")
+namespace OstPlayer.Models {
+    /// <summary>
+    /// Represents comprehensive metadata from Discogs database.
+    /// </summary>
+    public class DiscogsMetadataModel : IMetadataModel {
+        /// <summary>
+        /// Gets the source of the metadata.
+        /// </summary>
+        public string Source => "Discogs";
+
+        /// <summary>
+        /// Gets or sets the release title.
+        /// </summary>
         public string Title { get; set; }
-        // Main artist name (e.g., "Pink Floyd")
+
+        /// <summary>
+        /// Gets or sets the artist name.
+        /// </summary>
         public string Artist { get; set; }
-        // Country of release (e.g., "UK")
+
+        /// <summary>
+        /// Gets or sets the country of release.
+        /// </summary>
         public string Country { get; set; }
+
         private string _album;
-        // Album title, only returned if different from Title
-        public string Album
-        {
-            get
-            {
+        /// <summary>
+        /// Gets or sets the album name (only if different from Title).
+        /// </summary>
+        public string Album {
+            get {
                 if (string.IsNullOrWhiteSpace(_album))
                     return null;
                 if (string.Equals(_album, Title))
@@ -135,36 +150,124 @@ namespace OstPlayer.Models
             }
             set { _album = value; }
         }
-        // Record label(s) (e.g., "Harvest Records")
+
+        /// <summary>
+        /// Gets or sets the record label.
+        /// </summary>
         public string Label { get; set; }
-        // Format string describing the medium (e.g., "LP, Album, Reissue")
+
+        /// <summary>
+        /// Gets or sets the format of the release.
+        /// </summary>
         public string Format { get; set; }
-        // List of genres (e.g., ["Rock", "Progressive Rock"])
+
+        /// <summary>
+        /// Gets or sets the list of musical genres.
+        /// </summary>
         public List<string> Genres { get; set; }
-        // List of styles (e.g., ["Psychedelic Rock", "Art Rock"])
+
+        /// <summary>
+        /// Gets or sets the list of musical styles.
+        /// </summary>
         public List<string> Styles { get; set; }
-        // Optional notes about the release
+
+        /// <summary>
+        /// Gets or sets the notes or description.
+        /// </summary>
         public string Notes { get; set; }
-        // Release date in ISO format (e.g., "1973-03-01")
+
+        /// <summary>
+        /// Gets or sets the release date.
+        /// </summary>
         public string Released { get; set; }
-        // Reserved for plugin-specific notes
+
+        /// <summary>
+        /// Gets or sets the comment text.
+        /// </summary>
         public string Comment { get; set; }
-        // URL to cover image
+
+        /// <summary>
+        /// Gets or sets the cover image URL.
+        /// </summary>
         public string CoverUrl { get; set; }
-        // Direct link to the Discogs release page
+
+        /// <summary>
+        /// Gets or sets the Discogs URL for this release.
+        /// </summary>
         public string DiscogsUrl { get; set; }
-        // List of tracks with title and duration
+
+        /// <summary>
+        /// Gets or sets the list of tracks in the release.
+        /// </summary>
         public List<DiscogsTrack> Tracklist { get; set; }
-        // Nested class representing a single track
-        public class DiscogsTrack
-        {
-            // Track title
+
+        /// <summary>
+        /// Represents a track in a Discogs release.
+        /// </summary>
+        public class DiscogsTrack {
+            /// <summary>
+            /// Gets or sets the track title.
+            /// </summary>
             public string Title { get; set; }
-            // Duration in "mm:ss" format (optional)
+
+            /// <summary>
+            /// Gets or sets the track duration.
+            /// </summary>
             public string Duration { get; set; }
         }
-        // Convenience property: list of track titles only
+
+        /// <summary>
+        /// Gets the list of track titles from the tracklist.
+        /// </summary>
         public List<string> TrackTitles =>
             Tracklist?.ConvertAll(t => t.Title) ?? new List<string>();
+
+        // IMetadataModel interface implementation
+        /// <summary>
+        /// Gets or sets the release year.
+        /// </summary>
+        public string Year { get; set; }
+
+        /// <summary>
+        /// Gets or sets the genre.
+        /// </summary>
+        public string Genre { get; set; }
+
+        /// <summary>
+        /// Gets or sets the duration (not typically available from Discogs).
+        /// </summary>
+        string IMetadataModel.Duration { get; set; }
+
+        /// <summary>
+        /// Gets or sets the track number.
+        /// </summary>
+        public uint TrackNumber { get; set; }
+
+        /// <summary>
+        /// Gets or sets the total number of tracks.
+        /// </summary>
+        public uint TotalTracks { get; set; }
+
+        /// <summary>
+        /// Gets or sets the cover art image.
+        /// </summary>
+        public BitmapImage Cover { get; set; }
+
+        /// <summary>
+        /// Validates if the metadata contains minimum required information.
+        /// </summary>
+        public bool IsValid()
+        {
+            return !string.IsNullOrEmpty(Title) || !string.IsNullOrEmpty(Artist);
+        }
+
+        /// <summary>
+        /// Merges this metadata with another source.
+        /// </summary>
+        public IMetadataModel MergeWith(IMetadataModel other, MetadataMergePriority priority = MetadataMergePriority.PreferThis)
+        {
+            // Simple implementation - can be enhanced
+            return priority == MetadataMergePriority.PreferOther ? other : this;
+        }
     }
 }

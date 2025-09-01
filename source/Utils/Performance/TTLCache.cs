@@ -1,4 +1,4 @@
-﻿// ====================================================================
+// ====================================================================
 // FILE: TTLCache.cs
 // PROJECT: OstPlayer - Playnite Plugin for Game Soundtrack Management
 // MODULE: Utils
@@ -60,14 +60,14 @@
 // - Cache persistence not included (memory-only)
 //
 // FUTURE REFACTORING:
-// TODO: Add persistent cache storage with disk overflow
-// TODO: Implement distributed cache support
-// TODO: Add cache compression for large values
-// TODO: Implement adaptive TTL based on usage patterns
-// TODO: Add cache replication and synchronization
-// TODO: Implement hierarchical cache levels
-// TODO: Add cache analytics and optimization suggestions
-// TODO: Implement custom serialization for cache persistence
+// FUTURE: Add persistent cache storage with disk overflow
+// FUTURE: Implement distributed cache support
+// FUTURE: Add cache compression for large values
+// FUTURE: Implement adaptive TTL based on usage patterns
+// FUTURE: Add cache replication and synchronization
+// FUTURE: Implement hierarchical cache levels
+// FUTURE: Add cache analytics and optimization suggestions
+// FUTURE: Implement custom serialization for cache persistence
 // CONSIDER: Adding cache encryption for sensitive data
 // CONSIDER: Implementing cache partitioning for better performance
 // IDEA: Machine learning for optimal cache sizing and TTL values
@@ -95,37 +95,87 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace OstPlayer.Utils.Performance
-{
+namespace OstPlayer.Utils.Performance {
     /// <summary>
-    /// Cache item with TTL (Time To Live) and access tracking information.
-    /// Encapsulates cached value along with metadata needed for eviction decisions.
+    /// Cache item with expiration support for TTL cache.
     /// </summary>
-    /// <typeparam name="TValue">Type of cached value</typeparam>
+    /// <typeparam name="TValue">Type of cached value.</typeparam>
     public class TTLCacheItem<TValue>
     {
+        /// <summary>
+        /// Gets or sets the cached value.
+        /// </summary>
         public TValue Value { get; set; }
-        public DateTime ExpirationTime { get; set; }
-        public DateTime LastAccessTime { get; set; }
-        public long AccessCount { get; set; }
         
+        /// <summary>
+        /// Gets or sets the expiration time of the cache item.
+        /// </summary>
+        public DateTime ExpirationTime { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the last access time for LRU tracking.
+        /// </summary>
+        public DateTime LastAccessTime { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the number of times this item has been accessed.
+        /// </summary>
+        public int AccessCount { get; set; }
+
+        /// <summary>
+        /// Gets whether this cache item has expired.
+        /// </summary>
         public bool IsExpired => DateTime.UtcNow > ExpirationTime;
     }
 
     /// <summary>
-    /// Cache statistics for monitoring and performance analysis.
-    /// Provides comprehensive metrics for cache effectiveness evaluation.
+    /// Statistics for cache performance monitoring.
     /// </summary>
     public class CacheStatistics
     {
-        public long TotalRequests { get; set; }
-        public long CacheHits { get; set; }
-        public long CacheMisses { get; set; }
-        public long Evictions { get; set; }
-        public long Expirations { get; set; }
+        /// <summary>
+        /// Gets or sets the total number of cache requests.
+        /// </summary>
+        public int TotalRequests { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the number of cache hits.
+        /// </summary>
+        public int CacheHits { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the number of cache misses.
+        /// </summary>
+        public int CacheMisses { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the number of items evicted from cache.
+        /// </summary>
+        public int Evictions { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the number of items that expired.
+        /// </summary>
+        public int Expirations { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the current cache size.
+        /// </summary>
         public int CurrentSize { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the maximum cache size.
+        /// </summary>
         public int MaxSize { get; set; }
+        
+        /// <summary>
+        /// Gets the cache hit ratio as a percentage.
+        /// </summary>
         public double HitRatio => TotalRequests > 0 ? (double)CacheHits / TotalRequests : 0.0;
+        
+        /// <summary>
+        /// Gets or sets the default TTL for cache items.
+        /// </summary>
         public TimeSpan DefaultTTL { get; set; }
     }
 
@@ -137,8 +187,7 @@ namespace OstPlayer.Utils.Performance
     /// </summary>
     /// <typeparam name="TKey">Type of cache keys (must be hashable and equatable)</typeparam>
     /// <typeparam name="TValue">Type of cached values</typeparam>
-    public class TTLCache<TKey, TValue> : IDisposable
-    {
+    public class TTLCache<TKey, TValue> : IDisposable {
         #region Private Fields
 
         // Cache configuration
@@ -175,8 +224,7 @@ namespace OstPlayer.Utils.Performance
         /// <param name="defaultTTL">Default time-to-live for cache entries</param>
         /// <param name="cleanupInterval">Interval for background cleanup of expired items</param>
         /// <param name="enableMemoryPressureAdjustment">Enable automatic cache size adjustment based on memory pressure</param>
-        public TTLCache(int maxSize, TimeSpan defaultTTL, TimeSpan? cleanupInterval = null, bool enableMemoryPressureAdjustment = true)
-        {
+        public TTLCache(int maxSize, TimeSpan defaultTTL, TimeSpan? cleanupInterval = null, bool enableMemoryPressureAdjustment = true) {
             _initialMaxSize = maxSize;
             _maxSize = maxSize;
             _defaultTTL = defaultTTL;
@@ -203,21 +251,17 @@ namespace OstPlayer.Utils.Performance
         /// <param name="key">Key to look up</param>
         /// <param name="value">Retrieved value (valid only if method returns true)</param>
         /// <returns>true if key was found and not expired, false otherwise</returns>
-        public bool TryGet(TKey key, out TValue value)
-        {
+        public bool TryGet(TKey key, out TValue value) {
             Interlocked.Increment(ref _totalRequests);
             value = default(TValue);
 
-            if (_cache.TryGetValue(key, out var node))
-            {
+            if (_cache.TryGetValue(key, out var node)) {
                 _lruLock.EnterWriteLock();
-                try
-                {
+                try {
                     var entry = node.Value;
-                    
+
                     // Check if entry has expired
-                    if (entry.Item.IsExpired)
-                    {
+                    if (entry.Item.IsExpired) {
                         // Remove expired entry
                         _lruList.Remove(node);
                         _cache.TryRemove(key, out _);
@@ -238,8 +282,7 @@ namespace OstPlayer.Utils.Performance
                     Interlocked.Increment(ref _cacheHits);
                     return true;
                 }
-                finally
-                {
+                finally {
                     _lruLock.ExitWriteLock();
                 }
             }
@@ -256,14 +299,12 @@ namespace OstPlayer.Utils.Performance
         /// <param name="key">Key to add or update</param>
         /// <param name="value">Value to cache</param>
         /// <param name="customTTL">Custom TTL for this entry (optional)</param>
-        public void Add(TKey key, TValue value, TimeSpan? customTTL = null)
-        {
+        public void Add(TKey key, TValue value, TimeSpan? customTTL = null) {
             var ttl = customTTL ?? _defaultTTL;
             var expirationTime = DateTime.UtcNow.Add(ttl);
             var now = DateTime.UtcNow;
 
-            var newItem = new TTLCacheItem<TValue>
-            {
+            var newItem = new TTLCacheItem<TValue> {
                 Value = value,
                 ExpirationTime = expirationTime,
                 LastAccessTime = now,
@@ -271,24 +312,20 @@ namespace OstPlayer.Utils.Performance
             };
 
             _lruLock.EnterWriteLock();
-            try
-            {
-                if (_cache.TryGetValue(key, out var existingNode))
-                {
+            try {
+                if (_cache.TryGetValue(key, out var existingNode)) {
                     // Update existing entry
                     existingNode.Value.Item = newItem;
                     _lruList.Remove(existingNode);
                     _lruList.AddFirst(existingNode);
                 }
-                else
-                {
+                else {
                     // Add new entry
                     var entry = new CacheEntry { Key = key, Item = newItem };
                     var newNode = new LinkedListNode<CacheEntry>(entry);
 
                     // Check if we need to evict items
-                    while (_cache.Count >= _maxSize && _lruList.Count > 0)
-                    {
+                    while (_cache.Count >= _maxSize && _lruList.Count > 0) {
                         EvictLeastRecentlyUsed();
                     }
 
@@ -296,8 +333,7 @@ namespace OstPlayer.Utils.Performance
                     _cache[key] = newNode;
                 }
             }
-            finally
-            {
+            finally {
                 _lruLock.ExitWriteLock();
             }
         }
@@ -307,18 +343,14 @@ namespace OstPlayer.Utils.Performance
         /// </summary>
         /// <param name="key">Key to remove</param>
         /// <returns>true if item was removed, false if not found</returns>
-        public bool Remove(TKey key)
-        {
-            if (_cache.TryRemove(key, out var node))
-            {
+        public bool Remove(TKey key) {
+            if (_cache.TryRemove(key, out var node)) {
                 _lruLock.EnterWriteLock();
-                try
-                {
+                try {
                     _lruList.Remove(node);
                     return true;
                 }
-                finally
-                {
+                finally {
                     _lruLock.ExitWriteLock();
                 }
             }
@@ -328,14 +360,12 @@ namespace OstPlayer.Utils.Performance
         /// <summary>
         /// Clears all items from the cache.
         /// </summary>
-        public void Clear()
-        {
+        public void Clear() {
             _lruLock.EnterWriteLock();
-            try
-            {
+            try {
                 _cache.Clear();
                 _lruList.Clear();
-                
+
                 // Reset statistics
                 Interlocked.Exchange(ref _totalRequests, 0);
                 Interlocked.Exchange(ref _cacheHits, 0);
@@ -343,8 +373,7 @@ namespace OstPlayer.Utils.Performance
                 Interlocked.Exchange(ref _evictions, 0);
                 Interlocked.Exchange(ref _expirations, 0);
             }
-            finally
-            {
+            finally {
                 _lruLock.ExitWriteLock();
             }
         }
@@ -357,49 +386,40 @@ namespace OstPlayer.Utils.Performance
         /// Adjusts cache size based on current memory pressure.
         /// Automatically reduces cache size when system memory is low.
         /// </summary>
-        public void AdjustForMemoryPressure()
-        {
+        public void AdjustForMemoryPressure() {
             if (!_enableMemoryPressureAdjustment) return;
 
-            try
-            {
+            try {
                 // Simple memory pressure detection (can be enhanced with GC.GetTotalMemory, etc.)
                 var workingSet = Environment.WorkingSet;
                 var memoryPressureThreshold = 500 * 1024 * 1024; // 500MB threshold
 
                 int newMaxSize;
-                if (workingSet > memoryPressureThreshold)
-                {
+                if (workingSet > memoryPressureThreshold) {
                     // High memory pressure - reduce cache size
                     newMaxSize = Math.Max(_initialMaxSize / 4, 10);
                 }
-                else
-                {
+                else {
                     // Normal memory pressure - restore cache size
                     newMaxSize = _initialMaxSize;
                 }
 
-                if (newMaxSize != _maxSize)
-                {
+                if (newMaxSize != _maxSize) {
                     _maxSize = newMaxSize;
-                    
+
                     // Evict excess items if necessary
                     _lruLock.EnterWriteLock();
-                    try
-                    {
-                        while (_cache.Count > _maxSize && _lruList.Count > 0)
-                        {
+                    try {
+                        while (_cache.Count > _maxSize && _lruList.Count > 0) {
                             EvictLeastRecentlyUsed();
                         }
                     }
-                    finally
-                    {
+                    finally {
                         _lruLock.ExitWriteLock();
                     }
                 }
             }
-            catch
-            {
+            catch {
                 // Ignore memory pressure detection errors
             }
         }
@@ -412,15 +432,13 @@ namespace OstPlayer.Utils.Performance
         /// Gets current cache statistics for monitoring and analysis.
         /// </summary>
         /// <returns>Comprehensive cache statistics</returns>
-        public CacheStatistics GetStatistics()
-        {
-            return new CacheStatistics
-            {
-                TotalRequests = Interlocked.Read(ref _totalRequests),
-                CacheHits = Interlocked.Read(ref _cacheHits),
-                CacheMisses = Interlocked.Read(ref _cacheMisses),
-                Evictions = Interlocked.Read(ref _evictions),
-                Expirations = Interlocked.Read(ref _expirations),
+        public CacheStatistics GetStatistics() {
+            return new CacheStatistics {
+                TotalRequests = (int)Interlocked.Read(ref _totalRequests),
+                CacheHits = (int)Interlocked.Read(ref _cacheHits),
+                CacheMisses = (int)Interlocked.Read(ref _cacheMisses),
+                Evictions = (int)Interlocked.Read(ref _evictions),
+                Expirations = (int)Interlocked.Read(ref _expirations),
                 CurrentSize = _cache.Count,
                 MaxSize = _maxSize,
                 DefaultTTL = _defaultTTL
@@ -445,11 +463,9 @@ namespace OstPlayer.Utils.Performance
         /// Evicts the least recently used item from the cache.
         /// Should be called within write lock.
         /// </summary>
-        private void EvictLeastRecentlyUsed()
-        {
+        private void EvictLeastRecentlyUsed() {
             var lastNode = _lruList.Last;
-            if (lastNode != null)
-            {
+            if (lastNode != null) {
                 _lruList.RemoveLast();
                 _cache.TryRemove(lastNode.Value.Key, out _);
                 Interlocked.Increment(ref _evictions);
@@ -460,17 +476,14 @@ namespace OstPlayer.Utils.Performance
         /// Background cleanup timer callback.
         /// Removes expired items and adjusts for memory pressure.
         /// </summary>
-        private void BackgroundCleanup(object state)
-        {
+        private void BackgroundCleanup(object state) {
             if (_disposed) return;
 
-            try
-            {
+            try {
                 CleanupExpiredItems();
                 AdjustForMemoryPressure();
             }
-            catch
-            {
+            catch {
                 // Ignore cleanup errors to prevent timer from stopping
             }
         }
@@ -478,47 +491,37 @@ namespace OstPlayer.Utils.Performance
         /// <summary>
         /// Removes all expired items from the cache.
         /// </summary>
-        private void CleanupExpiredItems()
-        {
+        private void CleanupExpiredItems() {
             var expiredKeys = new List<TKey>();
             var now = DateTime.UtcNow;
 
             // Collect expired keys
             _lruLock.EnterReadLock();
-            try
-            {
+            try {
                 var current = _lruList.First;
-                while (current != null)
-                {
-                    if (current.Value.Item.ExpirationTime <= now)
-                    {
+                while (current != null) {
+                    if (current.Value.Item.ExpirationTime <= now) {
                         expiredKeys.Add(current.Value.Key);
                     }
                     current = current.Next;
                 }
             }
-            finally
-            {
+            finally {
                 _lruLock.ExitReadLock();
             }
 
             // Remove expired items
-            if (expiredKeys.Count > 0)
-            {
+            if (expiredKeys.Count > 0) {
                 _lruLock.EnterWriteLock();
-                try
-                {
-                    foreach (var key in expiredKeys)
-                    {
-                        if (_cache.TryRemove(key, out var node))
-                        {
+                try {
+                    foreach (var key in expiredKeys) {
+                        if (_cache.TryRemove(key, out var node)) {
                             _lruList.Remove(node);
                             Interlocked.Increment(ref _expirations);
                         }
                     }
                 }
-                finally
-                {
+                finally {
                     _lruLock.ExitWriteLock();
                 }
             }
@@ -532,8 +535,7 @@ namespace OstPlayer.Utils.Performance
         /// Internal cache entry structure.
         /// Contains both the key and the TTL cache item.
         /// </summary>
-        private class CacheEntry
-        {
+        private class CacheEntry {
             public TKey Key { get; set; }
             public TTLCacheItem<TValue> Item { get; set; }
         }
@@ -545,8 +547,7 @@ namespace OstPlayer.Utils.Performance
         /// <summary>
         /// Releases all resources used by the cache.
         /// </summary>
-        public void Dispose()
-        {
+        public void Dispose() {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
@@ -555,10 +556,8 @@ namespace OstPlayer.Utils.Performance
         /// Protected dispose method for proper disposal pattern.
         /// </summary>
         /// <param name="disposing">True if disposing managed resources</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed && disposing)
-            {
+        protected virtual void Dispose(bool disposing) {
+            if (!_disposed && disposing) {
                 _disposed = true;
                 _cleanupTimer?.Dispose();
                 _lruLock?.Dispose();

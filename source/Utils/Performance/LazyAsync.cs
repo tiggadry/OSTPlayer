@@ -46,10 +46,10 @@
 // - Exception in factory propagates to all callers
 //
 // FUTURE REFACTORING:
-// TODO: Add cancellation token support for factory
-// TODO: Implement timeout mechanism for factory execution
-// TODO: Add factory retry mechanism on failure
-// TODO: Support for factory replacement/reset
+// FUTURE: Add cancellation token support for factory
+// FUTURE: Implement timeout mechanism for factory execution
+// FUTURE: Add factory retry mechanism on failure
+// FUTURE: Support for factory replacement/reset
 // CONSIDER: Adding progress reporting for long factories
 // CONSIDER: Memory pressure-aware lazy loading
 //
@@ -70,8 +70,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace OstPlayer.Utils.Performance
-{
+namespace OstPlayer.Utils.Performance {
     /// <summary>
     /// Lazy loading wrapper for expensive operations
     /// PATTERN: Lazy initialization with async support for non-blocking expensive operations
@@ -79,20 +78,19 @@ namespace OstPlayer.Utils.Performance
     /// USE CASES: Database connections, file loading, API calls, resource initialization
     /// </summary>
     /// <typeparam name="T">Type of value to lazily initialize</typeparam>
-    public class LazyAsync<T>
-    {
+    public class LazyAsync<T> {
         #region Private Fields
 
         // Factory function that creates the value when first requested
         // DELEGATE: Func<Task<T>> allows async initialization operations
         // IMMUTABLE: Set once in constructor, never changes (thread safety)
         private readonly Func<Task<T>> _factory;
-        
+
         // Synchronization object for thread-safe initialization
         // LOCKING: Ensures only one thread can initialize the value
         // PERFORMANCE: Minimal contention for most use cases
         private readonly object _lock = new object();
-        
+
         // The actual async task that produces the value
         // LIFECYCLE: null initially, set once during first access, never changed again
         // SHARING: Same Task<T> instance shared across all callers
@@ -108,8 +106,7 @@ namespace OstPlayer.Utils.Performance
         /// DEFERRED EXECUTION: Factory is not called until Value property is first accessed
         /// </summary>
         /// <param name="factory">Function that creates the value asynchronously</param>
-        public LazyAsync(Func<Task<T>> factory)
-        {
+        public LazyAsync(Func<Task<T>> factory) {
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
         }
 
@@ -123,22 +120,18 @@ namespace OstPlayer.Utils.Performance
         /// INITIALIZATION: Factory is called exactly once, even with concurrent access
         /// SHARING: All callers receive the same Task<T> instance
         /// </summary>
-        public Task<T> Value
-        {
-            get
-            {
+        public Task<T> Value {
+            get {
                 // FAST PATH: If already initialized, return immediately without locking
                 // PERFORMANCE: Avoids lock overhead for subsequent accesses
                 if (_task != null)
                     return _task;
 
                 // SLOW PATH: First access or concurrent initialization
-                lock (_lock)
-                {
+                lock (_lock) {
                     // DOUBLE-CHECK: Another thread might have initialized while waiting for lock
                     // CORRECTNESS: Ensures only one initialization even with race conditions
-                    if (_task == null)
-                    {
+                    if (_task == null) {
                         // INITIALIZATION: Call factory function and store result
                         // SINGLE EXECUTION: Factory called exactly once regardless of concurrent access
                         _task = _factory();
@@ -182,7 +175,7 @@ namespace OstPlayer.Utils.Performance
         ADVANCED SCENARIOS:
 
         1. Conditional Initialization:
-           var lazyService = new LazyAsync<IService>(async () => 
+           var lazyService = new LazyAsync<IService>(async () =>
            {
                if (shouldUseRemote)
                    return await CreateRemoteServiceAsync();
@@ -192,7 +185,7 @@ namespace OstPlayer.Utils.Performance
 
         2. Dependency Chain:
            var lazyConfig = new LazyAsync<Config>(() => LoadConfigAsync());
-           var lazyService = new LazyAsync<Service>(async () => 
+           var lazyService = new LazyAsync<Service>(async () =>
            {
                var config = await lazyConfig.Value;
                return new Service(config);

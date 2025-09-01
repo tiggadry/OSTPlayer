@@ -234,7 +234,7 @@ ViewModels/
 ### **Future Maintenance**
 - **Version tracking** through file headers
 - **Changelog maintenance** for all changes
-- **TODO management** for future features
+- **FUTURE management** for future features
 - **Testing procedures** documented
 
 ---

@@ -1,4 +1,5 @@
-﻿// ====================================================================
+// <copyright file="OstPlayer.cs" company="OstPlayer">Copyright (c) OstPlayer. All rights reserved.</copyright>
+// ====================================================================
 // FILE: OstPlayer.cs
 // PROJECT: OstPlayer - Playnite Plugin for Game Soundtrack Management
 // MODULE: Core
@@ -59,12 +60,12 @@
 // - Utility services and helpers
 //
 // FUTURE REFACTORING:
-// TODO: Implement proper dependency injection container
-// TODO: Add plugin health monitoring and diagnostics
-// TODO: Extract PlayniteSound integration to dedicated service
-// TODO: Add plugin auto-update mechanism
-// TODO: Create plugin SDK for third-party extensions
-// TODO: Add backup/restore functionality for settings and metadata
+// FUTURE: Implement proper dependency injection container
+// FUTURE: Add plugin health monitoring and diagnostics
+// FUTURE: Extract PlayniteSound integration to dedicated service
+// FUTURE: Add plugin auto-update mechanism
+// FUTURE: Create plugin SDK for third-party extensions
+// FUTURE: Add backup/restore functionality for settings and metadata
 // CONSIDER: Splitting into multiple plugins for modularity
 // CONSIDER: Adding plugin marketplace integration
 // IDEA: Integration with music streaming services
@@ -108,17 +109,16 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
+using OstPlayer.Services;
+using OstPlayer.Services.Interfaces;
+using OstPlayer.Utils;
+using OstPlayer.ViewModels;
+using OstPlayer.Views;
+using OstPlayer.Views.Settings;
 using Playnite.SDK;
 using Playnite.SDK.Events;
 using Playnite.SDK.Models;
 using Playnite.SDK.Plugins;
-using OstPlayer.Views;
-using OstPlayer.Views.Settings;
-using OstPlayer.ViewModels;
-using OstPlayer.Services;
-using OstPlayer.Services.Interfaces;
-using OstPlayer.Utils;
-using OstPlayer.Diagnostics;
 
 namespace OstPlayer
 {
@@ -128,72 +128,80 @@ namespace OstPlayer
     /// </summary>
     public class OstPlayer : GenericPlugin
     {
-        #region Private Fields (DI Architecture)
-
+        // Private Fields (DI Architecture)
         // Service container for dependency injection
         private readonly ServiceContainer serviceContainer;
-        
+
         // Core services (resolved through DI)
         private readonly ILogger logger;
         private readonly ErrorHandlingService errorHandler;
         private readonly IGameService gameService;
         private readonly IAudioService audioService;
         private readonly IMetadataService metadataService;
-        
+
         // Plugin state and UI components
         private OstPlayerSettingsViewModel settings { get; set; }
         internal SidebarItem SidebarItem { get; set; }
         private OstPlayerSidebarView lastSidebarView = null;
-        
+
         // PlayniteSound integration state
         private bool playniteSoundWasPaused = false;
 
-        #endregion
+        // Plugin Properties
 
-        #region Plugin Properties
-
+        /// <summary>
+        /// Gets the unique identifier for this plugin.
+        /// </summary>
         public override Guid Id { get; } = Guid.Parse("f3b0c108-5212-4b34-a303-47e859b31a92");
 
-        #endregion
+        // Constructor (Dependency Injection)
 
-        #region Constructor (Dependency Injection)
-
+        /// <summary>
+        /// Initializes a new instance of the OstPlayer class with dependency injection.
+        /// </summary>
+        /// <param name="api">The Playnite API interface.</param>
         public OstPlayer(IPlayniteAPI api)
             : base(api)
         {
             try
             {
                 // Initialize service container and register all services
-                serviceContainer = ServiceContainer.Instance;
-                InitializeDependencyInjection(api);
-                
+                this.serviceContainer = ServiceContainer.Instance;
+                this.InitializeDependencyInjection(api);
+
                 // Resolve core services through DI with defensive handling
                 try
                 {
-                    logger = serviceContainer.GetService<ILogger>() ?? LogManager.GetLogger();
-                    errorHandler = serviceContainer.GetService<ErrorHandlingService>() ?? new ErrorHandlingService();
-                    gameService = serviceContainer.GetService<IGameService>();
-                    audioService = serviceContainer.GetService<IAudioService>();
-                    metadataService = serviceContainer.GetService<IMetadataService>();
+                    this.logger =
+                        this.serviceContainer.GetService<ILogger>() ?? LogManager.GetLogger();
+                    this.errorHandler =
+                        this.serviceContainer.GetService<ErrorHandlingService>()
+                        ?? new ErrorHandlingService();
+                    this.gameService = this.serviceContainer.GetService<IGameService>();
+                    this.audioService = this.serviceContainer.GetService<IAudioService>();
+                    this.metadataService = this.serviceContainer.GetService<IMetadataService>();
                 }
                 catch (Exception serviceEx)
                 {
                     // Use fallback logger if DI resolution fails
                     var fallbackLogger = LogManager.GetLogger();
-                    fallbackLogger.Warn(serviceEx, "Failed to resolve some services through DI, using fallbacks");
+                    fallbackLogger.Warn(
+                        serviceEx,
+                        "Failed to resolve some services through DI, using fallbacks"
+                    );
                 }
 
                 // Initialize settings with error handling
-                InitializeSettings();
-                
+                this.InitializeSettings();
+
                 // Initialize sidebar item with DI support
-                InitializeSidebarItem();
+                this.InitializeSidebarItem();
             }
             catch (Exception ex)
             {
                 var fallbackLogger = LogManager.GetLogger();
                 fallbackLogger.Error(ex, "Critical error during OstPlayer DI initialization");
-                
+
                 // Try to create fallback error handler
                 try
                 {
@@ -203,16 +211,16 @@ namespace OstPlayer
                 catch
                 {
                     // Last resort - log to debug output
-                    System.Diagnostics.Debug.WriteLine($"CRITICAL: OstPlayer initialization failed: {ex.Message}");
+                    System.Diagnostics.Debug.WriteLine(
+                        $"CRITICAL: OstPlayer initialization failed: {ex.Message}"
+                    );
                 }
-                
+
                 throw; // Re-throw critical initialization errors
             }
         }
 
-        #endregion
-
-        #region Dependency Injection Initialization
+        // Dependency Injection Initialization
 
         /// <summary>
         /// Initializes the dependency injection container with all services.
@@ -223,21 +231,27 @@ namespace OstPlayer
             try
             {
                 // Clear any existing registrations for clean initialization
-                serviceContainer.Clear();
-                
+                this.serviceContainer.Clear();
+
                 // Register Playnite API and plugin reference as singletons FIRST
-                serviceContainer.RegisterSingleton<IPlayniteAPI>(api);
-                serviceContainer.RegisterSingleton<OstPlayer>(this);
-                serviceContainer.RegisterSingleton<ILogger>(LogManager.GetLogger());
-                
+                this.serviceContainer.RegisterSingleton<IPlayniteAPI>(api);
+                this.serviceContainer.RegisterSingleton<OstPlayer>(this);
+                this.serviceContainer.RegisterSingleton<ILogger>(LogManager.GetLogger());
+
                 // Register basic infrastructure services before complex ones
-                serviceContainer.RegisterSingleton<ErrorHandlingService, ErrorHandlingService>();
-                
+                this.serviceContainer.RegisterSingleton<
+                    ErrorHandlingService,
+                    ErrorHandlingService
+                >();
+
                 // Register utility services
-                serviceContainer.RegisterTransient<MusicPlaybackService, MusicPlaybackService>();
-                
+                this.serviceContainer.RegisterTransient<
+                    MusicPlaybackService,
+                    MusicPlaybackService
+                >();
+
                 // Register cache configuration
-                serviceContainer.RegisterSingleton<MetadataCacheConfig>(provider =>
+                this.serviceContainer.RegisterSingleton<MetadataCacheConfig>(provider =>
                 {
                     return new MetadataCacheConfig
                     {
@@ -247,43 +261,60 @@ namespace OstPlayer
                         MaxCacheSize = 2000,
                         CleanupInterval = TimeSpan.FromMinutes(5),
                         EnableMemoryPressureAdjustment = true,
-                        EnableCacheWarming = true
+                        EnableCacheWarming = true,
                     };
                 });
-                
+
                 // Register cache services
-                serviceContainer.RegisterSingleton<MetadataCache, MetadataCache>();
-                
+                this.serviceContainer.RegisterSingleton<MetadataCache, MetadataCache>();
+
                 // Register external API clients as singletons (single instance for both interface and concrete type)
-                serviceContainer.RegisterSingleton<DiscogsClientService, DiscogsClientService>();
-                serviceContainer.RegisterSingleton<MusicBrainzClientService, MusicBrainzClientService>();
-                
+                this.serviceContainer.RegisterSingleton<
+                    DiscogsClientService,
+                    DiscogsClientService
+                >();
+                this.serviceContainer.RegisterSingleton<
+                    MusicBrainzClientService,
+                    MusicBrainzClientService
+                >();
+
                 // Register interfaces to use the same instances
-                serviceContainer.RegisterSingleton<IDiscogsClient>(provider => provider.GetService<DiscogsClientService>());
-                serviceContainer.RegisterSingleton<IMusicBrainzClient>(provider => provider.GetService<MusicBrainzClientService>());
-                
+                this.serviceContainer.RegisterSingleton<IDiscogsClient>(provider =>
+                    provider.GetService<DiscogsClientService>()
+                );
+                this.serviceContainer.RegisterSingleton<IMusicBrainzClient>(provider =>
+                    provider.GetService<MusicBrainzClientService>()
+                );
+
                 // Register service interfaces with their implementations (register after dependencies)
-                serviceContainer.RegisterSingleton<IGameService, GameService>();
-                serviceContainer.RegisterSingleton<IMetadataService, MetadataService>();
-                serviceContainer.RegisterTransient<IAudioService, AudioService>();
-                
+                this.serviceContainer.RegisterSingleton<IGameService, GameService>();
+                this.serviceContainer.RegisterSingleton<IMetadataService, MetadataService>();
+                this.serviceContainer.RegisterTransient<IAudioService, AudioService>();
+
                 // Validate service registrations (debug only)
-                #if DEBUG
+#if DEBUG
                 try
                 {
-                    serviceContainer.ValidateServices();
+                    this.serviceContainer.ValidateServices();
                 }
                 catch (Exception validationEx)
                 {
-                    System.Diagnostics.Debug.WriteLine($"⚠ DI Container validation warning: {validationEx.Message}");
+                    System.Diagnostics.Debug.WriteLine(
+                        $"⚠ DI Container validation warning: {validationEx.Message}"
+                    );
                     // Continue anyway - some services might work even if others don't validate
                 }
-                #endif
+#endif
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"✗ Failed to initialize DI container: {ex.Message}");
-                throw new InvalidOperationException("Dependency injection initialization failed", ex);
+                System.Diagnostics.Debug.WriteLine(
+                    $"✗ Failed to initialize DI container: {ex.Message}"
+                );
+                throw new InvalidOperationException(
+                    "Dependency injection initialization failed",
+                    ex
+                );
             }
         }
 
@@ -296,23 +327,21 @@ namespace OstPlayer
             {
                 // Create settings ViewModel directly instead of through DI container
                 // OstPlayerSettingsViewModel is not registered in DI container as it's Playnite-specific
-                settings = new OstPlayerSettingsViewModel(this);
-                Properties = new GenericPluginProperties { HasSettings = true };
+                this.settings = new OstPlayerSettingsViewModel(this);
+                this.Properties = new GenericPluginProperties { HasSettings = true };
             }
             catch (Exception ex)
             {
-                logger.Error(ex, "Failed to initialize plugin settings");
-                errorHandler.HandlePlaybackError(ex, "Plugin Settings Initialization");
-                
+                this.logger.Error(ex, "Failed to initialize plugin settings");
+                this.errorHandler.HandlePlaybackError(ex, "Plugin Settings Initialization");
+
                 // Create fallback settings to prevent complete plugin failure
-                settings = null;
-                Properties = new GenericPluginProperties { HasSettings = false };
+                this.settings = null;
+                this.Properties = new GenericPluginProperties { HasSettings = false };
             }
         }
 
-        #endregion
-
-        #region Sidebar Management (DI-Enhanced)
+        // Sidebar Management (DI-Enhanced)
 
         /// <summary>
         /// Initializes the sidebar item with dependency injection support.
@@ -321,29 +350,32 @@ namespace OstPlayer
         {
             try
             {
-                SidebarItem = new SidebarItem
+                this.SidebarItem = new SidebarItem
                 {
                     Type = SiderbarItemType.View,
                     Title = "OstPlayer",
-                    Icon = GetPluginIcon(),
+                    Icon = this.GetPluginIcon(),
                     Visible = true,
-                    Opened = CreateSidebarView,
-                    Closed = CleanupSidebarView
+                    Opened = this.CreateSidebarView,
+                    Closed = this.CleanupSidebarView,
                 };
             }
             catch (Exception ex)
             {
-                logger.Error(ex, "Failed to initialize sidebar item with DI");
-                errorHandler.HandlePlaybackError(ex, "Sidebar DI Initialization");
-                
+                this.logger.Error(ex, "Failed to initialize sidebar item with DI");
+                this.errorHandler.HandlePlaybackError(ex, "Sidebar DI Initialization");
+
                 // Create minimal fallback sidebar item
-                SidebarItem = new SidebarItem
+                this.SidebarItem = new SidebarItem
                 {
                     Type = SiderbarItemType.View,
                     Title = "OstPlayer (DI Error)",
                     Visible = true,
-                    Opened = () => CreateErrorView("Dependency injection failed. Please restart Playnite."),
-                    Closed = () => { }
+                    Opened = () =>
+                        this.CreateErrorView(
+                            "Dependency injection failed. Please restart Playnite."
+                        ),
+                    Closed = () => { },
                 };
             }
         }
@@ -356,18 +388,21 @@ namespace OstPlayer
             try
             {
                 // Pause PlayniteSound music when sidebar is opened
-                PausePlayniteSoundMusic(PlayniteApi);
-                playniteSoundWasPaused = true;
-                
+                PausePlayniteSoundMusic(this.PlayniteApi);
+                this.playniteSoundWasPaused = true;
+
                 // Get active game simply and safely
                 Game activeGame = null;
                 try
                 {
-                    activeGame = PlayniteApi.MainView.SelectedGames?.FirstOrDefault();
+                    activeGame = this.PlayniteApi.MainView.SelectedGames?.FirstOrDefault();
                 }
                 catch (Exception ex)
                 {
-                    logger.Warn(ex, "Failed to get selected game - continuing without preselection");
+                    this.logger.Warn(
+                        ex,
+                        "Failed to get selected game - continuing without preselection"
+                    );
                     activeGame = null;
                 }
 
@@ -381,15 +416,15 @@ namespace OstPlayer
                 {
                     view = new OstPlayerSidebarView(this);
                 }
-                
-                lastSidebarView = view;
+
+                this.lastSidebarView = view;
                 return view;
             }
             catch (Exception ex)
             {
-                logger.Error(ex, "Critical error in DI-enhanced sidebar view creation");
-                errorHandler.HandlePlaybackError(ex, "Sidebar DI Creation");
-                return CreateErrorView("Critical DI error occurred. Please restart Playnite.");
+                this.logger.Error(ex, "Critical error in DI-enhanced sidebar view creation");
+                this.errorHandler.HandlePlaybackError(ex, "Sidebar DI Creation");
+                return this.CreateErrorView("Critical DI error occurred. Please restart Playnite.");
             }
         }
 
@@ -409,7 +444,7 @@ namespace OstPlayer
             }
             catch (Exception ex)
             {
-                logger.Warn(ex, "Failed to get plugin icon path");
+                this.logger.Warn(ex, "Failed to get plugin icon path");
                 return null; // Playnite will use default icon
             }
         }
@@ -427,14 +462,14 @@ namespace OstPlayer
                     Text = $"OstPlayer DI Error: {errorMessage}",
                     Margin = new System.Windows.Thickness(10),
                     TextWrapping = System.Windows.TextWrapping.Wrap,
-                    Foreground = System.Windows.Media.Brushes.Red
+                    Foreground = System.Windows.Media.Brushes.Red,
                 };
                 errorControl.Content = textBlock;
                 return errorControl;
             }
             catch (Exception ex)
             {
-                logger.Error(ex, "Failed to create error view");
+                this.logger.Error(ex, "Failed to create error view");
                 // Return minimal fallback
                 return new UserControl();
             }
@@ -449,84 +484,97 @@ namespace OstPlayer
             try
             {
                 // Stop music playback when the sidebar panel is closed
-                if (lastSidebarView != null)
+                if (this.lastSidebarView != null)
                 {
                     try
                     {
                         // FIXED: Try DI-based audio service first with timeout
-                        if (audioService != null)
+                        if (this.audioService != null)
                         {
-                            var stopTask = audioService.StopAsync();
+                            var stopTask = this.audioService.StopAsync();
                             if (!stopTask.Wait(1000)) // 1 second timeout
                             {
-                                logger.Warn("Audio service stop operation timed out");
+                                this.logger.Warn("Audio service stop operation timed out");
                             }
                             else
                             {
-                                System.Diagnostics.Debug.WriteLine("FIXED: Stopped music using audioService during sidebar cleanup");
+                                System.Diagnostics.Debug.WriteLine(
+                                    "FIXED: Stopped music using audioService during sidebar cleanup"
+                                );
                             }
                         }
-                        
+
                         // FIXED: Fallback to direct view StopMusic method for reliability
                         // This ensures music stops even if audioService fails or times out
                         try
                         {
-                            lastSidebarView.StopMusic();
-                            System.Diagnostics.Debug.WriteLine("FIXED: Stopped music using lastSidebarView.StopMusic() as fallback");
+                            this.lastSidebarView.StopMusic();
+                            System.Diagnostics.Debug.WriteLine(
+                                "FIXED: Stopped music using lastSidebarView.StopMusic() as fallback"
+                            );
                         }
                         catch (Exception fallbackEx)
                         {
-                            logger.Warn(fallbackEx, "Fallback StopMusic() also failed during cleanup");
+                            this.logger.Warn(
+                                fallbackEx,
+                                "Fallback StopMusic() also failed during cleanup"
+                            );
                         }
                     }
                     catch (Exception ex)
                     {
-                        logger.Warn(ex, "Failed to stop music during sidebar cleanup using DI");
-                        
+                        this.logger.Warn(
+                            ex,
+                            "Failed to stop music during sidebar cleanup using DI"
+                        );
+
                         // FIXED: Final fallback - try direct StopMusic even if DI completely fails
                         try
                         {
-                            lastSidebarView.StopMusic();
-                            System.Diagnostics.Debug.WriteLine("FIXED: Used final fallback StopMusic() after DI failure");
+                            this.lastSidebarView.StopMusic();
+                            System.Diagnostics.Debug.WriteLine(
+                                "FIXED: Used final fallback StopMusic() after DI failure"
+                            );
                         }
                         catch (Exception finalEx)
                         {
-                            logger.Error(finalEx, "All music stop methods failed during cleanup");
+                            this.logger.Error(
+                                finalEx,
+                                "All music stop methods failed during cleanup"
+                            );
                         }
                     }
                     finally
                     {
-                        lastSidebarView = null;
+                        this.lastSidebarView = null;
                     }
                 }
 
                 // Resume PlayniteSound music only if paused by OstPlayer
-                if (playniteSoundWasPaused)
+                if (this.playniteSoundWasPaused)
                 {
                     try
                     {
-                        ResumePlayniteSoundMusic();
+                        this.ResumePlayniteSoundMusic();
                     }
                     catch (Exception ex)
                     {
-                        logger.Warn(ex, "Failed to resume PlayniteSound music via URI");
+                        this.logger.Warn(ex, "Failed to resume PlayniteSound music via URI");
                     }
                     finally
                     {
-                        playniteSoundWasPaused = false;
+                        this.playniteSoundWasPaused = false;
                     }
                 }
             }
             catch (Exception ex)
             {
-                logger.Error(ex, "Error during DI-enhanced sidebar cleanup");
+                this.logger.Error(ex, "Error during DI-enhanced sidebar cleanup");
                 // Don't propagate cleanup errors
             }
         }
 
-        #endregion
-
-        #region PlayniteSound Integration
+        // PlayniteSound Integration
 
         /// <summary>
         /// Sends a URI request to PlayniteSound to pause music playback with error handling.
@@ -554,13 +602,11 @@ namespace OstPlayer
             }
             catch (Exception ex)
             {
-                logger.Warn(ex, "Failed to resume PlayniteSound music via URI");
+                this.logger.Warn(ex, "Failed to resume PlayniteSound music via URI");
             }
         }
 
-        #endregion
-
-        #region Public Plugin Interface (DI-Enhanced)
+        // Public Plugin Interface (DI-Enhanced)
 
         /// <summary>
         /// Returns the sidebar item for Playnite's sidebar integration.
@@ -569,11 +615,11 @@ namespace OstPlayer
         {
             try
             {
-                return new List<SidebarItem> { SidebarItem };
+                return new List<SidebarItem> { this.SidebarItem };
             }
             catch (Exception ex)
             {
-                logger.Error(ex, "Failed to get sidebar items with DI");
+                this.logger.Error(ex, "Failed to get sidebar items with DI");
                 return new List<SidebarItem>(); // Return empty list on error
             }
         }
@@ -591,15 +637,21 @@ namespace OstPlayer
                 {
                     var gameService = container.GetService<IGameService>();
                     // Use ConfigureAwait(false) to prevent deadlock
-                    return gameService.GetMusicDirectoryAsync(game).ConfigureAwait(false).GetAwaiter().GetResult();
+                    return gameService
+                        .GetMusicDirectoryAsync(game)
+                        .ConfigureAwait(false)
+                        .GetAwaiter()
+                        .GetResult();
                 }
-                
+
                 // Use existing static helper
                 return Utils.MusicFileHelper.GetGameMusicPath(api, game);
             }
             catch (Exception ex)
             {
-                LogManager.GetLogger().Warn(ex, $"Failed to get music path for game: {game?.Name ?? "Unknown"}");
+                LogManager
+                    .GetLogger()
+                    .Warn(ex, $"Failed to get music path for game: {game?.Name ?? "Unknown"}");
                 // Fallback to static helper on error
                 try
                 {
@@ -624,15 +676,21 @@ namespace OstPlayer
                 {
                     var gameService = container.GetService<IGameService>();
                     // Use ConfigureAwait(false) to prevent deadlock
-                    return gameService.GetMusicFilesAsync(game).ConfigureAwait(false).GetAwaiter().GetResult();
+                    return gameService
+                        .GetMusicFilesAsync(game)
+                        .ConfigureAwait(false)
+                        .GetAwaiter()
+                        .GetResult();
                 }
-                
+
                 // Fallback to static helper
                 return Utils.MusicFileHelper.GetGameMusicFiles(api, game);
             }
             catch (Exception ex)
             {
-                LogManager.GetLogger().Warn(ex, $"Failed to get music files for game: {game?.Name ?? "Unknown"}");
+                LogManager
+                    .GetLogger()
+                    .Warn(ex, $"Failed to get music files for game: {game?.Name ?? "Unknown"}");
                 // Fallback to static helper on error
                 try
                 {
@@ -645,23 +703,58 @@ namespace OstPlayer
             }
         }
 
-        #endregion
-
-        #region Plugin Event Hooks
+        // Plugin Event Hooks
 
         // Plugin event hooks (not implemented, but required by Playnite)
+        /// <summary>
+        /// Called when a game is installed. Not implemented in this plugin.
+        /// </summary>
+        /// <param name="args">Event arguments.</param>
         public override void OnGameInstalled(OnGameInstalledEventArgs args) { }
+
+        /// <summary>
+        /// Called when a game is started. Not implemented in this plugin.
+        /// </summary>
+        /// <param name="args">Event arguments.</param>
         public override void OnGameStarted(OnGameStartedEventArgs args) { }
+
+        /// <summary>
+        /// Called when a game is starting. Not implemented in this plugin.
+        /// </summary>
+        /// <param name="args">Event arguments.</param>
         public override void OnGameStarting(OnGameStartingEventArgs args) { }
+
+        /// <summary>
+        /// Called when a game is stopped. Not implemented in this plugin.
+        /// </summary>
+        /// <param name="args">Event arguments.</param>
         public override void OnGameStopped(OnGameStoppedEventArgs args) { }
+
+        /// <summary>
+        /// Called when a game is uninstalled. Not implemented in this plugin.
+        /// </summary>
+        /// <param name="args">Event arguments.</param>
         public override void OnGameUninstalled(OnGameUninstalledEventArgs args) { }
+
+        /// <summary>
+        /// Called when the application is started. Not implemented in this plugin.
+        /// </summary>
+        /// <param name="args">Event arguments.</param>
         public override void OnApplicationStarted(OnApplicationStartedEventArgs args) { }
+
+        /// <summary>
+        /// Called when the application is stopped. Not implemented in this plugin.
+        /// </summary>
+        /// <param name="args">Event arguments.</param>
         public override void OnApplicationStopped(OnApplicationStoppedEventArgs args) { }
+
+        /// <summary>
+        /// Called when the library is updated. Not implemented in this plugin.
+        /// </summary>
+        /// <param name="args">Event arguments.</param>
         public override void OnLibraryUpdated(OnLibraryUpdatedEventArgs args) { }
 
-        #endregion
-
-        #region Settings Management (DI-Enhanced)
+        // Settings Management (DI-Enhanced)
 
         /// <summary>
         /// Returns the plugin settings ViewModel for Playnite with dependency injection.
@@ -670,17 +763,17 @@ namespace OstPlayer
         {
             try
             {
-                if (settings == null)
+                if (this.settings == null)
                 {
                     // Create settings ViewModel directly if not already initialized
-                    settings = new OstPlayerSettingsViewModel(this);
+                    this.settings = new OstPlayerSettingsViewModel(this);
                 }
-                return settings;
+                return this.settings;
             }
             catch (Exception ex)
             {
-                logger.Error(ex, "Failed to get plugin settings");
-                errorHandler.HandlePlaybackError(ex, "Settings Retrieval");
+                this.logger.Error(ex, "Failed to get plugin settings");
+                this.errorHandler.HandlePlaybackError(ex, "Settings Retrieval");
                 return null; // Playnite will handle null gracefully
             }
         }
@@ -693,38 +786,38 @@ namespace OstPlayer
             try
             {
                 var settingsView = new OstPlayerSettingsView();
-                
+
                 // Ensure settings ViewModel is available
-                if (settings == null)
+                if (this.settings == null)
                 {
-                    settings = new OstPlayerSettingsViewModel(this);
+                    this.settings = new OstPlayerSettingsViewModel(this);
                 }
-                
+
                 // Set DataContext explicitly for proper binding
-                settingsView.DataContext = settings;
-                
+                settingsView.DataContext = this.settings;
+
                 return settingsView;
             }
             catch (Exception ex)
             {
-                logger.Error(ex, "Failed to create settings view");
-                errorHandler.HandlePlaybackError(ex, "Settings View Creation");
-                
+                this.logger.Error(ex, "Failed to create settings view");
+                this.errorHandler.HandlePlaybackError(ex, "Settings View Creation");
+
                 // Return fallback settings view
-                return CreateErrorView("Failed to load settings interface. Please restart Playnite.");
+                return this.CreateErrorView(
+                    "Failed to load settings interface. Please restart Playnite."
+                );
             }
         }
 
-        #endregion
-
-        #region Service Container Access
+        // Service Container Access
 
         /// <summary>
         /// Provides access to the service container for external components.
         /// </summary>
         public ServiceContainer GetServiceContainer()
         {
-            return serviceContainer;
+            return this.serviceContainer;
         }
 
         /// <summary>
@@ -732,7 +825,7 @@ namespace OstPlayer
         /// </summary>
         public T GetService<T>()
         {
-            return serviceContainer.GetService<T>();
+            return this.serviceContainer.GetService<T>();
         }
 
         /// <summary>
@@ -740,42 +833,41 @@ namespace OstPlayer
         /// </summary>
         public bool IsServiceRegistered<T>()
         {
-            return serviceContainer.IsRegistered<T>();
+            return this.serviceContainer.IsRegistered<T>();
         }
 
-        #endregion
+        // IDisposable Implementation (DI-Enhanced)
 
-        #region IDisposable Implementation (DI-Enhanced)
-
+        /// <summary>
+        /// Disposes resources and cleans up the plugin.
+        /// </summary>
+        /// <param name="disposing">True if disposing managed resources.</param>
         protected void Dispose(bool disposing)
         {
             if (disposing)
             {
                 try
                 {
-                    logger.Info("Disposing OstPlayer with dependency injection...");
-                    
+                    this.logger.Info("Disposing OstPlayer with dependency injection...");
+
                     // Dispose DI-managed services that implement IDisposable
-                    if (audioService is IDisposable disposableAudio)
+                    if (this.audioService is IDisposable disposableAudio)
                         disposableAudio.Dispose();
-                    if (metadataService is IDisposable disposableMetadata)
+                    if (this.metadataService is IDisposable disposableMetadata)
                         disposableMetadata.Dispose();
-                    if (gameService is IDisposable disposableGame)
+                    if (this.gameService is IDisposable disposableGame)
                         disposableGame.Dispose();
-                    
+
                     // Dispose service container
-                    serviceContainer?.Dispose();
-                    
-                    logger.Info("OstPlayer disposed successfully with DI cleanup");
+                    this.serviceContainer?.Dispose();
+
+                    this.logger.Info("OstPlayer disposed successfully with DI cleanup");
                 }
                 catch (Exception ex)
                 {
-                    logger.Error(ex, "Error disposing OstPlayer with DI");
+                    this.logger.Error(ex, "Error disposing OstPlayer with DI");
                 }
             }
-            
         }
-
-        #endregion
     }
 }

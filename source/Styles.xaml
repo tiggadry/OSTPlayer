@@ -70,14 +70,14 @@ LIMITATIONS:
 - Static resource approach
 
 FUTURE REFACTORING:
-TODO: Add comprehensive control style library
-TODO: Implement dynamic theming and color schemes
-TODO: Add animation and transition effects
-TODO: Create responsive styling for different screen sizes
-TODO: Add accessibility enhancements to styles
-TODO: Implement style validation and testing
-TODO: Add theme marketplace compatibility
-TODO: Create style documentation and examples
+FUTURE: Add comprehensive control style library
+FUTURE: Implement dynamic theming and color schemes
+FUTURE: Add animation and transition effects
+FUTURE: Create responsive styling for different screen sizes
+FUTURE: Add accessibility enhancements to styles
+FUTURE: Implement style validation and testing
+FUTURE: Add theme marketplace compatibility
+FUTURE: Create style documentation and examples
 CONSIDER: Advanced styling with custom controls
 CONSIDER: Integration with Playnite's theming system
 IDEA: User-customizable style preferences
@@ -121,9 +121,9 @@ CHANGELOG:
 
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Style x:Key="LargeThumb" TargetType="Thumb">
-        <Setter Property="Width" Value="22"/>
-        <Setter Property="Height" Value="22"/>
-    </Style>
-    <Style x:Key="BaseTextBlockStyle" TargetType="TextBlock" />
+  <Style x:Key="LargeThumb" TargetType="Thumb">
+    <Setter Property="Width" Value="22"/>
+    <Setter Property="Height" Value="22"/>
+  </Style>
+  <Style x:Key="BaseTextBlockStyle" TargetType="TextBlock" />
 </ResourceDictionary>

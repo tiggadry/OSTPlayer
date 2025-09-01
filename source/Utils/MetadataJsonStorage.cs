@@ -54,14 +54,14 @@
 // - No support for partial metadata updates
 //
 // FUTURE REFACTORING:
-// TODO: Add comprehensive error handling for file I/O operations
-// TODO: Implement JSON schema validation for data integrity
-// TODO: Add support for partial metadata updates and merging
-// TODO: Extract to configurable storage provider interface
-// TODO: Add metadata versioning and migration support
-// TODO: Implement async file operations for better performance
-// TODO: Add metadata compression for large collections
-// TODO: Extract unified metadata merging to separate service
+// FUTURE: Add comprehensive error handling for file I/O operations
+// FUTURE: Implement JSON schema validation for data integrity
+// FUTURE: Add support for partial metadata updates and merging
+// FUTURE: Extract to configurable storage provider interface
+// FUTURE: Add metadata versioning and migration support
+// FUTURE: Implement async file operations for better performance
+// FUTURE: Add metadata compression for large collections
+// FUTURE: Extract unified metadata merging to separate service
 // CONSIDER: Database storage as alternative to file-based JSON
 // CONSIDER: Adding metadata backup and restore capabilities
 // IDEA: Real-time metadata synchronization across instances
@@ -182,7 +182,7 @@ namespace OstPlayer.Utils
             // JSON SERIALIZATION: Convert metadata to formatted JSON string
             // FORMATTING: Indented format for readability and version control
             string json = JsonConvert.SerializeObject(metadata, Formatting.Indented);
-            
+
             // FILE PERSISTENCE: Write JSON to specified file path
             // ENCODING: Default UTF-8 encoding handles international characters
             File.WriteAllText(filePath, json);
@@ -214,20 +214,21 @@ namespace OstPlayer.Utils
             // Helper local function for loading JSON and deserializing to given type
             // ENCAPSULATION: Reduces code duplication for multiple source loading
             // ERROR HANDLING: Returns null for missing files or deserialization failures
-            T LoadJson<T>(string fileName) where T : class
+            T LoadJson<T>(string fileName)
+                where T : class
             {
                 // PATH CONSTRUCTION: Build full path to JSON file
                 string path = Path.Combine(folderPath, fileName);
-                
+
                 // EXISTENCE CHECK: Return null if file doesn't exist
                 if (!File.Exists(path))
                     return null;
-                    
+
                 try
                 {
                     // FILE READING: Load JSON content from file
                     string json = File.ReadAllText(path);
-                    
+
                     // DESERIALIZATION: Convert JSON back to typed object
                     // NULL HANDLING: JsonConvert handles null/empty JSON gracefully
                     return JsonConvert.DeserializeObject<T>(json);
@@ -264,15 +265,15 @@ namespace OstPlayer.Utils
                 result.Title = mp3Metadata.Title;
                 result.Artist = mp3Metadata.Artist;
                 result.Album = mp3Metadata.Album;
-                
+
                 // NOTE: Mp3MetadataModel typically doesn't have Released, Genres, Styles
                 // DESIGN: ID3 tags focus on track information rather than release metadata
                 result.Comment = mp3Metadata.Comment;
-                
+
                 // COVER ART: Convert from base64 encoding to BitmapImage
                 // PRIORITY: Local cover art preferred over external URLs
                 result.Cover = LoadBitmapImageFromBase64(mp3Metadata.CoverBase64);
-                
+
                 // TRACKLIST: Extract track titles from MP3 track collection
                 // STRUCTURE: Convert TrackInfo list to simple string list for UI
                 if (mp3Metadata.Tracks != null)
@@ -295,15 +296,15 @@ namespace OstPlayer.Utils
                     result.Artist = mbMetadata.Artist;
                 if (string.IsNullOrEmpty(result.Album))
                     result.Album = mbMetadata.Album;
-                    
+
                 // RELEASE DATE: MusicBrainz specializes in release information
                 // FIELD MAPPING: ReleaseDate maps to Released field
                 if (string.IsNullOrEmpty(result.Released) && mbMetadata.ReleaseDate != null)
                     result.Released = mbMetadata.ReleaseDate;
-                    
+
                 if (string.IsNullOrEmpty(result.Comment))
                     result.Comment = mbMetadata.Comment;
-                    
+
                 // COVER ART FALLBACK: Use URL-based image if no local cover available
                 // PRIORITY: Local base64 images preferred over remote URLs
                 if (result.Cover == null && !string.IsNullOrEmpty(mbMetadata.CoverUrl))
@@ -327,32 +328,40 @@ namespace OstPlayer.Utils
                     result.Album = discogsMetadata.Album;
                 if (string.IsNullOrEmpty(result.Released))
                     result.Released = discogsMetadata.Released;
-                    
+
                 // GENRE AND STYLE: Discogs specializes in detailed categorization
                 // COLLECTION CHECK: Only assign if current collections are empty
-                if ((result.Genres == null || result.Genres.Count == 0) && discogsMetadata.Genres != null)
+                if (
+                    (result.Genres == null || result.Genres.Count == 0)
+                    && discogsMetadata.Genres != null
+                )
                     result.Genres = discogsMetadata.Genres;
-                if ((result.Styles == null || result.Styles.Count == 0) && discogsMetadata.Styles != null)
+                if (
+                    (result.Styles == null || result.Styles.Count == 0)
+                    && discogsMetadata.Styles != null
+                )
                     result.Styles = discogsMetadata.Styles;
-                    
+
                 if (string.IsNullOrEmpty(result.Comment))
                     result.Comment = discogsMetadata.Comment;
-                    
+
                 // COVER ART: Final fallback to Discogs cover URL
                 if (result.Cover == null && !string.IsNullOrEmpty(discogsMetadata.CoverUrl))
                     result.Cover = LoadBitmapImageFromUrl(discogsMetadata.CoverUrl);
-                
+
                 // DISCOGS-SPECIFIC FIELDS: Unique to Discogs metadata
                 if (string.IsNullOrEmpty(result.Country))
                     result.Country = discogsMetadata.Country;
                 if (string.IsNullOrEmpty(result.DiscogsUrl))
                     result.DiscogsUrl = discogsMetadata.DiscogsUrl;
-                
+
                 // TRACKLIST FALLBACK: Use Discogs tracklist if no other source available
                 // CONDITION: Only if no existing tracklist and Discogs has valid data
-                if ((result.Tracklist == null || result.Tracklist.Count == 0)
+                if (
+                    (result.Tracklist == null || result.Tracklist.Count == 0)
                     && discogsMetadata.Tracklist != null
-                    && discogsMetadata.Tracklist.Count > 0)
+                    && discogsMetadata.Tracklist.Count > 0
+                )
                 {
                     // TRACK TITLE EXTRACTION: Convert DiscogsTrack objects to simple string list
                     result.Tracklist = discogsMetadata.Tracklist.ConvertAll(t => t.Title);
@@ -381,25 +390,25 @@ namespace OstPlayer.Utils
             // INPUT VALIDATION: Check for null or empty base64 data
             if (string.IsNullOrEmpty(base64))
                 return null;
-                
+
             try
             {
                 // BASE64 DECODING: Convert base64 string to byte array
                 byte[] bytes = Convert.FromBase64String(base64);
-                
+
                 // MEMORY STREAM: Create stream from byte array for BitmapImage
                 using (var ms = new MemoryStream(bytes))
                 {
                     // BITMAPIMAGE CREATION: WPF-compatible image format
                     var img = new BitmapImage();
                     img.BeginInit();
-                    
+
                     // CACHING STRATEGY: OnLoad loads image data immediately
                     // BENEFIT: Allows MemoryStream disposal while preserving image
                     img.CacheOption = BitmapCacheOption.OnLoad;
                     img.StreamSource = ms;
                     img.EndInit();
-                    
+
                     // THREAD SAFETY: Freeze makes object thread-safe and improves performance
                     img.Freeze();
                     return img;
@@ -427,21 +436,21 @@ namespace OstPlayer.Utils
             // INPUT VALIDATION: Check for null or empty URL
             if (string.IsNullOrEmpty(url))
                 return null;
-                
+
             try
             {
                 // BITMAPIMAGE CREATION: Direct from URL
                 var img = new BitmapImage();
                 img.BeginInit();
-                
+
                 // URL ASSIGNMENT: Set source to provided URL
                 img.UriSource = new Uri(url, UriKind.Absolute);
-                
+
                 // CACHING STRATEGY: OnLoad downloads and caches image immediately
                 // BENEFIT: Subsequent access doesn't require network requests
                 img.CacheOption = BitmapCacheOption.OnLoad;
                 img.EndInit();
-                
+
                 // THREAD SAFETY: Freeze makes object thread-safe
                 img.Freeze();
                 return img;

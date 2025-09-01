@@ -1,0 +1,6 @@
+projectKey=OstPlayer
+serverUrl=http://localhost:9000
+serverVersion=25.8.0.112029
+dashboardUrl=http://localhost:9000/dashboard?id=OstPlayer
+ceTaskId=88b4ccb2-9daf-495c-9189-e27eaa41e349
+ceTaskUrl=http://localhost:9000/api/ce/task?id=88b4ccb2-9daf-495c-9189-e27eaa41e349

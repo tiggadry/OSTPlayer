@@ -16,7 +16,7 @@
 //
 // REFACTORING CHANGES (v2.0.0):
 // - Extracted LazyAsync<T> to Utils/Performance/LazyAsync.cs
-// - Extracted LRUCache<TKey, TValue> to Utils/Performance/LRUCache.cs  
+// - Extracted LRUCache<TKey, TValue> to Utils/Performance/LRUCache.cs
 // - Extracted Debouncer to Utils/Performance/Debouncer.cs
 // - Maintained backward compatibility through namespace imports
 //
@@ -39,10 +39,10 @@
 // - Debouncer: UI responsiveness debouncing utility
 //
 // FUTURE REFACTORING:
-// TODO: Consider extracting to separate Utils.Performance assembly
-// TODO: Add performance monitoring and metrics collection
-// TODO: Implement performance benchmarking utilities
-// TODO: Add memory pressure monitoring utilities
+// FUTURE: Consider extracting to separate Utils.Performance assembly
+// FUTURE: Add performance monitoring and metrics collection
+// FUTURE: Implement performance benchmarking utilities
+// FUTURE: Add memory pressure monitoring utilities
 // CONSIDER: Creating performance profiler integration
 // CONSIDER: Adding performance best practices documentation
 //
@@ -59,22 +59,20 @@
 
 // NAMESPACE IMPORTS: Make extracted classes available in original namespace
 // This maintains backward compatibility while improving code organization
-using OstPlayer.Utils.Performance;
-
 namespace OstPlayer.Utils
 {
     // NOTE: All performance optimization classes have been extracted to separate files
     // in the Utils/Performance/ directory for better code organization:
     //
     // - LazyAsync<T> ? Utils/Performance/LazyAsync.cs
-    // - LRUCache<TKey, TValue> ? Utils/Performance/LRUCache.cs  
+    // - LRUCache<TKey, TValue> ? Utils/Performance/LRUCache.cs
     // - Debouncer ? Utils/Performance/Debouncer.cs
     //
     // This file now serves as a namespace bridge to maintain backward compatibility.
     // All existing code using these classes will continue to work without changes.
-    
+
     #region Namespace Bridge Documentation
-    
+
     /*
     USAGE EXAMPLES (unchanged from v1.0.0):
 
@@ -84,9 +82,9 @@ namespace OstPlayer.Utils
 
     2. LRUCache<TKey, TValue> Usage:
        var cache = new LRUCache<string, Metadata>(100);
-       if (!cache.TryGet(key, out var value)) 
-       { 
-           cache.Add(key, LoadValue(key)); 
+       if (!cache.TryGet(key, out var value))
+       {
+           cache.Add(key, LoadValue(key));
        }
 
     3. Debouncer Usage:
@@ -96,6 +94,6 @@ namespace OstPlayer.Utils
     All classes are now imported from OstPlayer.Utils.Performance namespace
     but remain accessible in OstPlayer.Utils for backward compatibility.
     */
-    
+
     #endregion
 }

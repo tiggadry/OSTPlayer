@@ -41,11 +41,11 @@
 // - Limited configuration options in interface
 //
 // FUTURE REFACTORING:
-// TODO: Add batch metadata operations for performance
-// TODO: Implement metadata source prioritization
-// TODO: Add metadata validation and quality scoring
-// TODO: Create specialized interfaces for each metadata source
-// TODO: Add metadata streaming for large datasets
+// FUTURE: Add batch metadata operations for performance
+// FUTURE: Implement metadata source prioritization
+// FUTURE: Add metadata validation and quality scoring
+// FUTURE: Create specialized interfaces for each metadata source
+// FUTURE: Add metadata streaming for large datasets
 // CONSIDER: Splitting into smaller, more focused interfaces
 // CONSIDER: Adding event-based metadata notifications
 // IDEA: Real-time metadata synchronization
@@ -74,109 +74,149 @@ using System.Threading.Tasks;
 using OstPlayer.Models;
 using Playnite.SDK.Models;
 
-namespace OstPlayer.Services.Interfaces
-{
+namespace OstPlayer.Services.Interfaces {
     /// <summary>
     /// Interface for metadata service providing comprehensive metadata operations.
     /// </summary>
-    public interface IMetadataService
-    {
+    public interface IMetadataService {
         #region Track Metadata Operations
-        
+
         /// <summary>
         /// Loads metadata for a specific track asynchronously.
         /// </summary>
         Task<TrackMetadataModel> LoadTrackMetadataAsync(string filePath, CancellationToken cancellationToken = default);
-        
+
         /// <summary>
         /// Loads metadata for multiple tracks with progress reporting.
         /// </summary>
-        Task<List<TrackMetadataModel>> LoadMultipleTracksMetadataAsync(IEnumerable<string> filePaths, 
+        Task<List<TrackMetadataModel>> LoadMultipleTracksMetadataAsync(IEnumerable<string> filePaths,
             IProgress<int> progress = null, CancellationToken cancellationToken = default);
-        
+
         /// <summary>
         /// Saves track metadata to cache storage.
         /// </summary>
         Task SaveTrackMetadataAsync(string filePath, TrackMetadataModel metadata, CancellationToken cancellationToken = default);
-        
+
         #endregion
-        
+
         #region Album/Game Metadata Operations
-        
+
         /// <summary>
         /// Loads album metadata for a game from external sources.
         /// </summary>
         Task<AlbumMetadataModel> LoadAlbumMetadataAsync(Game game, CancellationToken cancellationToken = default);
-        
+
         /// <summary>
         /// Loads Discogs metadata for a specific game.
         /// </summary>
-        Task<DiscogsMetadataModel> LoadDiscogsMetadataAsync(Game game, string discogsToken, 
+        Task<DiscogsMetadataModel> LoadDiscogsMetadataAsync(Game game, string discogsToken,
             CancellationToken cancellationToken = default);
-        
+
         /// <summary>
         /// Loads MusicBrainz metadata for a specific game.
         /// </summary>
         Task<MusicBrainzMetadataModel> LoadMusicBrainzMetadataAsync(Game game, CancellationToken cancellationToken = default);
-        
+
         #endregion
-        
+
         #region Cache Management
-        
+
         /// <summary>
         /// Invalidates cache for specific game or track.
         /// </summary>
         Task InvalidateCacheAsync(string key, CancellationToken cancellationToken = default);
-        
+
         /// <summary>
         /// Clears all cached metadata.
         /// </summary>
         Task ClearAllCacheAsync(CancellationToken cancellationToken = default);
-        
+
         /// <summary>
         /// Gets cache statistics and performance metrics.
         /// </summary>
         Task<CacheStatistics> GetCacheStatisticsAsync(CancellationToken cancellationToken = default);
-        
+
         #endregion
-        
+
         #region Configuration and Health
-        
+
         /// <summary>
         /// Configures metadata service with settings.
         /// </summary>
         void Configure(OstPlayerSettings settings);
-        
+
         /// <summary>
         /// Performs health check on service components.
         /// </summary>
         Task<ServiceHealthStatus> CheckHealthAsync(CancellationToken cancellationToken = default);
-        
+
         #endregion
     }
-    
+
     /// <summary>
-    /// Cache statistics for monitoring and optimization.
+    /// Statistics about cache performance.
     /// </summary>
     public class CacheStatistics
     {
+        /// <summary>
+        /// Gets or sets the total number of cache entries.
+        /// </summary>
         public int TotalEntries { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the number of cache hits.
+        /// </summary>
         public int HitCount { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the number of cache misses.
+        /// </summary>
         public int MissCount { get; set; }
-        public double HitRatio => TotalRequests > 0 ? (double)HitCount / TotalRequests : 0;
-        public int TotalRequests => HitCount + MissCount;
+        
+        /// <summary>
+        /// Gets or sets the cache hit ratio.
+        /// </summary>
+        public double HitRatio { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the total number of requests.
+        /// </summary>
+        public int TotalRequests { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the memory usage in bytes.
+        /// </summary>
         public long MemoryUsageBytes { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the average response time.
+        /// </summary>
         public TimeSpan AverageResponseTime { get; set; }
     }
-    
+
     /// <summary>
-    /// Service health status for monitoring.
+    /// Health status of a service.
     /// </summary>
     public class ServiceHealthStatus
     {
+        /// <summary>
+        /// Gets or sets whether the service is healthy.
+        /// </summary>
         public bool IsHealthy { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the status message.
+        /// </summary>
         public string Status { get; set; }
-        public Dictionary<string, string> Details { get; set; } = new Dictionary<string, string>();
+        
+        /// <summary>
+        /// Gets or sets additional details about the health status.
+        /// </summary>
+        public Dictionary<string, object> Details { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the response time for health checks.
+        /// </summary>
         public TimeSpan ResponseTime { get; set; }
     }
 }

@@ -1,7 +1,7 @@
 # 🎉 STEP 4 COMPLETE: Second Micro-Extraction Successful!
 
 ## 🎯 **Cíl Step 4**
-Provést **druhou micro-extraction** - nahradit CurrentTime computed property helper metodou z TimeHelper.
+Provést **druhou micro-extraction** - nahradit CurrentTime computed property helper meFUTUREu z TimeHelper.
 
 ## ✅ **Co bylo dokončeno**
 

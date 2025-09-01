@@ -70,12 +70,12 @@
 // - Limited configuration-based registration
 //
 // FUTURE REFACTORING:
-// TODO: Add hierarchical container support for plugin modules
-// TODO: Implement advanced AOP with interceptors and decorators
-// TODO: Add configuration-based service registration (JSON/XML)
-// TODO: Implement service health monitoring and diagnostics
-// TODO: Add service lifecycle events and notifications
-// TODO: Extract to separate NuGet package for reusability
+// FUTURE: Add hierarchical container support for plugin modules
+// FUTURE: Implement advanced AOP with interceptors and decorators
+// FUTURE: Add configuration-based service registration (JSON/XML)
+// FUTURE: Implement service health monitoring and diagnostics
+// FUTURE: Add service lifecycle events and notifications
+// FUTURE: Extract to separate NuGet package for reusability
 // CONSIDER: Integration with standard DI containers (Unity, Autofac)
 // CONSIDER: Adding fluent API for service registration
 // IDEA: Automatic service discovery through assembly scanning
@@ -94,12 +94,12 @@
 // container.RegisterSingleton<IMetadataService, MetadataService>();
 // container.RegisterTransient<IAudioService, AudioService>();
 // container.RegisterScoped<IGameService, GameService>();
-// 
+//
 // // Resolution with constructor injection
 // var service = container.GetService<IMetadataService>(); // Automatic dependency injection
-// 
+//
 // // Factory registration
-// container.RegisterFactory<IComplexService>(provider => 
+// container.RegisterFactory<IComplexService>(provider =>
 //     new ComplexService(provider.GetService<IDependency>()));
 //
 // COMPATIBILITY:
@@ -119,53 +119,94 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
-using OstPlayer.Utils;
 using OstPlayer.Services.Interfaces;
+using OstPlayer.Utils;
 using OstPlayer.ViewModels;
-using OstPlayer.Clients;
 
 namespace OstPlayer.Services
 {
-    #region Service Lifetime Enums
-
+    // Service Lifetime Enums
     /// <summary>
-    /// Defines service lifetime management strategies for dependency injection.
+    /// Defines the lifetime of services in the dependency injection container.
     /// </summary>
     public enum ServiceLifetime
     {
-        /// <summary>Single instance per application lifetime</summary>
+        /// <summary>
+        /// Single instance for the entire application lifetime.
+        /// </summary>
         Singleton,
-        /// <summary>New instance per resolution request</summary>
+        
+        /// <summary>
+        /// New instance created for each resolution request.
+        /// </summary>
         Transient,
-        /// <summary>Single instance per scope (UI context, request, etc.)</summary>
-        Scoped
+        
+        /// <summary>
+        /// Single instance per scope context.
+        /// </summary>
+        Scoped,
     }
 
-    #endregion
-
-    #region Service Descriptor
-
+    // Service Descriptor
     /// <summary>
-    /// Describes a service registration including type information, lifetime, and factory.
+    /// Describes how a service should be created and managed in the DI container.
     /// </summary>
     public class ServiceDescriptor
     {
+        /// <summary>
+        /// Gets or sets the service interface or abstract type.
+        /// </summary>
         public Type ServiceType { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the concrete implementation type.
+        /// </summary>
         public Type ImplementationType { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the service lifetime.
+        /// </summary>
         public ServiceLifetime Lifetime { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the factory function for creating service instances.
+        /// </summary>
         public Func<IServiceProvider, object> Factory { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the singleton instance for singleton services.
+        /// </summary>
         public object SingletonInstance { get; set; }
 
-        public ServiceDescriptor(Type serviceType, Type implementationType, ServiceLifetime lifetime)
+        /// <summary>
+        /// Initializes a new instance of the ServiceDescriptor class for type-based registration.
+        /// </summary>
+        /// <param name="serviceType">The service interface or abstract type.</param>
+        /// <param name="implementationType">The concrete implementation type.</param>
+        /// <param name="lifetime">The service lifetime.</param>
+        public ServiceDescriptor(
+            Type serviceType,
+            Type implementationType,
+            ServiceLifetime lifetime
+        )
         {
             ServiceType = serviceType;
             ImplementationType = implementationType;
             Lifetime = lifetime;
         }
 
-        public ServiceDescriptor(Type serviceType, Func<IServiceProvider, object> factory, ServiceLifetime lifetime)
+        /// <summary>
+        /// Initializes a new instance of the ServiceDescriptor class for factory-based registration.
+        /// </summary>
+        /// <param name="serviceType">The service interface or abstract type.</param>
+        /// <param name="factory">The factory function for creating instances.</param>
+        /// <param name="lifetime">The service lifetime.</param>
+        public ServiceDescriptor(
+            Type serviceType,
+            Func<IServiceProvider, object> factory,
+            ServiceLifetime lifetime
+        )
         {
             ServiceType = serviceType;
             Factory = factory;
@@ -173,12 +214,9 @@ namespace OstPlayer.Services
         }
     }
 
-    #endregion
-
-    #region Service Scope
-
+    // Service Scope
     /// <summary>
-    /// Manages scoped service instances with automatic disposal.
+    /// Manages scoped service instances and their disposal.
     /// </summary>
     public class ServiceScope : IDisposable
     {
@@ -186,31 +224,47 @@ namespace OstPlayer.Services
         private readonly List<IDisposable> _disposables;
         private bool _disposed = false;
 
+        /// <summary>
+        /// Initializes a new instance of the ServiceScope class.
+        /// </summary>
         public ServiceScope()
         {
             _scopedServices = new ConcurrentDictionary<Type, object>();
             _disposables = new List<IDisposable>();
         }
 
+        /// <summary>
+        /// Gets a scoped service instance, creating it if necessary.
+        /// </summary>
+        /// <typeparam name="T">The service type.</typeparam>
+        /// <param name="factory">The factory function to create the service.</param>
+        /// <returns>The scoped service instance.</returns>
         public T GetScopedService<T>(Func<T> factory)
         {
             if (_disposed)
                 throw new ObjectDisposedException(nameof(ServiceScope));
 
-            return (T)_scopedServices.GetOrAdd(typeof(T), _ =>
-            {
-                var instance = factory();
-                if (instance is IDisposable disposable)
-                {
-                    lock (_disposables)
+            return (T)
+                _scopedServices.GetOrAdd(
+                    typeof(T),
+                    _ =>
                     {
-                        _disposables.Add(disposable);
+                        var instance = factory();
+                        if (instance is IDisposable disposable)
+                        {
+                            lock (_disposables)
+                            {
+                                _disposables.Add(disposable);
+                            }
+                        }
+                        return instance;
                     }
-                }
-                return instance;
-            });
+                );
         }
 
+        /// <summary>
+        /// Disposes all scoped services and releases resources.
+        /// </summary>
         public void Dispose()
         {
             if (!_disposed)
@@ -237,43 +291,71 @@ namespace OstPlayer.Services
         }
     }
 
-    #endregion
-
-    #region Service Provider Interface
-
+    // Service Provider Interface
     /// <summary>
-    /// Interface for service resolution and dependency injection.
+    /// Provides service resolution capabilities for dependency injection.
     /// </summary>
     public interface IServiceProvider
     {
+        /// <summary>
+        /// Gets a service of the specified type.
+        /// </summary>
+        /// <typeparam name="T">The service type.</typeparam>
+        /// <returns>The service instance, or null if not registered.</returns>
         T GetService<T>();
+        
+        /// <summary>
+        /// Gets a service of the specified type.
+        /// </summary>
+        /// <param name="serviceType">The service type.</param>
+        /// <returns>The service instance, or null if not registered.</returns>
         object GetService(Type serviceType);
+        
+        /// <summary>
+        /// Gets a required service of the specified type.
+        /// </summary>
+        /// <typeparam name="T">The service type.</typeparam>
+        /// <returns>The service instance.</returns>
+        /// <exception cref="InvalidOperationException">Thrown if the service is not registered.</exception>
         T GetRequiredService<T>();
+        
+        /// <summary>
+        /// Gets a required service of the specified type.
+        /// </summary>
+        /// <param name="serviceType">The service type.</param>
+        /// <returns>The service instance.</returns>
+        /// <exception cref="InvalidOperationException">Thrown if the service is not registered.</exception>
         object GetRequiredService(Type serviceType);
+        
+        /// <summary>
+        /// Creates a new service scope for scoped service management.
+        /// </summary>
+        /// <returns>A new service scope.</returns>
         IServiceScope CreateScope();
     }
 
     /// <summary>
-    /// Interface for service scope management.
+    /// Represents a scope for managing scoped services.
     /// </summary>
     public interface IServiceScope : IDisposable
     {
+        /// <summary>
+        /// Gets the service provider for this scope.
+        /// </summary>
         IServiceProvider ServiceProvider { get; }
     }
 
-    #endregion
-
-    #region Advanced Service Container
-
+    // Advanced Service Container
     /// <summary>
-    /// Advanced dependency injection container with constructor injection and scoped services.
-    /// Implements enterprise-grade DI patterns for Phase 5 refactoring.
+    /// Advanced dependency injection container with full IoC capabilities.
     /// </summary>
     public class ServiceContainer : IServiceProvider
     {
         #region Private Fields
 
-        private static readonly Lazy<ServiceContainer> _instance = new Lazy<ServiceContainer>(() => new ServiceContainer());
+        private static readonly Lazy<ServiceContainer> _instance = new Lazy<ServiceContainer>(() =>
+            new ServiceContainer()
+        );
         private readonly ConcurrentDictionary<Type, ServiceDescriptor> _services;
         private readonly ReaderWriterLockSlim _lock;
         private readonly ThreadLocal<ServiceScope> _currentScope;
@@ -316,7 +398,11 @@ namespace OstPlayer.Services
         /// </summary>
         public void RegisterSingleton<TInterface>(Func<IServiceProvider, TInterface> factory)
         {
-            var descriptor = new ServiceDescriptor(typeof(TInterface), provider => factory(provider), ServiceLifetime.Singleton);
+            var descriptor = new ServiceDescriptor(
+                typeof(TInterface),
+                provider => factory(provider),
+                ServiceLifetime.Singleton
+            );
             _services.TryAdd(typeof(TInterface), descriptor);
         }
 
@@ -325,9 +411,13 @@ namespace OstPlayer.Services
         /// </summary>
         public void RegisterSingleton<TInterface>(TInterface instance)
         {
-            var descriptor = new ServiceDescriptor(typeof(TInterface), typeof(TInterface), ServiceLifetime.Singleton)
+            var descriptor = new ServiceDescriptor(
+                typeof(TInterface),
+                typeof(TInterface),
+                ServiceLifetime.Singleton
+            )
             {
-                SingletonInstance = instance
+                SingletonInstance = instance,
             };
             _services.TryAdd(typeof(TInterface), descriptor);
         }
@@ -346,7 +436,11 @@ namespace OstPlayer.Services
         /// </summary>
         public void RegisterTransient<TInterface>(Func<IServiceProvider, TInterface> factory)
         {
-            var descriptor = new ServiceDescriptor(typeof(TInterface), provider => factory(provider), ServiceLifetime.Transient);
+            var descriptor = new ServiceDescriptor(
+                typeof(TInterface),
+                provider => factory(provider),
+                ServiceLifetime.Transient
+            );
             _services.TryAdd(typeof(TInterface), descriptor);
         }
 
@@ -364,7 +458,11 @@ namespace OstPlayer.Services
         /// </summary>
         public void RegisterScoped<TInterface>(Func<IServiceProvider, TInterface> factory)
         {
-            var descriptor = new ServiceDescriptor(typeof(TInterface), provider => factory(provider), ServiceLifetime.Scoped);
+            var descriptor = new ServiceDescriptor(
+                typeof(TInterface),
+                provider => factory(provider),
+                ServiceLifetime.Scoped
+            );
             _services.TryAdd(typeof(TInterface), descriptor);
         }
 
@@ -374,19 +472,31 @@ namespace OstPlayer.Services
 
         private void RegisterSingleton(Type serviceType, Type implementationType)
         {
-            var descriptor = new ServiceDescriptor(serviceType, implementationType, ServiceLifetime.Singleton);
+            var descriptor = new ServiceDescriptor(
+                serviceType,
+                implementationType,
+                ServiceLifetime.Singleton
+            );
             _services.TryAdd(serviceType, descriptor);
         }
 
         private void RegisterTransient(Type serviceType, Type implementationType)
         {
-            var descriptor = new ServiceDescriptor(serviceType, implementationType, ServiceLifetime.Transient);
+            var descriptor = new ServiceDescriptor(
+                serviceType,
+                implementationType,
+                ServiceLifetime.Transient
+            );
             _services.TryAdd(serviceType, descriptor);
         }
 
         private void RegisterScoped(Type serviceType, Type implementationType)
         {
-            var descriptor = new ServiceDescriptor(serviceType, implementationType, ServiceLifetime.Scoped);
+            var descriptor = new ServiceDescriptor(
+                serviceType,
+                implementationType,
+                ServiceLifetime.Scoped
+            );
             _services.TryAdd(serviceType, descriptor);
         }
 
@@ -431,7 +541,9 @@ namespace OstPlayer.Services
             var service = GetService(serviceType);
             if (service == null)
             {
-                throw new InvalidOperationException($"Service of type {serviceType.Name} is not registered");
+                throw new InvalidOperationException(
+                    $"Service of type {serviceType.Name} is not registered"
+                );
             }
             return service;
         }
@@ -444,11 +556,13 @@ namespace OstPlayer.Services
         {
             // Get thread-local resolution stack
             var resolutionStack = _resolutionStack.Value;
-            
+
             // Check for circular dependencies
             if (resolutionStack.Contains(descriptor.ServiceType))
             {
-                throw new InvalidOperationException($"Circular dependency detected for service {descriptor.ServiceType.Name}");
+                throw new InvalidOperationException(
+                    $"Circular dependency detected for service {descriptor.ServiceType.Name}"
+                );
             }
 
             try
@@ -467,7 +581,9 @@ namespace OstPlayer.Services
                         return GetOrCreateScoped(descriptor);
 
                     default:
-                        throw new ArgumentException($"Unknown service lifetime: {descriptor.Lifetime}");
+                        throw new ArgumentException(
+                            $"Unknown service lifetime: {descriptor.Lifetime}"
+                        );
                 }
             }
             finally
@@ -520,12 +636,15 @@ namespace OstPlayer.Services
                 return CreateInstanceWithConstructorInjection(descriptor.ImplementationType);
             }
 
-            throw new InvalidOperationException($"Cannot create instance for service {descriptor.ServiceType.Name}");
+            throw new InvalidOperationException(
+                $"Cannot create instance for service {descriptor.ServiceType.Name}"
+            );
         }
 
         private object CreateInstanceWithConstructorInjection(Type implementationType)
         {
-            var constructors = implementationType.GetConstructors()
+            var constructors = implementationType
+                .GetConstructors()
                 .OrderByDescending(c => c.GetParameters().Length)
                 .ToArray();
 
@@ -561,7 +680,9 @@ namespace OstPlayer.Services
                 return Activator.CreateInstance(implementationType);
             }
 
-            throw new InvalidOperationException($"Cannot resolve constructor dependencies for {implementationType.Name}");
+            throw new InvalidOperationException(
+                $"Cannot resolve constructor dependencies for {implementationType.Name}"
+            );
         }
 
         #endregion
@@ -646,7 +767,9 @@ namespace OstPlayer.Services
 
             if (errors.Any())
             {
-                throw new InvalidOperationException($"Service validation failed:\n{string.Join("\n", errors)}");
+                throw new InvalidOperationException(
+                    $"Service validation failed:\n{string.Join("\n", errors)}"
+                );
             }
         }
 
@@ -670,6 +793,9 @@ namespace OstPlayer.Services
 
         #region IDisposable Implementation
 
+        /// <summary>
+        /// Disposes the service container and releases all resources.
+        /// </summary>
         public void Dispose()
         {
             _lock?.Dispose();
@@ -679,13 +805,9 @@ namespace OstPlayer.Services
         #endregion
     }
 
-    #endregion
-
-    #region Enhanced Service Initializer
-
+    // Enhanced Service Initializer
     /// <summary>
-    /// Enhanced service initializer for Phase 5 DI implementation.
-    /// Registers all application services with proper dependency injection.
+    /// Utility class for initializing services in the DI container.
     /// </summary>
     public static class ServiceInitializer
     {
@@ -724,16 +846,23 @@ namespace OstPlayer.Services
                 // Register ViewModels with transient lifetime for proper state management
                 // Only register ViewModels that actually exist
                 container.RegisterTransient<OstPlayerSidebarViewModel, OstPlayerSidebarViewModel>();
-                container.RegisterTransient<OstPlayerSettingsViewModel, OstPlayerSettingsViewModel>();
+                container.RegisterTransient<
+                    OstPlayerSettingsViewModel,
+                    OstPlayerSettingsViewModel
+                >();
 
                 // Validate all service registrations
                 container.ValidateServices();
 
-                System.Diagnostics.Debug.WriteLine("Phase 5 DI Container initialized successfully with all services registered.");
+                System.Diagnostics.Debug.WriteLine(
+                    "Phase 5 DI Container initialized successfully with all services registered."
+                );
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Failed to initialize DI container: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine(
+                    $"Failed to initialize DI container: {ex.Message}"
+                );
                 throw; // Re-throw to prevent plugin startup with invalid DI state
             }
         }
@@ -777,5 +906,4 @@ namespace OstPlayer.Services
             return report.ToString();
         }
     }
-    #endregion
 }

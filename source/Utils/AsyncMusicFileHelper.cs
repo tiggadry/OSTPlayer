@@ -49,14 +49,14 @@
 // - Limited error recovery options
 //
 // FUTURE REFACTORING:
-// TODO: Add parallel processing for metadata loading
-// TODO: Implement configurable batch sizes
-// TODO: Add support for additional audio formats
-// TODO: Improve error handling with partial retry
-// TODO: Add file system watcher integration
-// TODO: Implement metadata streaming for large collections
-// TODO: Add configurable progress reporting intervals
-// TODO: Extract progress models to shared namespace
+// FUTURE: Add parallel processing for metadata loading
+// FUTURE: Implement configurable batch sizes
+// FUTURE: Add support for additional audio formats
+// FUTURE: Improve error handling with partial retry
+// FUTURE: Add file system watcher integration
+// FUTURE: Implement metadata streaming for large collections
+// FUTURE: Add configurable progress reporting intervals
+// FUTURE: Extract progress models to shared namespace
 // CONSIDER: Using Parallel.ForEach for CPU-bound operations
 // CONSIDER: Adding memory pressure monitoring
 // IDEA: Predictive loading based on user behavior
@@ -97,8 +97,7 @@ using System.Threading.Tasks;
 using Playnite.SDK;
 using Playnite.SDK.Models;
 
-namespace OstPlayer.Utils
-{
+namespace OstPlayer.Utils {
     #region Progress Reporting Models
 
     /// <summary>
@@ -106,37 +105,35 @@ namespace OstPlayer.Utils
     /// PURPOSE: Provides UI feedback during file enumeration processes
     /// THREAD SAFETY: Immutable data transfer object (safe for cross-thread access)
     /// </summary>
-    public class FileProgressInfo
-    {
+    public class FileProgressInfo {
         /// <summary>Current number of files processed</summary>
         public int Current { get; set; }
-        
+
         /// <summary>Total number of files to process</summary>
         public int Total { get; set; }
-        
+
         /// <summary>Calculated completion percentage (0-100)</summary>
         public double PercentComplete => Total > 0 ? (double)Current / Total * 100 : 0;
     }
-    
+
     /// <summary>
     /// Progress information for metadata loading operations
     /// PURPOSE: Detailed feedback for expensive metadata extraction processes
     /// UI BINDING: Suitable for progress bars, status text, and cancel buttons
     /// </summary>
-    public class MetadataProgressInfo
-    {
+    public class MetadataProgressInfo {
         /// <summary>Current number of files with loaded metadata</summary>
         public int Current { get; set; }
-        
+
         /// <summary>Total number of files to process</summary>
         public int Total { get; set; }
-        
+
         /// <summary>Name of currently processing file (without extension for UI)</summary>
         public string CurrentFile { get; set; }
-        
+
         /// <summary>Calculated completion percentage (0-100)</summary>
         public double PercentComplete => Total > 0 ? (double)Current / Total * 100 : 0;
-        
+
         /// <summary>Estimated time remaining based on current progress rate</summary>
         public TimeSpan? EstimatedTimeRemaining { get; set; }
     }
@@ -149,8 +146,7 @@ namespace OstPlayer.Utils
     /// PERFORMANCE: Designed for large collections without blocking UI thread
     /// CANCELLATION: Full cancellation support for responsive user experience
     /// </summary>
-    public static class AsyncMusicFileHelper
-    {
+    public static class AsyncMusicFileHelper {
         #region File Discovery with Progress Reporting
 
         /// <summary>
@@ -165,11 +161,10 @@ namespace OstPlayer.Utils
         /// <param name="cancellationToken">Cancellation token for operation abort</param>
         /// <returns>Sorted list of MP3 file paths</returns>
         public static async Task<List<string>> GetGameMusicFilesAsync(
-            IPlayniteAPI api, 
-            Game game, 
+            IPlayniteAPI api,
+            Game game,
             IProgress<FileProgressInfo> progress = null,
-            CancellationToken cancellationToken = default)
-        {
+            CancellationToken cancellationToken = default) {
             // INPUT VALIDATION: Early exit for null game (consistent with synchronous version)
             if (game == null)
                 return new List<string>();
@@ -180,50 +175,44 @@ namespace OstPlayer.Utils
                 return new List<string>();
 
             // ASYNC EXECUTION: Move file operations to background thread
-            return await Task.Run(async () =>
-            {
-                try
-                {
+            return await Task.Run(async () => {
+                try {
                     // FILE ENUMERATION: Get all MP3 files in directory
                     // SCOPE: TopDirectoryOnly for performance (same as sync version)
                     var files = Directory.GetFiles(musicPath, "*.mp3", SearchOption.TopDirectoryOnly);
                     var sortedFiles = new List<string>();
-                    
+
                     // PROGRESS PROCESSING: Add files one by one with progress reporting
-                    for (int i = 0; i < files.Length; i++)
-                    {
+                    for (int i = 0; i < files.Length; i++) {
                         // CANCELLATION CHECK: Respond to cancellation requests promptly
                         // TIMING: Check before each file to ensure responsiveness
                         cancellationToken.ThrowIfCancellationRequested();
-                        
+
                         // FILE PROCESSING: Add file to result list
                         sortedFiles.Add(files[i]);
-                        
+
                         // PROGRESS REPORTING: Update progress for UI feedback
-                        progress?.Report(new FileProgressInfo 
-                        { 
-                            Current = i + 1, 
-                            Total = files.Length 
+                        progress?.Report(new FileProgressInfo {
+                            Current = i + 1,
+                            Total = files.Length
                         });
-                        
+
                         // YIELD POINT: Periodic yielding for UI responsiveness
                         // FREQUENCY: Every 10 files balances responsiveness with overhead
                         // PURPOSE: Allows UI thread to process updates and handle cancellation
                         if (i % 10 == 0)
                             await Task.Delay(1, cancellationToken);
                     }
-                    
+
                     // SORTING: Apply same alphabetical sorting as synchronous version
                     // PERFORMANCE: Sort once at end rather than maintaining sorted order during processing
                     return sortedFiles.OrderBy(f => Path.GetFileNameWithoutExtension(f)).ToList();
                 }
-                catch (OperationCanceledException)
-                {
+                catch (OperationCanceledException) {
                     // CANCELLATION HANDLING: Re-throw cancellation to preserve async cancellation semantics
                     throw; // Proper async cancellation pattern
                 }
-                catch (Exception)
-                {
+                catch (Exception) {
                     // ERROR HANDLING: Convert all other exceptions to empty result
                     // CONSISTENCY: Same graceful degradation as synchronous version
                     // ERRORS: File access, permission, I/O, path too long, etc.
@@ -249,45 +238,41 @@ namespace OstPlayer.Utils
         public static async Task<Dictionary<string, Models.TrackMetadataModel>> LoadMetadataForFilesAsync(
             IEnumerable<string> filePaths,
             IProgress<MetadataProgressInfo> progress = null,
-            CancellationToken cancellationToken = default)
-        {
+            CancellationToken cancellationToken = default) {
             // COLLECTION MATERIALIZATION: Convert to list for count and indexing
             // PERFORMANCE: Single enumeration to avoid multiple iterations
             var files = filePaths.ToList();
             var results = new Dictionary<string, Models.TrackMetadataModel>();
-            
+
             // SEQUENTIAL PROCESSING: Process files one by one for memory efficiency
             // ALTERNATIVE: Could use Parallel.ForEach for CPU-bound metadata extraction
-            for (int i = 0; i < files.Count; i++)
-            {
+            for (int i = 0; i < files.Count; i++) {
                 // CANCELLATION CHECK: Allow prompt cancellation between files
                 cancellationToken.ThrowIfCancellationRequested();
-                
+
                 var filePath = files[i];
-                
+
                 // PROGRESS REPORTING: Detailed progress with current file information
-                progress?.Report(new MetadataProgressInfo 
-                { 
-                    Current = i + 1, 
-                    Total = files.Count, 
-                    CurrentFile = Path.GetFileNameWithoutExtension(filePath) 
+                progress?.Report(new MetadataProgressInfo {
+                    Current = i + 1,
+                    Total = files.Count,
+                    CurrentFile = Path.GetFileNameWithoutExtension(filePath)
                 });
-                
+
                 // METADATA EXTRACTION: Delegate to synchronous reader in background
                 // ASYNC WRAPPING: Use Task.Run to avoid blocking calling thread
                 // ERROR ISOLATION: Individual file failures don't stop entire operation
                 var metadata = await Task.Run(() => Mp3MetadataReader.ReadMetadata(filePath), cancellationToken);
-                if (metadata != null)
-                {
+                if (metadata != null) {
                     results[filePath] = metadata;
                 }
                 // IMPLICIT: Failed metadata reads are silently skipped (logged elsewhere if needed)
-                
+
                 // RESPONSIVENESS: Small delay to allow UI updates and cancellation processing
                 // BALANCE: 1ms delay provides responsiveness without significant overhead
                 await Task.Delay(1, cancellationToken);
             }
-            
+
             return results;
         }
 
@@ -304,32 +289,27 @@ namespace OstPlayer.Utils
         /// <param name="filePath">Path to audio file to validate</param>
         /// <param name="cancellationToken">Cancellation token for operation abort</param>
         /// <returns>true if file appears to be playable, false otherwise</returns>
-        public static async Task<bool> ValidateMusicFileAsync(string filePath, CancellationToken cancellationToken = default)
-        {
+        public static async Task<bool> ValidateMusicFileAsync(string filePath, CancellationToken cancellationToken = default) {
             // INPUT VALIDATION: Check basic file existence before expensive validation
             if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
                 return false;
-                
+
             // ASYNC VALIDATION: Move validation to background thread
-            return await Task.Run(() =>
-            {
-                try
-                {
+            return await Task.Run(() => {
+                try {
                     // CANCELLATION CHECK: Respond to cancellation before expensive operation
                     cancellationToken.ThrowIfCancellationRequested();
-                    
+
                     // NAUDIO VALIDATION: Use NAudio to verify file can be opened for playback
                     // LIGHTWEIGHT: Creates reader but doesn't read audio data
                     // VERIFICATION: Checks file format, headers, and basic structure
-                    using (var audioFileReader = new NAudio.Wave.AudioFileReader(filePath))
-                    {
+                    using (var audioFileReader = new NAudio.Wave.AudioFileReader(filePath)) {
                         // DURATION CHECK: Valid audio files should have positive duration
                         // CORRUPTION DETECTION: Corrupted files often report zero duration
                         return audioFileReader.TotalTime.TotalSeconds > 0;
                     }
                 }
-                catch
-                {
+                catch {
                     // ERROR HANDLING: Any exception indicates file is not playable
                     // EXCEPTIONS: Format not supported, corrupted file, access denied, etc.
                     // PHILOSOPHY: Conservative approach - if validation fails, assume unplayable
@@ -417,7 +397,7 @@ namespace OstPlayer.Utils
         INTEGRATION RECOMMENDATIONS:
 
         1. UI Progress Binding:
-           var progress = new Progress<FileProgressInfo>(info => 
+           var progress = new Progress<FileProgressInfo>(info =>
            {
                ProgressBar.Value = info.PercentComplete;
                StatusText.Text = $"Processing {info.Current} of {info.Total} files...";

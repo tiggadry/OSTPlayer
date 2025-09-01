@@ -47,10 +47,10 @@
 // - File I/O operations are optimized for small files
 //
 // FUTURE REFACTORING:
-// TODO: Add timezone support for international development
-// TODO: Add custom date format options
-// TODO: Add validation for date ranges
-// TODO: Implement backup functionality for file updates
+// FUTURE: Add timezone support for international development
+// FUTURE: Add custom date format options
+// FUTURE: Add validation for date ranges
+// FUTURE: Implement backup functionality for file updates
 // CONSIDER: Add localization support for different date formats
 // CONSIDER: Add async file operations for large projects
 //
@@ -73,10 +73,9 @@
 // ====================================================================
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace OstPlayer.DevTools
@@ -87,9 +86,18 @@ namespace OstPlayer.DevTools
     public static class DateHelper
     {
         // Constants for file header patterns
-        private static readonly Regex UpdatedDateRegex = new Regex(@"// UPDATED: (\d{4}-\d{2}-\d{2})", RegexOptions.Compiled);
-        private static readonly Regex ChangelogRegex = new Regex(@"// CHANGELOG:", RegexOptions.Compiled);
-        private static readonly Regex VersionRegex = new Regex(@"// VERSION: (.+)", RegexOptions.Compiled);
+        private static readonly Regex UpdatedDateRegex = new Regex(
+            @"// UPDATED: (\d{4}-\d{2}-\d{2})",
+            RegexOptions.Compiled
+        );
+        private static readonly Regex ChangelogRegex = new Regex(
+            @"// CHANGELOG:",
+            RegexOptions.Compiled
+        );
+        private static readonly Regex VersionRegex = new Regex(
+            @"// VERSION: (.+)",
+            RegexOptions.Compiled
+        );
 
         #region Basic Date Formatting
 
@@ -185,13 +193,13 @@ namespace OstPlayer.DevTools
 
                 var content = File.ReadAllText(filePath, Encoding.UTF8);
                 var changelogEntry = GetChangelogEntry(version, description);
-                
+
                 var changelogMatch = ChangelogRegex.Match(content);
                 if (changelogMatch.Success)
                 {
                     var insertIndex = changelogMatch.Index + changelogMatch.Length;
                     var updatedContent = content.Insert(insertIndex, $"\n{changelogEntry}");
-                    
+
                     File.WriteAllText(filePath, updatedContent, Encoding.UTF8);
                     return true;
                 }
@@ -241,13 +249,13 @@ namespace OstPlayer.DevTools
         private static List<string> GetProjectFiles(string projectPath)
         {
             var files = new List<string>();
-            
+
             // Add C# files
             files.AddRange(Directory.GetFiles(projectPath, "*.cs", SearchOption.AllDirectories));
-            
+
             // Add documentation files
             files.AddRange(Directory.GetFiles(projectPath, "*.md", SearchOption.AllDirectories));
-            
+
             // Add PowerShell scripts
             files.AddRange(Directory.GetFiles(projectPath, "*.ps1", SearchOption.AllDirectories));
 
@@ -264,7 +272,7 @@ namespace OstPlayer.DevTools
             try
             {
                 var content = File.ReadAllText(filePath, Encoding.UTF8);
-                
+
                 // Check for valid date format in UPDATED field
                 var updatedMatch = UpdatedDateRegex.Match(content);
                 if (updatedMatch.Success)
@@ -272,7 +280,9 @@ namespace OstPlayer.DevTools
                     var dateString = updatedMatch.Groups[1].Value;
                     if (!IsValidDateFormat(dateString))
                     {
-                        issues.Add($"{filePath}: Invalid date format in UPDATED field: {dateString}");
+                        issues.Add(
+                            $"{filePath}: Invalid date format in UPDATED field: {dateString}"
+                        );
                     }
                 }
             }
@@ -289,8 +299,13 @@ namespace OstPlayer.DevTools
         /// <returns>True if valid format, false otherwise</returns>
         private static bool IsValidDateFormat(string dateString)
         {
-            return DateTime.TryParseExact(dateString, "yyyy-MM-dd", null, 
-                System.Globalization.DateTimeStyles.None, out _);
+            return DateTime.TryParseExact(
+                dateString,
+                "yyyy-MM-dd",
+                null,
+                System.Globalization.DateTimeStyles.None,
+                out _
+            );
         }
 
         #endregion
@@ -314,7 +329,10 @@ namespace OstPlayer.DevTools
         /// <param name="filePath">Path to the file to update</param>
         /// <param name="operationType">Type of operation for validation context</param>
         /// <returns>True if successfully updated, false otherwise</returns>
-        public static bool UpdateFileHeaderWithValidation(string filePath, AIOperationType operationType = AIOperationType.RoutineUpdate)
+        public static bool UpdateFileHeaderWithValidation(
+            string filePath,
+            AIOperationType operationType = AIOperationType.RoutineUpdate
+        )
         {
             try
             {
@@ -325,8 +343,11 @@ namespace OstPlayer.DevTools
 
                 // Get validated current date
                 var validatedDate = DateValidationService.GetValidatedCurrentDate();
-                var validationResult = DateValidationService.ValidateForAI(validatedDate, operationType);
-                
+                var validationResult = DateValidationService.ValidateForAI(
+                    validatedDate,
+                    operationType
+                );
+
                 if (!validationResult.IsValid)
                 {
                     // Log validation error but don't fail the operation
@@ -334,7 +355,10 @@ namespace OstPlayer.DevTools
                 }
 
                 var content = File.ReadAllText(filePath, Encoding.UTF8);
-                var updatedContent = UpdatedDateRegex.Replace(content, $"// UPDATED: {validatedDate}");
+                var updatedContent = UpdatedDateRegex.Replace(
+                    content,
+                    $"// UPDATED: {validatedDate}"
+                );
 
                 if (content != updatedContent)
                 {
@@ -359,7 +383,12 @@ namespace OstPlayer.DevTools
         /// <param name="description">Description of changes</param>
         /// <param name="operationType">Type of operation for validation</param>
         /// <returns>True if successfully added, false otherwise</returns>
-        public static bool AddValidatedChangelogEntry(string filePath, string version, string description, AIOperationType operationType = AIOperationType.VersionRelease)
+        public static bool AddValidatedChangelogEntry(
+            string filePath,
+            string version,
+            string description,
+            AIOperationType operationType = AIOperationType.VersionRelease
+        )
         {
             try
             {
@@ -370,8 +399,11 @@ namespace OstPlayer.DevTools
 
                 // Get validated date
                 var validatedDate = DateValidationService.GetValidatedCurrentDate();
-                var validationResult = DateValidationService.ValidateForAI(validatedDate, operationType);
-                
+                var validationResult = DateValidationService.ValidateForAI(
+                    validatedDate,
+                    operationType
+                );
+
                 if (!validationResult.IsValid)
                 {
                     return false;
@@ -379,13 +411,13 @@ namespace OstPlayer.DevTools
 
                 var content = File.ReadAllText(filePath, Encoding.UTF8);
                 var changelogEntry = $"{validatedDate} v{version} - {description}";
-                
+
                 var changelogMatch = ChangelogRegex.Match(content);
                 if (changelogMatch.Success)
                 {
                     var insertIndex = changelogMatch.Index + changelogMatch.Length;
                     var updatedContent = content.Insert(insertIndex, $"\n{changelogEntry}");
-                    
+
                     File.WriteAllText(filePath, updatedContent, Encoding.UTF8);
                     return true;
                 }
@@ -421,10 +453,10 @@ namespace OstPlayer.DevTools
 
                 var content = File.ReadAllText(filePath, Encoding.UTF8);
                 var originalContent = content;
-                
+
                 // Use provided date or get validated current date
                 var dateToUse = targetDate ?? DateValidationService.GetValidatedCurrentDate();
-                
+
                 // CRITICAL: Only replace the UPDATED line, preserve everything else
                 var updatedLine = $"// UPDATED: {dateToUse}";
                 var newContent = UpdatedDateRegex.Replace(content, updatedLine);
@@ -454,7 +486,12 @@ namespace OstPlayer.DevTools
         /// <param name="description">Description of changes</param>
         /// <param name="targetDate">Specific date to use (if null, uses current date)</param>
         /// <returns>True if successfully added, false otherwise</returns>
-        public static bool SafelyAddChangelogEntry(string filePath, string version, string description, string targetDate = null)
+        public static bool SafelyAddChangelogEntry(
+            string filePath,
+            string version,
+            string description,
+            string targetDate = null
+        )
         {
             try
             {
@@ -464,17 +501,17 @@ namespace OstPlayer.DevTools
                 }
 
                 var content = File.ReadAllText(filePath, Encoding.UTF8);
-                
+
                 // Use provided date or get validated current date
                 var dateToUse = targetDate ?? DateValidationService.GetValidatedCurrentDate();
                 var changelogEntry = $"{dateToUse} v{version} - {description}";
-                
+
                 var changelogMatch = ChangelogRegex.Match(content);
                 if (changelogMatch.Success)
                 {
                     var insertIndex = changelogMatch.Index + changelogMatch.Length;
                     var updatedContent = content.Insert(insertIndex, $"\n{changelogEntry}");
-                    
+
                     File.WriteAllText(filePath, updatedContent, Encoding.UTF8);
                     return true;
                 }
@@ -500,7 +537,7 @@ namespace OstPlayer.DevTools
             {
                 FilePath = filePath,
                 IsValid = true,
-                MissingSections = new List<string>()
+                MissingSections = new List<string>(),
             };
 
             try
@@ -513,17 +550,17 @@ namespace OstPlayer.DevTools
                 }
 
                 var content = File.ReadAllText(filePath, Encoding.UTF8);
-                
+
                 // Check for critical documentation sections
                 var requiredSections = new Dictionary<string, string>
                 {
-                    {"LIMITATIONS", "// LIMITATIONS:"},
-                    {"FUTURE_REFACTORING", "// FUTURE REFACTORING:"},
-                    {"TODO_ITEMS", "// TODO:"},
-                    {"TESTING", "// TESTING:"},
-                    {"COMPATIBILITY", "// COMPATIBILITY:"},
-                    {"CONSIDER_ITEMS", "// CONSIDER:"},
-                    {"IDEA_ITEMS", "// IDEA:"}
+                    { "LIMITATIONS", "// LIMITATIONS:" },
+                    { "FUTURE_REFACTORING", "// FUTURE REFACTORING:" },
+                    { "FUTURE_ITEMS", "// FUTURE:" },
+                    { "TESTING", "// TESTING:" },
+                    { "COMPATIBILITY", "// COMPATIBILITY:" },
+                    { "CONSIDER_ITEMS", "// CONSIDER:" },
+                    { "IDEA_ITEMS", "// IDEA:" },
                 };
 
                 foreach (var section in requiredSections)
@@ -565,7 +602,7 @@ namespace OstPlayer.DevTools
 
                 var content = File.ReadAllText(filePath, Encoding.UTF8);
                 var versionMatch = VersionRegex.Match(content);
-                
+
                 return versionMatch.Success ? versionMatch.Groups[1].Value.Trim() : null;
             }
             catch (Exception)
@@ -589,12 +626,12 @@ namespace OstPlayer.DevTools
                 }
 
                 var content = File.ReadAllText(filePath, Encoding.UTF8);
-                
+
                 // Check for basic header elements
-                return content.Contains("// FILE:") && 
-                       content.Contains("// PROJECT:") && 
-                       content.Contains("// VERSION:") &&
-                       content.Contains("// UPDATED:");
+                return content.Contains("// FILE:")
+                    && content.Contains("// PROJECT:")
+                    && content.Contains("// VERSION:")
+                    && content.Contains("// UPDATED:");
             }
             catch (Exception)
             {
@@ -609,14 +646,25 @@ namespace OstPlayer.DevTools
 #region Supporting Types for Header Protection
 
 /// <summary>
-/// Result of header integrity validation to detect AI content deletion.
+/// Result of header validation indicating file path and validation status.
 /// </summary>
 public class HeaderValidationResult
 {
+    /// <summary>
+    /// Gets or sets the file path that was validated.
+    /// </summary>
     public string FilePath { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether the header validation passed.
+    /// </summary>
     public bool IsValid { get; set; }
+
+    /// <summary>
+    /// Gets or sets the list of missing sections found during validation.
+    /// </summary>
     public List<string> MissingSections { get; set; } = new List<string>();
-    
+
     /// <summary>
     /// Gets human-readable description of validation issues.
     /// </summary>
@@ -626,7 +674,7 @@ public class HeaderValidationResult
         {
             return "Header integrity validated - all sections present";
         }
-        
+
         return $"Header validation failed - missing sections: {string.Join(", ", MissingSections)}";
     }
 }

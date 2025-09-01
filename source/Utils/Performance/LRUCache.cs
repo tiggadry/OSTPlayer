@@ -53,13 +53,13 @@
 // - Basic eviction policy (no TTL or advanced algorithms)
 //
 // FUTURE REFACTORING:
-// TODO: Add cache statistics and performance monitoring
-// TODO: Implement multiple eviction policies (LFU, FIFO, TTL)
-// TODO: Add async cache eviction for better performance
-// TODO: Extract cache interface for pluggable implementations
-// TODO: Add cache persistence and restore capabilities
-// TODO: Implement cache warming strategies
-// TODO: Add memory pressure-aware cache sizing
+// FUTURE: Add cache statistics and performance monitoring
+// FUTURE: Implement multiple eviction policies (LFU, FIFO, TTL)
+// FUTURE: Add async cache eviction for better performance
+// FUTURE: Extract cache interface for pluggable implementations
+// FUTURE: Add cache persistence and restore capabilities
+// FUTURE: Implement cache warming strategies
+// FUTURE: Add memory pressure-aware cache sizing
 // CONSIDER: Adding cache events for monitoring and debugging
 // CONSIDER: Implementing distributed cache support
 //
@@ -79,7 +79,6 @@
 // 2025-08-06 v1.0.0 - Extracted from PerformanceOptimizations.cs for better modularity
 // ====================================================================
 
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
@@ -101,17 +100,17 @@ namespace OstPlayer.Utils.Performance
         // CAPACITY: Fixed at construction time, determines eviction behavior
         // PERFORMANCE: Larger capacity = less eviction overhead, more memory usage
         private readonly int _maxSize;
-        
+
         // Fast lookup table mapping keys to linked list nodes
         // PERFORMANCE: O(1) average case lookup, uses TKey's GetHashCode() and Equals()
         // THREAD SAFETY: ConcurrentDictionary provides thread-safe operations
         private readonly ConcurrentDictionary<TKey, LinkedListNode<CacheItem>> _cache;
-        
+
         // Linked list maintaining access order (most recent first, least recent last)
         // ORDER: Head = most recently used, Tail = least recently used (eviction candidate)
         // OPERATIONS: Add to front, remove from back, move to front on access
         private readonly LinkedList<CacheItem> _lruList;
-        
+
         // Synchronization object for coordinating linked list operations
         // NECESSITY: LinkedList<T> is not thread-safe, requires external synchronization
         // SCOPE: Protects both linked list and eviction logic
@@ -150,7 +149,7 @@ namespace OstPlayer.Utils.Performance
         public bool TryGet(TKey key, out TValue value)
         {
             value = default(TValue);
-            
+
             // FAST LOOKUP: Check if key exists in cache
             if (_cache.TryGetValue(key, out var node))
             {
@@ -162,12 +161,12 @@ namespace OstPlayer.Utils.Performance
                     _lruList.Remove(node);
                     _lruList.AddFirst(node);
                 }
-                
+
                 // SUCCESS: Return cached value
                 value = node.Value.Value;
                 return true;
             }
-            
+
             // CACHE MISS: Key not found
             return false;
         }
@@ -189,7 +188,7 @@ namespace OstPlayer.Utils.Performance
                 {
                     // VALUE UPDATE: Modify existing cache item
                     existingNode.Value.Value = value;
-                    
+
                     // LRU UPDATE: Move to front (most recently used)
                     _lruList.Remove(existingNode);
                     _lruList.AddFirst(existingNode);
@@ -197,8 +196,10 @@ namespace OstPlayer.Utils.Performance
                 else
                 {
                     // ADD NEW ITEM: Create new cache entry
-                    var newNode = new LinkedListNode<CacheItem>(new CacheItem { Key = key, Value = value });
-                    
+                    var newNode = new LinkedListNode<CacheItem>(
+                        new CacheItem { Key = key, Value = value }
+                    );
+
                     // CAPACITY CHECK: Evict least recently used item if at maximum capacity
                     if (_cache.Count >= _maxSize)
                     {
@@ -207,14 +208,14 @@ namespace OstPlayer.Utils.Performance
                         if (lastNode != null)
                         {
                             // CLEANUP: Remove from both data structures
-                            _lruList.RemoveLast();                           // Remove from LRU order
-                            _cache.TryRemove(lastNode.Value.Key, out _);     // Remove from lookup table
+                            _lruList.RemoveLast(); // Remove from LRU order
+                            _cache.TryRemove(lastNode.Value.Key, out _); // Remove from lookup table
                         }
                     }
-                    
+
                     // INSERTION: Add new item to front (most recently used position)
-                    _lruList.AddFirst(newNode);    // Add to LRU order (front = most recent)
-                    _cache[key] = newNode;         // Add to lookup table
+                    _lruList.AddFirst(newNode); // Add to LRU order (front = most recent)
+                    _cache[key] = newNode; // Add to lookup table
                 }
             }
         }
@@ -228,8 +229,8 @@ namespace OstPlayer.Utils.Performance
         {
             lock (_lock)
             {
-                _cache.Clear();      // Clear lookup table
-                _lruList.Clear();    // Clear LRU order list
+                _cache.Clear(); // Clear lookup table
+                _lruList.Clear(); // Clear LRU order list
             }
         }
 
@@ -262,8 +263,8 @@ namespace OstPlayer.Utils.Performance
         /// </summary>
         private class CacheItem
         {
-            public TKey Key { get; set; }       // Cache key (for eviction tracking)
-            public TValue Value { get; set; }   // Cached value
+            public TKey Key { get; set; } // Cache key (for eviction tracking)
+            public TValue Value { get; set; } // Cached value
         }
 
         #endregion

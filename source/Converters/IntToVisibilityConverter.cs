@@ -49,11 +49,11 @@
 // - Binary visibility logic only
 //
 // FUTURE REFACTORING:
-// TODO: Add parameter support for custom threshold values
-// TODO: Implement ConvertBack for two-way binding scenarios
-// TODO: Add support for decimal and floating-point numbers
-// TODO: Add range-based visibility logic (min/max parameters)
-// TODO: Consider generic numeric converter base class
+// FUTURE: Add parameter support for custom threshold values
+// FUTURE: Implement ConvertBack for two-way binding scenarios
+// FUTURE: Add support for decimal and floating-point numbers
+// FUTURE: Add range-based visibility logic (min/max parameters)
+// FUTURE: Consider generic numeric converter base class
 // CONSIDER: Multi-threshold visibility states
 // IDEA: Parameter-based comparison operators (>, >=, <, <=, ==)
 //
@@ -86,8 +86,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace OstPlayer.Converters
-{
+namespace OstPlayer.Converters {
     /// <summary>
     /// Converts int (or string representing a number) to Visibility.
     /// Returns Visible if the value > 0, otherwise Collapsed.
@@ -97,18 +96,15 @@ namespace OstPlayer.Converters
     /// - OstPlayerSidebarView.xaml: Used as a resource with the key "IntToVisibilityConverter".
     ///   Used in DataTemplate for Track List (displaying track number TrackNumber).
     /// </summary>
-    public class IntToVisibilityConverter : IValueConverter
-    {
+    public class IntToVisibilityConverter : IValueConverter {
         /// <summary>
         /// If the input value > 0, returns Visible, otherwise Collapsed.
         /// </summary>
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
             if (value == null)
                 return Visibility.Collapsed;
             int intValue;
-            if (int.TryParse(value.ToString(), out intValue))
-            {
+            if (int.TryParse(value.ToString(), out intValue)) {
                 return intValue > 0 ? Visibility.Visible : Visibility.Collapsed;
             }
             return Visibility.Collapsed;
@@ -117,8 +113,7 @@ namespace OstPlayer.Converters
         /// <summary>
         /// Not implemented, backward conversion is not needed.
         /// </summary>
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
             throw new NotImplementedException();
         }
     }

@@ -64,16 +64,16 @@
 //
 // FUTURE REFACTORING:
 // ? COMPLETED: Implement async/await pattern for all HTTP operations
-// TODO: Add comprehensive error handling with custom exceptions
-// TODO: Implement rate limiting (1 request/second)
-// TODO: Add response caching with TTL expiration
-// TODO: Support pagination for large search results
-// TODO: Extract additional metadata fields (genres, labels, etc.)
-// TODO: Add retry logic with exponential backoff
+// FUTURE: Add comprehensive error handling with custom exceptions
+// FUTURE: Implement rate limiting (1 request/second)
+// FUTURE: Add response caching with TTL expiration
+// FUTURE: Support pagination for large search results
+// FUTURE: Extract additional metadata fields (genres, labels, etc.)
+// FUTURE: Add retry logic with exponential backoff
 // ? COMPLETED: Implement HttpClient shared service pattern
 // ? COMPLETED: Add automatic GZIP/Deflate decompression support
-// TODO: Add request/response logging for debugging
-// TODO: Support advanced search queries and filters
+// FUTURE: Add request/response logging for debugging
+// FUTURE: Support advanced search queries and filters
 // CONSIDER: Adding circuit breaker pattern for resilience
 // IDEA: Fuzzy matching algorithms for better search results
 // IDEA: Integration with other MusicBrainz entities (artists, recordings)
@@ -90,25 +90,44 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace OstPlayer.Clients
-{
+namespace OstPlayer.Clients {
     /// <summary>
     /// Represents the result of a MusicBrainz release search.
     /// </summary>
-    public class MusicBrainzReleaseResult
-    {
+    public class MusicBrainzReleaseResult {
+        /// <summary>
+        /// Gets or sets the list of releases found in the search.
+        /// </summary>
         public List<Release> releases { get; set; }
     }
 
     /// <summary>
     /// Represents a single release entry from MusicBrainz.
     /// </summary>
-    public class Release
-    {
+    public class Release {
+        /// <summary>
+        /// Gets or sets the release title.
+        /// </summary>
         public string title { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the release date.
+        /// </summary>
         public string date { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the release status.
+        /// </summary>
         public string status { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the country of release.
+        /// </summary>
         public string country { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the MusicBrainz ID.
+        /// </summary>
         public string id { get; set; }
     }
 
@@ -116,8 +135,7 @@ namespace OstPlayer.Clients
     /// Client for querying the MusicBrainz API for release information.
     /// Uses shared HttpClient instance for optimal performance and connection pooling.
     /// </summary>
-    public static class MusicBrainzClient
-    {
+    public static class MusicBrainzClient {
         #region Private Static Fields
 
         /// <summary>
@@ -151,26 +169,24 @@ namespace OstPlayer.Clients
         /// CONFIGURATION: Sets User-Agent, timeout, and other required headers.
         /// </summary>
         /// <returns>Configured HttpClient instance ready for MusicBrainz API calls</returns>
-        private static HttpClient CreateHttpClient()
-        {
+        private static HttpClient CreateHttpClient() {
             // Create HttpClientHandler with automatic decompression
-            var handler = new HttpClientHandler()
-            {
+            var handler = new HttpClientHandler() {
                 AutomaticDecompression = System.Net.DecompressionMethods.GZip | System.Net.DecompressionMethods.Deflate
             };
-            
+
             var client = new HttpClient(handler);
-            
+
             // MusicBrainz API requires User-Agent header for all requests
             client.DefaultRequestHeaders.UserAgent.ParseAdd("OstPlayer/1.0 (TiggAdry/OstPlayer)");
-            
+
             // Set reasonable timeout for API requests (30 seconds)
             client.Timeout = TimeSpan.FromSeconds(30);
-            
+
             // Configure headers for optimal API performance
             // NOTE: Accept-Encoding is handled automatically by AutomaticDecompression
             client.DefaultRequestHeaders.Add("Accept", "application/json");
-            
+
             return client;
         }
 
@@ -185,8 +201,7 @@ namespace OstPlayer.Clients
         /// <param name="artist">Artist name</param>
         /// <param name="album">Album title</param>
         /// <returns>Deserialized MusicBrainzReleaseResult or null if not found</returns>
-        public static async Task<MusicBrainzReleaseResult> SearchReleaseAsync(string artist, string album)
-        {
+        public static async Task<MusicBrainzReleaseResult> SearchReleaseAsync(string artist, string album) {
             if (string.IsNullOrWhiteSpace(artist) || string.IsNullOrWhiteSpace(album))
                 return null;
 
@@ -196,11 +211,10 @@ namespace OstPlayer.Clients
                 Uri.EscapeDataString(album)
             );
 
-            try
-            {
+            try {
                 // Use shared HttpClient instance for optimal performance
                 var response = await HttpClient.GetAsync(url);
-                
+
                 if (!response.IsSuccessStatusCode)
                     return null;
 
@@ -208,14 +222,12 @@ namespace OstPlayer.Clients
                 var result = JsonConvert.DeserializeObject<MusicBrainzReleaseResult>(json);
                 return result;
             }
-            catch (HttpRequestException)
-            {
+            catch (HttpRequestException) {
                 // Return null for HTTP failures - graceful degradation
                 return null;
             }
-            catch (JsonException)
-            {
-                // Return null for JSON parsing failures - graceful degradation  
+            catch (JsonException) {
+                // Return null for JSON parsing failures - graceful degradation
                 return null;
             }
         }
@@ -228,8 +240,7 @@ namespace OstPlayer.Clients
         /// <param name="artist">Artist name</param>
         /// <param name="album">Album title</param>
         /// <returns>Deserialized MusicBrainzReleaseResult or null if not found</returns>
-        public static MusicBrainzReleaseResult SearchRelease(string artist, string album)
-        {
+        public static MusicBrainzReleaseResult SearchRelease(string artist, string album) {
             // Use GetAwaiter().GetResult() for synchronous execution
             // NOTE: This is not ideal but necessary for backward compatibility
             return SearchReleaseAsync(artist, album).GetAwaiter().GetResult();

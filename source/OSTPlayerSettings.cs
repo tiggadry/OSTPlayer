@@ -1,4 +1,4 @@
-﻿// ====================================================================
+// ====================================================================
 // FILE: OstPlayerSettings.cs
 // PROJECT: OstPlayer - Playnite Plugin for Game Soundtrack Management
 // MODULE: Models
@@ -55,12 +55,12 @@
 // - No settings migration between versions
 //
 // FUTURE REFACTORING:
-// TODO: Add settings encryption for API tokens
-// TODO: Implement settings migration for version upgrades
-// TODO: Add more granular validation with localized messages
-// TODO: Add settings backup/restore functionality
-// TODO: Implement settings profiles for different use cases
-// TODO: Add real-time settings validation UI feedback
+// FUTURE: Add settings encryption for API tokens
+// FUTURE: Implement settings migration for version upgrades
+// FUTURE: Add more granular validation with localized messages
+// FUTURE: Add settings backup/restore functionality
+// FUTURE: Implement settings profiles for different use cases
+// FUTURE: Add real-time settings validation UI feedback
 // CONSIDER: Moving validation to separate validator class
 // IDEA: Cloud sync for settings across Playnite installations
 //
@@ -82,7 +82,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Playnite.SDK;
 
 namespace OstPlayer
 {
@@ -92,8 +91,7 @@ namespace OstPlayer
     /// </summary>
     public class OstPlayerSettings : ObservableObject
     {
-        #region Private Fields
-
+        // Private Fields
         private string discogsToken = "";
         private double defaultVolume = 50.0;
         private bool autoPlayNext = true;
@@ -101,23 +99,21 @@ namespace OstPlayer
         private bool showMp3MetadataByDefault = true;
         private bool showDiscogsMetadataByDefault = true;
         private bool pausePlayniteSoundOnPlay = true;
-        
-        // **NEW**: Advanced cache settings
+
+        // Advanced cache settings
         private int metadataCacheTTLHours = 6;
         private int maxCacheSize = 2000;
         private bool enableMemoryPressureAdjustment = true;
         private bool enableCacheWarming = true;
         private int cacheCleanupIntervalMinutes = 5;
-        
-        // **NEW**: DataGrid column width settings
+
+        // DataGrid column width settings
         private double trackNumberColumnWidth = 40.0;
         private double trackTitleColumnWidth = 300.0;
         private double durationColumnWidth = 100.0;
-        
-        // FIXED: Add missing property to track column splitter position
+
+        // Track column splitter position
         private double titleDurationSplitterRatio = 0.75;
-        
-        #endregion
 
         #region Basic Plugin Settings
 
@@ -126,11 +122,11 @@ namespace OstPlayer
         /// </summary>
         public string DiscogsToken
         {
-            get => discogsToken;
-            set 
-            { 
-                discogsToken = value;
-                OnPropertyChanged();
+            get => this.discogsToken;
+            set
+            {
+                this.discogsToken = value;
+                this.OnPropertyChanged();
             }
         }
 
@@ -140,11 +136,11 @@ namespace OstPlayer
         [DefaultValue(50.0)]
         public double DefaultVolume
         {
-            get => defaultVolume;
-            set 
-            { 
-                defaultVolume = Math.Max(0, Math.Min(100, value));
-                OnPropertyChanged();
+            get => this.defaultVolume;
+            set
+            {
+                this.defaultVolume = Math.Max(0, Math.Min(100, value));
+                this.OnPropertyChanged();
             }
         }
 
@@ -154,11 +150,11 @@ namespace OstPlayer
         [DefaultValue(true)]
         public bool AutoPlayNext
         {
-            get => autoPlayNext;
-            set 
-            { 
-                autoPlayNext = value;
-                OnPropertyChanged();
+            get => this.autoPlayNext;
+            set
+            {
+                this.autoPlayNext = value;
+                this.OnPropertyChanged();
             }
         }
 
@@ -168,11 +164,11 @@ namespace OstPlayer
         [DefaultValue(true)]
         public bool PausePlayniteSoundOnPlay
         {
-            get => pausePlayniteSoundOnPlay;
-            set 
-            { 
-                pausePlayniteSoundOnPlay = value;
-                OnPropertyChanged();
+            get => this.pausePlayniteSoundOnPlay;
+            set
+            {
+                this.pausePlayniteSoundOnPlay = value;
+                this.OnPropertyChanged();
             }
         }
 
@@ -187,11 +183,11 @@ namespace OstPlayer
         [DefaultValue(40.0)]
         public double TrackNumberColumnWidth
         {
-            get => trackNumberColumnWidth;
+            get => this.trackNumberColumnWidth;
             set
             {
-                trackNumberColumnWidth = Math.Max(40, Math.Min(200, value)); // Clamp between 40-200px (expandable only)
-                OnPropertyChanged();
+                this.trackNumberColumnWidth = Math.Max(40, Math.Min(200, value)); // Clamp between 40-200px (expandable only)
+                this.OnPropertyChanged();
             }
         }
 
@@ -203,11 +199,11 @@ namespace OstPlayer
         [DefaultValue(300.0)]
         public double TrackTitleColumnWidth
         {
-            get => trackTitleColumnWidth;
+            get => this.trackTitleColumnWidth;
             set
             {
-                trackTitleColumnWidth = Math.Max(250, value); // Minimum 250px, no maximum limit for star-sizing
-                OnPropertyChanged();
+                this.trackTitleColumnWidth = Math.Max(250, value); // Minimum 250px, no maximum limit for star-sizing
+                this.OnPropertyChanged();
             }
         }
 
@@ -219,11 +215,11 @@ namespace OstPlayer
         [DefaultValue(100.0)]
         public double DurationColumnWidth
         {
-            get => durationColumnWidth;
+            get => this.durationColumnWidth;
             set
             {
-                durationColumnWidth = Math.Max(80, value); // Minimum 80px, no maximum limit for star-sizing
-                OnPropertyChanged();
+                this.durationColumnWidth = Math.Max(80, value); // Minimum 80px, no maximum limit for star-sizing
+                this.OnPropertyChanged();
             }
         }
 
@@ -235,11 +231,11 @@ namespace OstPlayer
         [DefaultValue(0.75)]
         public double TitleDurationSplitterRatio
         {
-            get => titleDurationSplitterRatio;
+            get => this.titleDurationSplitterRatio;
             set
             {
-                titleDurationSplitterRatio = Math.Max(0.2, Math.Min(0.9, value)); // Clamp between 20% and 90%
-                OnPropertyChanged();
+                this.titleDurationSplitterRatio = Math.Max(0.2, Math.Min(0.9, value)); // Clamp between 20% and 90%
+                this.OnPropertyChanged();
             }
         }
 
@@ -253,11 +249,11 @@ namespace OstPlayer
         [DefaultValue(true)]
         public bool ShowMp3MetadataByDefault
         {
-            get => showMp3MetadataByDefault;
-            set 
-            { 
-                showMp3MetadataByDefault = value;
-                OnPropertyChanged();
+            get => this.showMp3MetadataByDefault;
+            set
+            {
+                this.showMp3MetadataByDefault = value;
+                this.OnPropertyChanged();
             }
         }
 
@@ -267,11 +263,11 @@ namespace OstPlayer
         [DefaultValue(true)]
         public bool ShowDiscogsMetadataByDefault
         {
-            get => showDiscogsMetadataByDefault;
-            set 
-            { 
-                showDiscogsMetadataByDefault = value;
-                OnPropertyChanged();
+            get => this.showDiscogsMetadataByDefault;
+            set
+            {
+                this.showDiscogsMetadataByDefault = value;
+                this.OnPropertyChanged();
             }
         }
 
@@ -286,12 +282,12 @@ namespace OstPlayer
         [DefaultValue(true)]
         public bool EnableMetadataCache
         {
-            get => enableMetadataCache;
-            set 
-            { 
-                enableMetadataCache = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(IsCacheConfigurationEnabled));
+            get => this.enableMetadataCache;
+            set
+            {
+                this.enableMetadataCache = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.IsCacheConfigurationEnabled));
             }
         }
 
@@ -303,11 +299,11 @@ namespace OstPlayer
         [DefaultValue(6)]
         public int MetadataCacheTTLHours
         {
-            get => metadataCacheTTLHours;
-            set 
-            { 
-                metadataCacheTTLHours = Math.Max(1, Math.Min(72, value));
-                OnPropertyChanged();
+            get => this.metadataCacheTTLHours;
+            set
+            {
+                this.metadataCacheTTLHours = Math.Max(1, Math.Min(72, value));
+                this.OnPropertyChanged();
             }
         }
 
@@ -319,11 +315,11 @@ namespace OstPlayer
         [DefaultValue(2000)]
         public int MaxCacheSize
         {
-            get => maxCacheSize;
-            set 
-            { 
-                maxCacheSize = Math.Max(100, Math.Min(10000, value));
-                OnPropertyChanged();
+            get => this.maxCacheSize;
+            set
+            {
+                this.maxCacheSize = Math.Max(100, Math.Min(10000, value));
+                this.OnPropertyChanged();
             }
         }
 
@@ -334,11 +330,11 @@ namespace OstPlayer
         [DefaultValue(true)]
         public bool EnableMemoryPressureAdjustment
         {
-            get => enableMemoryPressureAdjustment;
-            set 
-            { 
-                enableMemoryPressureAdjustment = value;
-                OnPropertyChanged();
+            get => this.enableMemoryPressureAdjustment;
+            set
+            {
+                this.enableMemoryPressureAdjustment = value;
+                this.OnPropertyChanged();
             }
         }
 
@@ -349,11 +345,11 @@ namespace OstPlayer
         [DefaultValue(true)]
         public bool EnableCacheWarming
         {
-            get => enableCacheWarming;
-            set 
-            { 
-                enableCacheWarming = value;
-                OnPropertyChanged();
+            get => this.enableCacheWarming;
+            set
+            {
+                this.enableCacheWarming = value;
+                this.OnPropertyChanged();
             }
         }
 
@@ -365,11 +361,11 @@ namespace OstPlayer
         [DefaultValue(5)]
         public int CacheCleanupIntervalMinutes
         {
-            get => cacheCleanupIntervalMinutes;
-            set 
-            { 
-                cacheCleanupIntervalMinutes = Math.Max(1, Math.Min(60, value));
-                OnPropertyChanged();
+            get => this.cacheCleanupIntervalMinutes;
+            set
+            {
+                this.cacheCleanupIntervalMinutes = Math.Max(1, Math.Min(60, value));
+                this.OnPropertyChanged();
             }
         }
 
@@ -381,19 +377,20 @@ namespace OstPlayer
         /// Gets whether cache configuration settings are enabled.
         /// Used for UI binding to enable/disable cache options
         /// </summary>
-        public bool IsCacheConfigurationEnabled => EnableMetadataCache;
+        public bool IsCacheConfigurationEnabled => this.EnableMetadataCache;
 
         /// <summary>
         /// Gets the TTL as TimeSpan for internal use.
         /// Converts hours setting to TimeSpan for cache configuration
         /// </summary>
-        public TimeSpan MetadataCacheTTL => TimeSpan.FromHours(MetadataCacheTTLHours);
+        public TimeSpan MetadataCacheTTL => TimeSpan.FromHours(this.MetadataCacheTTLHours);
 
         /// <summary>
         /// Gets the cleanup interval as TimeSpan for internal use.
         /// Converts minutes setting to TimeSpan for cache configuration
         /// </summary>
-        public TimeSpan CacheCleanupInterval => TimeSpan.FromMinutes(CacheCleanupIntervalMinutes);
+        public TimeSpan CacheCleanupInterval =>
+            TimeSpan.FromMinutes(this.CacheCleanupIntervalMinutes);
 
         /// <summary>
         /// Gets estimated memory usage for current cache settings.
@@ -403,11 +400,11 @@ namespace OstPlayer
         {
             get
             {
-                if (!EnableMetadataCache)
+                if (!this.EnableMetadataCache)
                     return "0 MB (Cache Disabled)";
-                
+
                 // Rough estimation: ~1KB per metadata entry
-                var estimatedMB = (MaxCacheSize * 1024) / (1024 * 1024);
+                var estimatedMB = (this.MaxCacheSize * 1024) / (1024 * 1024);
                 return $"~{estimatedMB} MB";
             }
         }
@@ -424,31 +421,31 @@ namespace OstPlayer
         public List<string> Validate()
         {
             var errors = new List<string>();
-            
+
             // Basic settings validation
-            if (DefaultVolume < 0 || DefaultVolume > 100)
+            if (this.DefaultVolume < 0 || this.DefaultVolume > 100)
                 errors.Add("Default volume must be between 0 and 100");
-            
+
             // **NEW**: Advanced cache settings validation
-            if (EnableMetadataCache)
+            if (this.EnableMetadataCache)
             {
-                if (MetadataCacheTTLHours < 1 || MetadataCacheTTLHours > 72)
+                if (this.MetadataCacheTTLHours < 1 || this.MetadataCacheTTLHours > 72)
                     errors.Add("Cache TTL must be between 1 and 72 hours");
-                
-                if (MaxCacheSize < 100 || MaxCacheSize > 10000)
+
+                if (this.MaxCacheSize < 100 || this.MaxCacheSize > 10000)
                     errors.Add("Max cache size must be between 100 and 10,000 entries");
-                
-                if (CacheCleanupIntervalMinutes < 1 || CacheCleanupIntervalMinutes > 60)
+
+                if (this.CacheCleanupIntervalMinutes < 1 || this.CacheCleanupIntervalMinutes > 60)
                     errors.Add("Cache cleanup interval must be between 1 and 60 minutes");
-                
+
                 // Memory usage warning (not an error, but helpful feedback)
-                var estimatedMB = (MaxCacheSize * 1024) / (1024 * 1024);
+                var estimatedMB = (this.MaxCacheSize * 1024) / (1024 * 1024);
                 if (estimatedMB > 50)
                 {
                     errors.Add($"Warning: Large cache size may use ~{estimatedMB}MB of memory");
                 }
             }
-                
+
             return errors;
         }
 
@@ -460,39 +457,49 @@ namespace OstPlayer
         public List<string> GetPerformanceRecommendations()
         {
             var recommendations = new List<string>();
-            
-            if (!EnableMetadataCache)
+
+            if (!this.EnableMetadataCache)
             {
                 recommendations.Add("Enable metadata caching for significantly better performance");
             }
             else
             {
-                if (MetadataCacheTTLHours < 3)
+                if (this.MetadataCacheTTLHours < 3)
                 {
-                    recommendations.Add("Consider longer cache TTL (6+ hours) for external metadata to reduce API calls");
+                    recommendations.Add(
+                        "Consider longer cache TTL (6+ hours) for external metadata to reduce API calls"
+                    );
                 }
-                
-                if (MaxCacheSize < 1000)
+
+                if (this.MaxCacheSize < 1000)
                 {
-                    recommendations.Add("Consider larger cache size (2000+ entries) for better hit ratio with large music libraries");
+                    recommendations.Add(
+                        "Consider larger cache size (2000+ entries) for better hit ratio with large music libraries"
+                    );
                 }
-                
-                if (!EnableMemoryPressureAdjustment)
+
+                if (!this.EnableMemoryPressureAdjustment)
                 {
-                    recommendations.Add("Enable memory pressure adjustment for better system performance");
+                    recommendations.Add(
+                        "Enable memory pressure adjustment for better system performance"
+                    );
                 }
-                
-                if (!EnableCacheWarming)
+
+                if (!this.EnableCacheWarming)
                 {
-                    recommendations.Add("Enable cache warming for faster access to frequently played music");
+                    recommendations.Add(
+                        "Enable cache warming for faster access to frequently played music"
+                    );
                 }
-                
-                if (CacheCleanupIntervalMinutes > 15)
+
+                if (this.CacheCleanupIntervalMinutes > 15)
                 {
-                    recommendations.Add("Consider more frequent cleanup (5-10 minutes) for optimal memory usage");
+                    recommendations.Add(
+                        "Consider more frequent cleanup (5-10 minutes) for optimal memory usage"
+                    );
                 }
             }
-            
+
             return recommendations;
         }
 
@@ -507,25 +514,25 @@ namespace OstPlayer
         /// <returns>Cache configuration based on current settings</returns>
         public Services.MetadataCacheConfig CreateCacheConfig()
         {
-            if (!EnableMetadataCache)
+            if (!this.EnableMetadataCache)
             {
                 return new Services.MetadataCacheConfig
                 {
                     MaxCacheSize = 0,
                     EnableMemoryPressureAdjustment = false,
-                    EnableCacheWarming = false
+                    EnableCacheWarming = false,
                 };
             }
-            
+
             return new Services.MetadataCacheConfig
             {
-                TrackMetadataTTL = TimeSpan.FromHours(MetadataCacheTTLHours / 2), // Shorter for tracks
-                AlbumMetadataTTL = MetadataCacheTTL,                            // User setting
-                ExternalMetadataTTL = TimeSpan.FromHours(MetadataCacheTTLHours * 2), // Longer for external data
-                MaxCacheSize = MaxCacheSize,
-                CleanupInterval = CacheCleanupInterval,
-                EnableMemoryPressureAdjustment = EnableMemoryPressureAdjustment,
-                EnableCacheWarming = EnableCacheWarming
+                TrackMetadataTTL = TimeSpan.FromHours(this.MetadataCacheTTLHours / 2), // Shorter for tracks
+                AlbumMetadataTTL = this.MetadataCacheTTL, // User setting
+                ExternalMetadataTTL = TimeSpan.FromHours(this.MetadataCacheTTLHours * 2), // Longer for external data
+                MaxCacheSize = this.MaxCacheSize,
+                CleanupInterval = this.CacheCleanupInterval,
+                EnableMemoryPressureAdjustment = this.EnableMemoryPressureAdjustment,
+                EnableCacheWarming = this.EnableCacheWarming,
             };
         }
 
@@ -535,19 +542,19 @@ namespace OstPlayer
 
         /// <summary>
         /// Legacy property for backward compatibility.
-        /// **DEPRECATED**: Use MaxCacheSize instead
+        /// **DEPRECATED**: Use MaxCacheSize instead.
         /// </summary>
         [Obsolete("Use MaxCacheSize instead")]
         [DefaultValue(100)]
         public int MetadataCacheSize
         {
-            get => Math.Min(MaxCacheSize, 1000); // Clamp to old maximum
-            set 
-            { 
+            get => Math.Min(this.MaxCacheSize, 1000); // Clamp to old maximum
+            set
+            {
                 // Convert old setting to new setting
-                MaxCacheSize = Math.Max(100, Math.Min(1000, value));
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(MaxCacheSize));
+                this.MaxCacheSize = Math.Max(100, Math.Min(1000, value));
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(this.MaxCacheSize));
             }
         }
 

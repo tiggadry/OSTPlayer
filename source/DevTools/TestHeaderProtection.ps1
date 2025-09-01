@@ -30,7 +30,7 @@ Write-Host "  ?? Original file size: $originalLines lines" -ForegroundColor Cyan
 $criticalSections = @(
     "// LIMITATIONS:",
     "// FUTURE REFACTORING:", 
-    "// TODO:",
+    "// FUTURE:",
     "// TESTING:",
     "// COMPATIBILITY:",
     "// CONSIDER:",
@@ -73,15 +73,15 @@ if (-not $WhatIf) {
         }
     }
     
-    # Remove TODO section (simulate AI deletion)
-    $todoStart = $modifiedContent.IndexOf("// TODO:")
-    if ($todoStart -ge 0) {
-        $todoEnd = $modifiedContent.IndexOf("// CONSIDER:", $todoStart)
-        if ($todoEnd -lt 0) { $todoEnd = $modifiedContent.IndexOf("// TESTING:", $todoStart) }
-        if ($todoEnd -gt $todoStart) {
-            $todoSection = $modifiedContent.Substring($todoStart, $todoEnd - $todoStart)
-            $modifiedContent = $modifiedContent.Replace($todoSection, "")
-            Write-Host "  ???  Simulated deletion: TODO section" -ForegroundColor Red
+    # Remove FUTURE section (simulate AI deletion)
+    $FUTUREStart = $modifiedContent.IndexOf("// FUTURE:")
+    if ($FUTUREStart -ge 0) {
+        $FUTUREEnd = $modifiedContent.IndexOf("// CONSIDER:", $FUTUREStart)
+        if ($FUTUREEnd -lt 0) { $FUTUREEnd = $modifiedContent.IndexOf("// TESTING:", $FUTUREStart) }
+        if ($FUTUREEnd -gt $FUTUREStart) {
+            $FUTURESection = $modifiedContent.Substring($FUTUREStart, $FUTUREEnd - $FUTUREStart)
+            $modifiedContent = $modifiedContent.Replace($FUTURESection, "")
+            Write-Host "  ???  Simulated deletion: FUTURE section" -ForegroundColor Red
         }
     }
     

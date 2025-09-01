@@ -1,4 +1,4 @@
-﻿# 📋 File Header Policy for OstPlayer Project
+# 📋 File Header Policy for OstPlayer Project
 
 ## 🎯 **Purpose**
 This document defines the official policy for file headers in the OstPlayer project, specifically addressing which information should be preserved in main architecture files vs. utility files.
@@ -10,7 +10,7 @@ This document defines the official policy for file headers in the OstPlayer proj
 #### **OstPlayer.cs** - Main Plugin Entry Point
 - **RATIONALE**: Core plugin class orchestrating entire system
 - **PRESERVE SECTIONS**:
-  - 🔮 **FUTURE REFACTORING** - Plugin-level architectural TODOs
+  - 🔮 **FUTURE REFACTORING** - Plugin-level architectural FUTUREs
   - 🏗️ **DESIGN PATTERNS** - Understanding system architecture
   - 🛡️ **ERROR HANDLING STRATEGY** - Plugin-level error coordination
   - ✨ **FEATURES** - Complete plugin capabilities overview
@@ -47,7 +47,7 @@ This document defines the official policy for file headers in the OstPlayer proj
 ### 🏗️ **INCLUDE FOR MAIN ARCHITECTURE FILES:**
 6. **DESIGN PATTERNS** - Architectural patterns used
 7. **ERROR HANDLING STRATEGY** - How errors are managed
-8. **FUTURE REFACTORING** - Specific architectural TODOs
+8. **FUTURE REFACTORING** - Specific architectural FUTUREs
 9. **PERFORMANCE NOTES** - Critical performance considerations
 
 ### 🚫 **AVOID REDUNDANCY:**
@@ -80,7 +80,7 @@ LIMITATIONS, TESTING, PLAYNITE INTEGRATION, COMPATIBILITY
 ## 🤖 **AI Assistant Guidelines**
 
 ### **DO NOT suggest removing from OstPlayer.cs:**
-- FUTURE REFACTORING section (plugin-specific TODOs)
+- FUTURE REFACTORING section (plugin-specific FUTUREs)
 - DESIGN PATTERNS section (architectural understanding)
 - ERROR HANDLING STRATEGY section (new v1.2.0 feature)
 
@@ -99,7 +99,7 @@ LIMITATIONS, TESTING, PLAYNITE INTEGRATION, COMPATIBILITY
 
 | Information Type | OstPlayer.cs | Utility Files | Rationale |
 |------------------|--------------|---------------|-----------|
-| Plugin-level TODOs | ✅ Keep | ❌ Remove | Unique to main plugin |
+| Plugin-level FUTUREs | ✅ Keep | ❌ Remove | Unique to main plugin |
 | Design Patterns | ✅ Keep | ❌ Remove | Architectural understanding |
 | Error Strategy | ✅ Keep | ❌ Remove | Plugin-level coordination |
 | File-specific features | ✅ Keep | ✅ Keep | Unique to each file |

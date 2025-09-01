@@ -66,14 +66,14 @@
 // - No caching of previous search results
 //
 // FUTURE REFACTORING:
-// TODO: Add loading spinner for async search operations
-// TODO: Implement pagination for large result sets
-// TODO: Add advanced search filters (year, format, etc.)
-// TODO: Implement search result caching
-// TODO: Add retry logic for failed API calls
-// TODO: Extract search logic to separate service
-// TODO: Add keyboard navigation for result list
-// TODO: Implement search history and suggestions
+// FUTURE: Add loading spinner for async search operations
+// FUTURE: Implement pagination for large result sets
+// FUTURE: Add advanced search filters (year, format, etc.)
+// FUTURE: Implement search result caching
+// FUTURE: Add retry logic for failed API calls
+// FUTURE: Extract search logic to separate service
+// FUTURE: Add keyboard navigation for result list
+// FUTURE: Implement search history and suggestions
 // CONSIDER: Adding preview images for releases
 // CONSIDER: Implementing batch selection capabilities
 // IDEA: Integration with user's Discogs collection
@@ -101,19 +101,23 @@
 // 2025-08-06 v1.0.0 - Initial implementation with comprehensive Discogs search dialog
 // ====================================================================
 
-
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using OstPlayer.Models;
 using OstPlayer.Clients;
+using OstPlayer.Models;
 
 namespace OstPlayer.Views.Dialogs
 {
+    /// <summary>
+    /// Modal dialog window for searching and selecting music releases from Discogs API.
+    /// </summary>
     public partial class DiscogsReleaseSelectDialog : Window
     {
-        // The release selected by the user.
+        /// <summary>
+        /// Gets the release selected by the user.
+        /// </summary>
         public DiscogsMetadataModel SelectedRelease { get; private set; }
 
         // Personal Discogs API token used for authenticated requests.

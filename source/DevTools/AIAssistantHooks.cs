@@ -1,4 +1,4 @@
-﻿// ====================================================================
+// ====================================================================
 // FILE: AIAssistantHooks.cs
 // PROJECT: OstPlayer - Playnite Plugin for Game Soundtrack Management
 // MODULE: DevTools
@@ -57,10 +57,10 @@
 // - No external AI service integration (local only)
 //
 // FUTURE REFACTORING:
-// TODO: Add support for external AI service integrations
-// TODO: Implement machine learning for context prediction
-// TODO: Add support for custom hook plugins
-// TODO: Implement advanced workflow orchestration
+// FUTURE: Add support for external AI service integrations
+// FUTURE: Implement machine learning for context prediction
+// FUTURE: Add support for custom hook plugins
+// FUTURE: Implement advanced workflow orchestration
 // CONSIDER: Integration with cloud-based AI services
 // CONSIDER: Real-time collaboration features
 //
@@ -85,7 +85,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace OstPlayer.DevTools
@@ -96,15 +95,17 @@ namespace OstPlayer.DevTools
     public static class AIAssistantHooks
     {
         // Hook registry for different event types
-        private static readonly Dictionary<string, List<Func<string, Task>>> FileChangeHooks = new Dictionary<string, List<Func<string, Task>>>();
-        private static readonly Dictionary<string, List<Func<AIContext, Task>>> ContextHooks = new Dictionary<string, List<Func<AIContext, Task>>>();
-        
+        private static readonly Dictionary<string, List<Func<string, Task>>> FileChangeHooks =
+            new Dictionary<string, List<Func<string, Task>>>();
+        private static readonly Dictionary<string, List<Func<AIContext, Task>>> ContextHooks =
+            new Dictionary<string, List<Func<AIContext, Task>>>();
+
         // AI action log for analytics
         private static readonly List<AIAction> ActionLog = new List<AIAction>();
-        
+
         // Current AI context
         private static AIContext _currentContext;
-        
+
         // Hook execution settings
         private static bool _hooksEnabled = true;
         private static int _maxLogEntries = 1000;
@@ -122,9 +123,9 @@ namespace OstPlayer.DevTools
             {
                 FileChangeHooks[pattern] = new List<Func<string, Task>>();
             }
-            
+
             FileChangeHooks[pattern].Add(handler);
-            
+
             LogAIAction("RegisterFileChangeHook", true, $"Registered hook for pattern: {pattern}");
         }
 
@@ -139,10 +140,14 @@ namespace OstPlayer.DevTools
             {
                 ContextHooks[eventType] = new List<Func<AIContext, Task>>();
             }
-            
+
             ContextHooks[eventType].Add(handler);
-            
-            LogAIAction("RegisterContextHook", true, $"Registered hook for event type: {eventType}");
+
+            LogAIAction(
+                "RegisterContextHook",
+                true,
+                $"Registered hook for event type: {eventType}"
+            );
         }
 
         /// <summary>
@@ -154,7 +159,11 @@ namespace OstPlayer.DevTools
             if (FileChangeHooks.ContainsKey(pattern))
             {
                 FileChangeHooks.Remove(pattern);
-                LogAIAction("UnregisterFileChangeHooks", true, $"Unregistered hooks for pattern: {pattern}");
+                LogAIAction(
+                    "UnregisterFileChangeHooks",
+                    true,
+                    $"Unregistered hooks for pattern: {pattern}"
+                );
             }
         }
 
@@ -176,15 +185,22 @@ namespace OstPlayer.DevTools
 
             try
             {
-                LogAIAction("TriggerDocumentationUpdate", true, $"Triggered by: {reason}, Files: {string.Join(", ", affectedFiles)}");
+                LogAIAction(
+                    "TriggerDocumentationUpdate",
+                    true,
+                    $"Triggered by: {reason}, Files: {string.Join(", ", affectedFiles)}"
+                );
 
                 // Update context with current operation
-                UpdateContext("DocumentationUpdate", new Dictionary<string, object>
-                {
-                    ["Reason"] = reason,
-                    ["AffectedFiles"] = affectedFiles,
-                    ["Timestamp"] = DateTime.Now
-                });
+                UpdateContext(
+                    "DocumentationUpdate",
+                    new Dictionary<string, object>
+                    {
+                        ["Reason"] = reason,
+                        ["AffectedFiles"] = affectedFiles,
+                        ["Timestamp"] = DateTime.Now,
+                    }
+                );
 
                 // Execute registered context hooks
                 await ExecuteContextHooks("DocumentationUpdate");
@@ -203,7 +219,10 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="generationType">Type of code generation (e.g., "Class", "Method", "Property")</param>
         /// <param name="context">Generation context</param>
-        public static async Task TriggerCodeGeneration(string generationType, Dictionary<string, object> context)
+        public static async Task TriggerCodeGeneration(
+            string generationType,
+            Dictionary<string, object> context
+        )
         {
             if (!_hooksEnabled)
             {
@@ -234,7 +253,10 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="filePath">Path to the file being analyzed</param>
         /// <param name="analysisType">Type of analysis being performed</param>
-        public static async Task TriggerFileAnalysis(string filePath, string analysisType = "General")
+        public static async Task TriggerFileAnalysis(
+            string filePath,
+            string analysisType = "General"
+        )
         {
             if (!_hooksEnabled)
             {
@@ -271,7 +293,7 @@ namespace OstPlayer.DevTools
             {
                 _currentContext = CreateDefaultContext();
             }
-            
+
             return _currentContext;
         }
 
@@ -289,7 +311,7 @@ namespace OstPlayer.DevTools
 
             _currentContext.CurrentOperation = operation;
             _currentContext.LastUpdated = DateTime.Now;
-            
+
             // Merge new data with existing context
             foreach (var item in data)
             {
@@ -297,12 +319,14 @@ namespace OstPlayer.DevTools
             }
 
             // Add operation to history
-            _currentContext.OperationHistory.Add(new ContextOperation
-            {
-                Operation = operation,
-                Timestamp = DateTime.Now,
-                Data = new Dictionary<string, object>(data)
-            });
+            _currentContext.OperationHistory.Add(
+                new ContextOperation
+                {
+                    Operation = operation,
+                    Timestamp = DateTime.Now,
+                    Data = new Dictionary<string, object>(data),
+                }
+            );
 
             // Keep history manageable
             if (_currentContext.OperationHistory.Count > 50)
@@ -338,7 +362,7 @@ namespace OstPlayer.DevTools
                 Success = success,
                 Details = details,
                 Timestamp = DateTime.Now,
-                Context = _currentContext?.CurrentOperation
+                Context = _currentContext?.CurrentOperation,
             };
 
             ActionLog.Add(aiAction);
@@ -361,7 +385,7 @@ namespace OstPlayer.DevTools
             {
                 return new List<AIAction>(ActionLog);
             }
-            
+
             return ActionLog.Skip(ActionLog.Count - count).ToList();
         }
 
@@ -372,16 +396,19 @@ namespace OstPlayer.DevTools
         public static Dictionary<string, object> GetActionStatistics()
         {
             var stats = new Dictionary<string, object>();
-            
+
             if (ActionLog.Any())
             {
                 stats["TotalActions"] = ActionLog.Count;
                 stats["SuccessfulActions"] = ActionLog.Count(a => a.Success);
                 stats["FailedActions"] = ActionLog.Count(a => !a.Success);
-                stats["SuccessRate"] = (double)ActionLog.Count(a => a.Success) / ActionLog.Count * 100;
-                stats["MostCommonAction"] = ActionLog.GroupBy(a => a.Action)
+                stats["SuccessRate"] =
+                    (double)ActionLog.Count(a => a.Success) / ActionLog.Count * 100;
+                stats["MostCommonAction"] = ActionLog
+                    .GroupBy(a => a.Action)
                     .OrderByDescending(g => g.Count())
-                    .FirstOrDefault()?.Key;
+                    .FirstOrDefault()
+                    ?.Key;
                 stats["LastAction"] = ActionLog.LastOrDefault()?.Action;
                 stats["LastActionTime"] = ActionLog.LastOrDefault()?.Timestamp;
             }
@@ -417,13 +444,13 @@ namespace OstPlayer.DevTools
         public static void SetMaxLogEntries(int maxEntries)
         {
             _maxLogEntries = Math.Max(100, maxEntries);
-            
+
             // Trim current log if necessary
             while (ActionLog.Count > _maxLogEntries)
             {
                 ActionLog.RemoveAt(0);
             }
-            
+
             LogAIAction("SetMaxLogEntries", true, $"Max entries set to: {maxEntries}");
         }
 
@@ -445,7 +472,7 @@ namespace OstPlayer.DevTools
                 LastUpdated = DateTime.Now,
                 CurrentOperation = "None",
                 Data = new Dictionary<string, object>(),
-                OperationHistory = new List<ContextOperation>()
+                OperationHistory = new List<ContextOperation>(),
             };
         }
 
@@ -468,7 +495,11 @@ namespace OstPlayer.DevTools
                         }
                         catch (Exception ex)
                         {
-                            LogAIAction("ExecuteFileChangeHook", false, $"Hook error for {filePath}: {ex.Message}");
+                            LogAIAction(
+                                "ExecuteFileChangeHook",
+                                false,
+                                $"Hook error for {filePath}: {ex.Message}"
+                            );
                         }
                     }
                 }
@@ -492,7 +523,11 @@ namespace OstPlayer.DevTools
                     }
                     catch (Exception ex)
                     {
-                        LogAIAction("ExecuteContextHook", false, $"Context hook error for {eventType}: {ex.Message}");
+                        LogAIAction(
+                            "ExecuteContextHook",
+                            false,
+                            $"Context hook error for {eventType}: {ex.Message}"
+                        );
                     }
                 }
             }
@@ -503,13 +538,16 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="affectedFiles">Files that were changed</param>
         /// <param name="reason">Reason for the update</param>
-        private static Task PerformAutomaticDocumentationUpdates(string[] affectedFiles, string reason)
+        private static Task PerformAutomaticDocumentationUpdates(
+            string[] affectedFiles,
+            string reason
+        )
         {
             try
             {
                 // Get affected documentation files
                 var docsToUpdate = ProjectAnalyzer.GetAffectedDocumentationFiles(affectedFiles);
-                
+
                 foreach (var docFile in docsToUpdate)
                 {
                     // Update file headers if needed
@@ -520,7 +558,8 @@ namespace OstPlayer.DevTools
                 }
 
                 // Update module summaries
-                var modules = affectedFiles.Select(f => GetModuleFromPath(f))
+                var modules = affectedFiles
+                    .Select(f => GetModuleFromPath(f))
                     .Where(m => !string.IsNullOrEmpty(m))
                     .Distinct();
 
@@ -529,7 +568,11 @@ namespace OstPlayer.DevTools
                     DocumentationManager.UpdateModuleSummary(module, reason);
                 }
 
-                LogAIAction("PerformAutomaticDocumentationUpdates", true, $"Updated docs for {docsToUpdate.Count} files");
+                LogAIAction(
+                    "PerformAutomaticDocumentationUpdates",
+                    true,
+                    $"Updated docs for {docsToUpdate.Count} files"
+                );
             }
             catch (Exception ex)
             {
@@ -544,12 +587,15 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="generationType">Type of generation</param>
         /// <param name="context">Generation context</param>
-        private static Task ProvideSuggestions(string generationType, Dictionary<string, object> context)
+        private static Task ProvideSuggestions(
+            string generationType,
+            Dictionary<string, object> context
+        )
         {
             // This would integrate with AI services to provide suggestions
             // For now, we'll just log the suggestion opportunity
             LogAIAction("ProvideSuggestions", true, $"Suggestions available for {generationType}");
-            
+
             // Update context with suggestion metadata
             _currentContext.Data["LastSuggestionType"] = generationType;
             _currentContext.Data["SuggestionContext"] = context;
@@ -567,19 +613,20 @@ namespace OstPlayer.DevTools
             {
                 var module = GetModuleFromPath(filePath);
                 var fileType = Path.GetExtension(filePath);
-                
+
                 _currentContext.Data["LastAnalyzedFile"] = filePath;
                 _currentContext.Data["LastAnalyzedModule"] = module;
                 _currentContext.Data["LastAnalyzedFileType"] = fileType;
-                
+
                 // Update project statistics
                 if (!_currentContext.Data.ContainsKey("AnalyzedFilesCount"))
                 {
                     _currentContext.Data["AnalyzedFilesCount"] = 0;
                 }
-                
-                _currentContext.Data["AnalyzedFilesCount"] = (int)_currentContext.Data["AnalyzedFilesCount"] + 1;
-                
+
+                _currentContext.Data["AnalyzedFilesCount"] =
+                    (int)_currentContext.Data["AnalyzedFilesCount"] + 1;
+
                 LogAIAction("UpdateProjectContext", true, $"Updated context for {filePath}");
             }
             catch (Exception ex)
@@ -598,9 +645,21 @@ namespace OstPlayer.DevTools
         private static string GetModuleFromPath(string filePath)
         {
             var pathParts = filePath.Replace('\\', '/').Split('/');
-            var modules = new[] { "ViewModels", "Models", "Utils", "Services", "Clients", "Views", "Converters", "DevTools" };
-            
-            return pathParts.FirstOrDefault(part => modules.Contains(part, StringComparer.OrdinalIgnoreCase));
+            var modules = new[]
+            {
+                "ViewModels",
+                "Models",
+                "Utils",
+                "Services",
+                "Clients",
+                "Views",
+                "Converters",
+                "DevTools",
+            };
+
+            return pathParts.FirstOrDefault(part =>
+                modules.Contains(part, StringComparer.OrdinalIgnoreCase)
+            );
         }
 
         /// <summary>
@@ -616,19 +675,19 @@ namespace OstPlayer.DevTools
             {
                 return true;
             }
-            
+
             if (pattern.StartsWith("*."))
             {
                 var extension = pattern.Substring(1);
                 return filePath.EndsWith(extension, StringComparison.OrdinalIgnoreCase);
             }
-            
+
             if (pattern.EndsWith("/*"))
             {
                 var directory = pattern.Substring(0, pattern.Length - 2);
                 return filePath.Contains(directory);
             }
-            
+
             return filePath.Contains(pattern);
         }
 

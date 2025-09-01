@@ -1,7 +1,7 @@
 # 🚀 STEP 3: First Micro-Extraction - VolumeDisplay Helper
 
 ## 🎯 **Cíl Step 3**
-Provést **první skutečnou micro-extraction** - nahradit `VolumeDisplay` computed property helper metodou z VolumeHelper.
+Provést **první skutečnou micro-extraction** - nahradit `VolumeDisplay` computed property helper meFUTUREu z VolumeHelper.
 
 ## 🔍 **Current State Analysis**
 

@@ -72,14 +72,14 @@ LIMITATIONS:
 - No runtime language switching
 
 FUTURE REFACTORING:
-TODO: Add comprehensive string resource definitions
-TODO: Implement multi-language support framework
-TODO: Add context-aware resource organization
-TODO: Create localization testing and validation
-TODO: Add pluralization and formatting support
-TODO: Implement runtime language switching
-TODO: Add right-to-left language support
-TODO: Create localization workflow and tools
+FUTURE: Add comprehensive string resource definitions
+FUTURE: Implement multi-language support framework
+FUTURE: Add context-aware resource organization
+FUTURE: Create localization testing and validation
+FUTURE: Add pluralization and formatting support
+FUTURE: Implement runtime language switching
+FUTURE: Add right-to-left language support
+FUTURE: Create localization workflow and tools
 CONSIDER: Automatic translation integration
 CONSIDER: Community-driven localization support
 IDEA: Dynamic content localization

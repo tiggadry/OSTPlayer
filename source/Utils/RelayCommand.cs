@@ -51,14 +51,14 @@
 // - No command composition or chaining support
 //
 // FUTURE REFACTORING:
-// TODO: Implement CanExecuteChanged event with CommandManager integration
-// TODO: Add generic parameter support for type safety
-// TODO: Create async command variant for long-running operations
-// TODO: Add command composition capabilities
-// TODO: Extract to shared UI utilities library
-// TODO: Add command logging and debugging support
-// TODO: Implement command history and undo capabilities
-// TODO: Add command validation and error handling
+// FUTURE: Implement CanExecuteChanged event with CommandManager integration
+// FUTURE: Add generic parameter support for type safety
+// FUTURE: Create async command variant for long-running operations
+// FUTURE: Add command composition capabilities
+// FUTURE: Extract to shared UI utilities library
+// FUTURE: Add command logging and debugging support
+// FUTURE: Implement command history and undo capabilities
+// FUTURE: Add command validation and error handling
 // CONSIDER: Creating specialized command types (AsyncRelayCommand)
 // CONSIDER: Adding command parameter validation
 // IDEA: Command middleware for cross-cutting concerns
@@ -87,23 +87,21 @@
 using System;
 using System.Windows.Input;
 
-namespace OstPlayer.Utils
-{
+namespace OstPlayer.Utils {
     /// <summary>
     /// RelayCommand implements ICommand, allowing you to bind UI actions to methods in MVVM.
     /// DESIGN PATTERN: Command Pattern implementation for WPF MVVM architecture
     /// THREAD SAFETY: Thread-safe execution (delegates handle their own thread safety)
     /// PERFORMANCE: Lightweight implementation with minimal memory overhead
     /// </summary>
-    public class RelayCommand : ICommand
-    {
+    public class RelayCommand : ICommand {
         #region Private Fields - Command Delegates
 
         // The action to execute when the command is invoked.
         // PARAMETER: object parameter passed from XAML CommandParameter binding
         // THREAD SAFETY: Execution thread safety depends on the provided action
         private readonly Action<object> execute;
-        
+
         // Predicate to determine if the command can execute (enables/disables UI elements).
         // RETURN VALUE: true = UI element enabled, false = UI element disabled
         // UI BINDING: Automatically controls Button.IsEnabled, MenuItem.IsEnabled, etc.
@@ -121,8 +119,7 @@ namespace OstPlayer.Utils
         /// </summary>
         /// <param name="execute">Action to execute when command is invoked</param>
         /// <param name="canExecute">Optional predicate to determine if command can execute</param>
-        public RelayCommand(Action<object> execute, Predicate<object> canExecute = null)
-        {
+        public RelayCommand(Action<object> execute, Predicate<object> canExecute = null) {
             this.execute = execute;
             this.canExecute = canExecute;
         }
@@ -140,8 +137,7 @@ namespace OstPlayer.Utils
         /// </summary>
         /// <param name="parameter">Command parameter from UI binding</param>
         /// <returns>true if command can execute, false if UI should be disabled</returns>
-        public bool CanExecute(object parameter)
-        {
+        public bool CanExecute(object parameter) {
             // DEFAULT BEHAVIOR: If no canExecute predicate provided, command is always available
             // ALTERNATIVE: Could return false by default for more defensive programming
             // PERFORMANCE: Null check is faster than delegate invocation
@@ -155,8 +151,7 @@ namespace OstPlayer.Utils
         /// PARAMETER: Object from XAML CommandParameter binding or programmatic calls
         /// </summary>
         /// <param name="parameter">Command parameter from UI binding</param>
-        public void Execute(object parameter)
-        {
+        public void Execute(object parameter) {
             // DIRECT EXECUTION: No null check for performance (constructor validation assumed)
             // EXCEPTION BEHAVIOR: Any exceptions bubble up to WPF command system
             // THREADING: Executes synchronously on calling thread
@@ -165,42 +160,41 @@ namespace OstPlayer.Utils
 
         /// <summary>
         /// Event required by ICommand, used to notify the UI when CanExecute changes.
-        /// 
+        ///
         /// CRITICAL LIMITATION: Not implemented here (no add/remove logic)!
-        /// 
+        ///
         /// IMPACT: UI elements will NOT automatically refresh their enabled state
         /// when underlying conditions change. This can lead to:
         /// - Buttons staying disabled when they should become enabled
         /// - Menu items not reflecting current application state
         /// - Poor user experience with "stuck" UI states
-        /// 
+        ///
         /// WORKAROUNDS for automatic UI updates:
         /// 1. Manual refresh: Call CommandManager.InvalidateRequerySuggested()
         /// 2. Property change: Trigger PropertyChanged on bound properties
         /// 3. Event subscription: Manually subscribe to relevant change events
         /// 4. ViewModel refresh: Recreate command instances when state changes
-        /// 
+        ///
         /// PROPER IMPLEMENTATION would be:
         /// add { CommandManager.RequerySuggested += value; }
         /// remove { CommandManager.RequerySuggested -= value; }
-        /// 
+        ///
         /// WHY NOT IMPLEMENTED:
         /// - Simplicity: Reduces complexity for basic scenarios
         /// - Performance: Avoids CommandManager overhead for static commands
         /// - Control: Allows manual control over when UI updates occur
-        /// 
+        ///
         /// WHEN TO USE THIS LIMITATION:
         /// - Commands that never change availability
         /// - Performance-critical scenarios
         /// - Custom refresh logic implementation
-        /// 
+        ///
         /// WHEN TO AVOID:
         /// - Dynamic command availability based on application state
         /// - Complex multi-step workflows
         /// - Commands dependent on selection or data changes
         /// </summary>
-        public event EventHandler CanExecuteChanged
-        {
+        public event EventHandler CanExecuteChanged {
             // EMPTY IMPLEMENTATION: No actual event subscription logic
             // CONSEQUENCE: CanExecuteChanged event will never be raised
             // UI REFRESH: Manual intervention required for command state updates
@@ -217,30 +211,30 @@ namespace OstPlayer.Utils
 
         1. Simple Command (always enabled):
            var saveCommand = new RelayCommand(param => SaveFile());
-           
+
         2. Command with Parameter:
            var deleteCommand = new RelayCommand(param => DeleteItem((string)param));
-           
+
         3. Command with CanExecute:
            var submitCommand = new RelayCommand(
-               param => SubmitForm(), 
+               param => SubmitForm(),
                param => IsFormValid()
            );
-           
+
         4. XAML Binding:
            <Button Command="{Binding SaveCommand}" Content="Save" />
-           <Button Command="{Binding DeleteCommand}" 
-                   CommandParameter="{Binding SelectedItem.Id}" 
+           <Button Command="{Binding DeleteCommand}"
+                   CommandParameter="{Binding SelectedItem.Id}"
                    Content="Delete" />
 
         MANUAL UI REFRESH TECHNIQUES:
 
         1. CommandManager approach:
            CommandManager.InvalidateRequerySuggested();
-           
+
         2. Property change approach:
            OnPropertyChanged(nameof(CanSave));
-           
+
         3. Command recreation approach:
            SaveCommand = new RelayCommand(param => Save(), param => CanSave());
 

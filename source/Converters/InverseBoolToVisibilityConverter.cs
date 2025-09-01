@@ -50,11 +50,11 @@
 // - Fixed inverse logic behavior
 //
 // FUTURE REFACTORING:
-// TODO: Add parameter support for configurable inversion
-// TODO: Add support for Visibility.Hidden state
-// TODO: Consider nullable boolean handling
-// TODO: Add custom true/false value mapping
-// TODO: Extract to generic boolean converter base
+// FUTURE: Add parameter support for configurable inversion
+// FUTURE: Add support for Visibility.Hidden state
+// FUTURE: Consider nullable boolean handling
+// FUTURE: Add custom true/false value mapping
+// FUTURE: Extract to generic boolean converter base
 // CONSIDER: Multi-value converter for complex boolean logic
 // IDEA: Parameter-based visibility state mapping
 //
@@ -86,8 +86,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace OstPlayer.Converters
-{
+namespace OstPlayer.Converters {
     /// <summary>
     /// Converts bool to Visibility, but inversely.
     /// true ? Collapsed, false ? Visible.
@@ -97,13 +96,11 @@ namespace OstPlayer.Converters
     /// - OstPlayerSidebarView.xaml: Used as a resource with the key "InverseBoolToVisibilityConverter".
     ///   Used for buttons "Show MP3 metadata" and "Show Discogs metadata" (Visibility binding).
     /// </summary>
-    public class InverseBoolToVisibilityConverter : IValueConverter
-    {
+    public class InverseBoolToVisibilityConverter : IValueConverter {
         /// <summary>
         /// true ? Collapsed, false ? Visible
         /// </summary>
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
             if (value is bool b)
                 return b ? Visibility.Collapsed : Visibility.Visible;
             return Visibility.Visible;
@@ -112,8 +109,7 @@ namespace OstPlayer.Converters
         /// <summary>
         /// Collapsed ? true, Visible ? false
         /// </summary>
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
             if (value is Visibility v)
                 return v != Visibility.Visible;
             return true;

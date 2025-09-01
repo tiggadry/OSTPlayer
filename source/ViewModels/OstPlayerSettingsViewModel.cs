@@ -51,12 +51,12 @@
 // - Limited error handling for corrupted settings
 //
 // FUTURE REFACTORING:
-// TODO: Add async settings loading/saving
-// TODO: Implement comprehensive settings validation
-// TODO: Add settings import/export functionality
-// TODO: Add settings migration support
-// TODO: Implement user notification for validation errors
-// TODO: Add settings backup before major changes
+// FUTURE: Add async settings loading/saving
+// FUTURE: Implement comprehensive settings validation
+// FUTURE: Add settings import/export functionality
+// FUTURE: Add settings migration support
+// FUTURE: Implement user notification for validation errors
+// FUTURE: Add settings backup before major changes
 // CONSIDER: Extracting validation to separate service
 // IDEA: Real-time settings synchronization
 //
@@ -84,14 +84,15 @@ using System.Collections.Generic;
 using Playnite.SDK;
 using Playnite.SDK.Data;
 
-namespace OstPlayer.ViewModels
-{
+namespace OstPlayer.ViewModels {
     /// <summary>
     /// ViewModel for plugin settings, implements Playnite's ISettings interface.
     /// Handles loading, editing, and saving settings.
     /// </summary>
-    public class OstPlayerSettingsViewModel : ObservableObject, ISettings
-    {
+    public class OstPlayerSettingsViewModel : ObservableObject, ISettings {
+        /// <summary>
+        /// Reference to the main plugin instance.
+        /// </summary>
         public readonly OstPlayer plugin;
         private OstPlayerSettings editingClone { get; set; }
 
@@ -99,11 +100,9 @@ namespace OstPlayer.ViewModels
         /// <summary>
         /// Current settings instance for binding and editing.
         /// </summary>
-        public OstPlayerSettings Settings
-        {
+        public OstPlayerSettings Settings {
             get => settings;
-            set
-            {
+            set {
                 settings = value;
                 OnPropertyChanged();
             }
@@ -112,8 +111,7 @@ namespace OstPlayer.ViewModels
         /// <summary>
         /// Loads settings from disk or initializes defaults.
         /// </summary>
-        public OstPlayerSettingsViewModel(OstPlayer plugin)
-        {
+        public OstPlayerSettingsViewModel(OstPlayer plugin) {
             this.plugin = plugin;
             var savedSettings = plugin.LoadPluginSettings<OstPlayerSettings>();
             Settings = savedSettings ?? new OstPlayerSettings();
@@ -122,32 +120,28 @@ namespace OstPlayer.ViewModels
         /// <summary>
         /// Begins editing session (creates a clone for cancel support).
         /// </summary>
-        public void BeginEdit()
-        {
+        public void BeginEdit() {
             editingClone = Serialization.GetClone(Settings);
         }
 
         /// <summary>
         /// Cancels editing and reverts changes to the last saved state.
         /// </summary>
-        public void CancelEdit()
-        {
+        public void CancelEdit() {
             Settings = editingClone;
         }
 
         /// <summary>
         /// Saves the current settings.
         /// </summary>
-        public void EndEdit()
-        {
+        public void EndEdit() {
             plugin.SavePluginSettings(Settings);
         }
 
         /// <summary>
         /// Verifies settings before saving. Returns true if valid.
         /// </summary>
-        public bool VerifySettings(out List<string> errors)
-        {
+        public bool VerifySettings(out List<string> errors) {
             errors = new List<string>();
             return true;
         }

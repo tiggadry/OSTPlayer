@@ -57,11 +57,11 @@
 // - Binary visibility logic only
 //
 // FUTURE REFACTORING:
-// TODO: Add parameter support for custom metadata validation
-// TODO: Implement ConvertBack for two-way binding scenarios
-// TODO: Add support for metadata quality/completeness checks
-// TODO: Consider generic external metadata visibility converter
-// TODO: Add metadata loading state visualization
+// FUTURE: Add parameter support for custom metadata validation
+// FUTURE: Implement ConvertBack for two-way binding scenarios
+// FUTURE: Add support for metadata quality/completeness checks
+// FUTURE: Consider generic external metadata visibility converter
+// FUTURE: Add metadata loading state visualization
 // CONSIDER: Extracting to configurable service metadata converter
 // IDEA: Parameter-based metadata validation rules
 //
@@ -93,8 +93,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace OstPlayer.Converters
-{
+namespace OstPlayer.Converters {
     /// <summary>
     /// MultiValueConverter for the Visibility of the GroupBox with Discogs metadata.
     /// Displays the GroupBox only if IsDiscogsMetadataVisible == true and metadata exists (DiscogsMetadata != null).
@@ -103,13 +102,11 @@ namespace OstPlayer.Converters
     /// - OstPlayerSidebarView.xaml: Used as a resource with the key "DiscogsGroupBoxVisibilityConverter".
     ///   Used in MultiBinding for the Visibility of the GroupBox with Discogs metadata.
     /// </summary>
-    public class DiscogsGroupBoxVisibilityConverter : IMultiValueConverter
-    {
+    public class DiscogsGroupBoxVisibilityConverter : IMultiValueConverter {
         /// <summary>
         /// Returns Visible only if IsDiscogsMetadataVisible == true and DiscogsMetadata != null.
         /// </summary>
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-        {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
             // values[0] = IsDiscogsMetadataVisible (bool)
             // values[1] = DiscogsMetadata (object)
             bool isVisible = values[0] is bool b && b;
@@ -120,8 +117,7 @@ namespace OstPlayer.Converters
         /// <summary>
         /// Not implemented, backward conversion is not needed.
         /// </summary>
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) {
             throw new NotImplementedException();
         }
     }

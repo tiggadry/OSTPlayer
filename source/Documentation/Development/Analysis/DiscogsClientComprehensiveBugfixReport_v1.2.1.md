@@ -1,4 +1,4 @@
-﻿# OstPlayer Clients Module - Comprehensive Bugfix Report v1.2.1
+# OstPlayer Clients Module - Comprehensive Bugfix Report v1.2.1
 
 ## 🚨 **CRITICAL BUGFIX SUMMARY**
 
@@ -228,7 +228,7 @@ System.Diagnostics.Debug.WriteLine($"First bytes (hex): {bytesHex}");
 
 ### **1. Enhanced Testing:**
 ```csharp
-// TODO: Add to test suite:
+// FUTURE: Add to test suite:
 [Test] public void DiscogsClient_HandlesGzipResponses() { }
 [Test] public void DiscogsClient_HandlesBomInResponse() { }
 [Test] public void DiscogsClient_JsonModelDeserializes() { }

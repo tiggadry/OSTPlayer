@@ -1,4 +1,4 @@
-﻿# OstPlayer XAML Command Binding Refactoring - Complete Summary
+# OstPlayer XAML Command Binding Refactoring - Complete Summary
 
 ## Overview
 Successfully completed comprehensive XAML Command Binding refactoring across the OstPlayer project, establishing consistent MVVM architecture by eliminating Click event handlers in favor of proper command binding patterns. This refactoring enhances maintainability, testability, and architectural consistency throughout the application.
@@ -146,7 +146,7 @@ RefreshDiscogsMetadataCommand = new Utils.RelayCommand(async _ =>
 
 ### **Phase 1: RelayCommand Enhancement (v1.3.0)**
 ```csharp
-// TODO: Implement proper CanExecuteChanged event
+// FUTURE: Implement proper CanExecuteChanged event
 public event EventHandler CanExecuteChanged
 {
     add { CommandManager.RequerySuggested += value; }

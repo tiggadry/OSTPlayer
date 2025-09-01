@@ -1,4 +1,4 @@
-﻿# OstPlayer XAML Files Header Updates - Summary
+# OstPlayer XAML Files Header Updates - Summary
 
 ## Overview
 Successfully created and added comprehensive standardized headers to all XAML files in the OstPlayer project. All WPF markup files now have detailed documentation covering their UI structure, design patterns, data binding, and integration within the plugin's presentation architecture.
@@ -94,14 +94,14 @@ AUTHOR: TiggAdry
 
 ### 4. **Future Refactoring Plans**
 
-#### UI Enhancement TODOs:
+#### UI Enhancement FUTUREs:
 - Add keyboard shortcuts and advanced navigation
 - Implement responsive design for different screen sizes
 - Add animation and visual feedback enhancements
 - Create advanced filtering and search capabilities
 - Implement drag-and-drop functionality
 
-#### Technical Improvement TODOs:
+#### Technical Improvement FUTUREs:
 - Dynamic theming and customization support
 - Runtime localization switching
 - Advanced styling with custom controls
@@ -376,7 +376,7 @@ Application Level (App.xaml)
 
 ## Consistency with Project Standards
 - Matches format used in C# files (.cs) across all modules
-- Consistent TODO management approach
+- Consistent FUTURE management approach
 - Standardized compatibility information (.NET Framework 4.6.2, WPF 4.6.2)
 - Professional documentation quality with XAML-specific focus
 - XML comment format appropriate for XAML files

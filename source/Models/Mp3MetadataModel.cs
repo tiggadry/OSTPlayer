@@ -60,14 +60,14 @@
 // - No support for custom ID3 frames
 //
 // FUTURE REFACTORING:
-// TODO: Implement IMetadataModel interface for consistency
-// TODO: Add support for additional audio formats
-// TODO: Extract cover art to separate model/service
-// TODO: Add custom ID3 frame reading capabilities
-// TODO: Implement metadata validation and quality scoring
-// TODO: Add support for embedded lyrics extraction
-// TODO: Extract TrackInfo to separate model file
-// TODO: Add metadata source confidence tracking
+// FUTURE: Implement IMetadataModel interface for consistency
+// FUTURE: Add support for additional audio formats
+// FUTURE: Extract cover art to separate model/service
+// FUTURE: Add custom ID3 frame reading capabilities
+// FUTURE: Implement metadata validation and quality scoring
+// FUTURE: Add support for embedded lyrics extraction
+// FUTURE: Extract TrackInfo to separate model file
+// FUTURE: Add metadata source confidence tracking
 // CONSIDER: Separating album-level vs track-level metadata
 // CONSIDER: Streaming cover art without base64 encoding
 // IDEA: Automatic metadata correction and enhancement
@@ -99,85 +99,81 @@
 using System;
 using System.Collections.Generic;
 
-namespace OstPlayer.Models
-{
+namespace OstPlayer.Models {
     /// <summary>
     /// Model for storing metadata of a single MP3 file extracted via TagLibSharp.
     /// Provides comprehensive ID3 tag support with intelligent redundancy handling.
     /// See: https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1
     /// </summary>
-    public class Mp3MetadataModel
-    {
+    public class Mp3MetadataModel {
         #region Private Fields
-        
+
         /// <summary>
         /// Internal storage for track title to support custom Album property logic.
         /// </summary>
         private string title;
-        
+
         /// <summary>
         /// Internal storage for album name to enable redundancy detection with title.
         /// </summary>
         private string album;
-        
+
         #endregion
-        
+
         #region Core Metadata Properties
-        
+
         /// <summary>
         /// Gets or sets the track title from ID3 tag.
         /// This property is used internally for Album redundancy detection.
         /// Reference: ID3v2.4 specification - TIT2 frame (Title/songname/content description)
         /// </summary>
-        public string Title
-        {
+        public string Title {
             get => title;
             set => title = value;
         }
-        
+
         /// <summary>
         /// Gets or sets the performing artist from ID3 tag.
         /// Maps to ID3v2 TPE1 frame (Lead performer(s)/Soloist(s))
         /// Reference: https://id3.org/id3v2.4.0-frames
         /// </summary>
         public string Artist { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the album name with intelligent redundancy handling.
         /// Returns null if album name is identical to title to avoid UI duplication.
         /// Maps to ID3v2 TALB frame (Album/Movie/Show title)
         /// </summary>
-        public string Album
-        {
+        public string Album {
             get => (album == title) ? null : album; // Avoid redundant display when album equals title
             set => album = value;
         }
-        
+
         /// <summary>
         /// Gets or sets the release or recording year as string (e.g., "2001").
         /// Maps to ID3v2 TYER frame (Year) or TDRC frame (Recording time) for ID3v2.4
         /// Reference: https://id3.org/id3v2.4.0-frames (TDRC)
         /// </summary>
         public string Year { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the music genre from ID3 tag.
         /// Maps to ID3v2 TCON frame (Content type/Genre)
         /// Can contain standard ID3v1 genre numbers or custom text
         /// </summary>
         public string Genre { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the comment from ID3 tag (e.g., "Game OST", "Remastered").
         /// Maps to ID3v2 COMM frame (Comments)
         /// Often used for additional context or categorization
         /// </summary>
         public string Comment { get; set; }
-        
+
         #endregion
-        
+
         #region Media and Extended Properties
-        
+
         /// <summary>
         /// Gets or sets the album cover in base64 format for UI display.
         /// Extracted from ID3v2 APIC frame (Attached picture)
@@ -185,7 +181,7 @@ namespace OstPlayer.Models
         /// Reference: https://id3.org/id3v2.4.0-frames (APIC)
         /// </summary>
         public string CoverBase64 { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the list of tracks within a single file or album.
         /// Supports multi-track files, embedded cue sheets, and compilation albums.
@@ -193,11 +189,11 @@ namespace OstPlayer.Models
         /// See: <see cref="TrackInfo"/> class for individual track structure
         /// </summary>
         public List<TrackInfo> Tracks { get; set; }
-        
+
         #endregion
-        
+
         #region Utility Methods
-        
+
         /// <summary>
         /// Sanitizes input string by removing characters not allowed in file names.
         /// Uses System.IO.Path.GetInvalidFileNameChars() for platform-specific validation.
@@ -209,17 +205,16 @@ namespace OstPlayer.Models
         /// <example>
         /// string safe = Mp3MetadataModel.Sanitize("Track: Title/Artist"); // Returns "Track Title Artist"
         /// </example>
-        public static string Sanitize(string input)
-        {
+        public static string Sanitize(string input) {
             // Remove all characters that are invalid for filenames on this platform
             // This approach preserves all valid characters while removing problematic ones
             return string.Concat(input.Split(System.IO.Path.GetInvalidFileNameChars()));
         }
-        
+
         #endregion
-        
+
         #region Nested Classes
-        
+
         /// <summary>
         /// Represents a single track within an MP3 file for multi-track scenarios.
         /// Supports embedded cue sheets, compilation albums, and complex track structures.
@@ -229,14 +224,13 @@ namespace OstPlayer.Models
         /// This nested class could be extracted to its own file in future refactoring
         /// for better separation of concerns and reusability across metadata models.
         /// </remarks>
-        public class TrackInfo
-        {
+        public class TrackInfo {
             /// <summary>
             /// Gets or sets the individual track title.
             /// May differ from parent Mp3MetadataModel.Title in multi-track files.
             /// </summary>
             public string Title { get; set; }
-            
+
             /// <summary>
             /// Gets or sets the track duration as TimeSpan for precise time calculations.
             /// Allows for easy formatting: duration.ToString(@"mm\:ss") for UI display.
@@ -247,13 +241,13 @@ namespace OstPlayer.Models
             /// string formatted = trackInfo.Duration.ToString(@"mm\:ss"); // "03:15"
             /// </example>
             public TimeSpan Duration { get; set; }
-            
+
             /// <summary>
             /// Gets or sets the track number in album (1-based indexing, e.g., 2 for second track).
             /// Corresponds to ID3v2 TRCK frame (Track number/Position in set)
             /// </summary>
             public uint TrackNumber { get; set; }
-            
+
             /// <summary>
             /// Gets or sets the total number of tracks in album (e.g., 12 for 12-track album).
             /// Used with TrackNumber to display "2/12" style track position indicators.
@@ -261,7 +255,7 @@ namespace OstPlayer.Models
             /// </summary>
             public uint TotalTracks { get; set; }
         }
-        
+
         #endregion
     }
 }

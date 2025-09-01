@@ -103,18 +103,18 @@
 // - Some complex UI operations still require code-behind
 //
 // FUTURE REFACTORING:
-// TODO: Extract dialog management to separate service
-// TODO: Implement async UI operation indicators
-// TODO: Add keyboard shortcut support for refresh operations
-// TODO: Extract external process launching to utility
-// TODO: Implement UI state persistence across sessions
-// TODO: Add drag-and-drop support for music files
-// TODO: Extract event handling to behavior classes
-// TODO: Implement progressive UI loading for large collections
-// TODO: Add context menu support for metadata operations
-// TODO: Extract image preview functionality to service
-// TODO: Convert remaining event handlers to Behaviors
-// TODO: Implement advanced ComboBox filtering with Behaviors
+// FUTURE: Extract dialog management to separate service
+// FUTURE: Implement async UI operation indicators
+// FUTURE: Add keyboard shortcut support for refresh operations
+// FUTURE: Extract external process launching to utility
+// FUTURE: Implement UI state persistence across sessions
+// FUTURE: Add drag-and-drop support for music files
+// FUTURE: Extract event handling to behavior classes
+// FUTURE: Implement progressive UI loading for large collections
+// FUTURE: Add context menu support for metadata operations
+// FUTURE: Extract image preview functionality to service
+// FUTURE: Convert remaining event handlers to Behaviors
+// FUTURE: Implement advanced ComboBox filtering with Behaviors
 // CONSIDER: Dependency injection for dialog services
 // CONSIDER: Complete elimination of code-behind
 // IDEA: Real-time UI state synchronization
@@ -158,10 +158,10 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using OstPlayer.Models;
+using OstPlayer.Utils;
 using OstPlayer.ViewModels;
 using OstPlayer.Views.Dialogs;
 using OstPlayer.Views.Windows;
-using OstPlayer.Utils;
 using Playnite.SDK.Models;
 
 namespace OstPlayer.Views
@@ -181,6 +181,11 @@ namespace OstPlayer.Views
 
         #region Constructor
 
+        /// <summary>
+        /// Initializes a new instance of the OstPlayerSidebarView class.
+        /// </summary>
+        /// <param name="plugin">The main plugin instance.</param>
+        /// <param name="preselectGame">Optional game to preselect.</param>
         public OstPlayerSidebarView(OstPlayer plugin, Game preselectGame = null)
         {
             if (plugin == null)
@@ -193,7 +198,7 @@ namespace OstPlayer.Views
                 DataContext = viewModel;
                 ConnectViewModelEvents();
                 InitializeColumnPersistence();
-                
+
                 Unloaded += OnUnloaded;
                 Loaded += OnLoaded;
             }
@@ -204,7 +209,7 @@ namespace OstPlayer.Views
                 throw;
             }
         }
-        
+
         /// <summary>
         /// Handles the Loaded event to initialize ViewModel asynchronously.
         /// </summary>
@@ -221,7 +226,8 @@ namespace OstPlayer.Views
                 logger.Error(ex, $"ViewModel initialization failed: {ex.Message}");
                 if (viewModel != null)
                 {
-                    viewModel.StatusText = "Failed to load games. Please try restarting the plugin.";
+                    viewModel.StatusText =
+                        "Failed to load games. Please try restarting the plugin.";
                 }
             }
         }
@@ -239,12 +245,13 @@ namespace OstPlayer.Views
                 {
                     return;
                 }
-                
+
                 _columnPersistence = new DataGridColumnPersistence(MusicDataGrid, plugin);
-                
+
                 // Load column widths when the control is loaded
-                Loaded += (s, e) => {
-                    try 
+                Loaded += (s, e) =>
+                {
+                    try
                     {
                         _columnPersistence?.LoadColumnWidths();
                     }
@@ -269,8 +276,11 @@ namespace OstPlayer.Views
         {
             try
             {
-                var pluginField = typeof(OstPlayerSidebarViewModel).GetField("plugin", 
-                    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                var pluginField = typeof(OstPlayerSidebarViewModel).GetField(
+                    "plugin",
+                    System.Reflection.BindingFlags.NonPublic
+                        | System.Reflection.BindingFlags.Instance
+                );
                 return pluginField?.GetValue(viewModel) as OstPlayer;
             }
             catch
@@ -312,7 +322,9 @@ namespace OstPlayer.Views
             {
                 if (!string.IsNullOrWhiteSpace(e.Uri?.AbsoluteUri))
                 {
-                    Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+                    Process.Start(
+                        new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true }
+                    );
                 }
             }
             catch (Exception ex)
@@ -330,8 +342,13 @@ namespace OstPlayer.Views
         private void GameComboBox_KeyUp(object sender, KeyEventArgs e)
         {
             // Ignore navigation keys
-            if (e.Key == Key.Up || e.Key == Key.Down || e.Key == Key.Enter || 
-                e.Key == Key.Tab || e.Key == Key.Escape)
+            if (
+                e.Key == Key.Up
+                || e.Key == Key.Down
+                || e.Key == Key.Enter
+                || e.Key == Key.Tab
+                || e.Key == Key.Escape
+            )
             {
                 return;
             }
@@ -415,12 +432,18 @@ namespace OstPlayer.Views
             viewModel.SetUserDragging(false);
         }
 
-        private void ProgressSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void ProgressSlider_ValueChanged(
+            object sender,
+            RoutedPropertyChangedEventArgs<double> e
+        )
         {
             // Position binding handles this automatically
         }
 
-        private void VolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void VolumeSlider_ValueChanged(
+            object sender,
+            RoutedPropertyChangedEventArgs<double> e
+        )
         {
             // Volume binding handles this automatically
         }
@@ -497,19 +520,27 @@ namespace OstPlayer.Views
 
         private void ShowInfoMessage(string message)
         {
-            MessageBox.Show(message, "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(
+                message,
+                "Information",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information
+            );
         }
 
-        private DiscogsMetadataModel ShowDiscogsReleaseDialog(List<DiscogsMetadataModel> results, string token)
+        private DiscogsMetadataModel ShowDiscogsReleaseDialog(
+            List<DiscogsMetadataModel> results,
+            String token
+        )
         {
             var dialog = new DiscogsReleaseSelectDialog(results, token);
             dialog.Owner = Window.GetWindow(this);
-            
+
             if (dialog.ShowDialog() == true && dialog.SelectedRelease != null)
             {
                 return dialog.SelectedRelease;
             }
-            
+
             return null;
         }
 
@@ -517,6 +548,9 @@ namespace OstPlayer.Views
 
         #region Public Methods (for external access)
 
+        /// <summary>
+        /// Stops music playback.
+        /// </summary>
         public void StopMusic()
         {
             viewModel?.StopCommand.Execute(null);
@@ -542,19 +576,23 @@ namespace OstPlayer.Views
                     try
                     {
                         viewModel.StopCommand?.Execute(null);
-                        System.Diagnostics.Debug.WriteLine("FIXED: Stopped music playback during sidebar cleanup");
+                        System.Diagnostics.Debug.WriteLine(
+                            "FIXED: Stopped music playback during sidebar cleanup"
+                        );
                     }
                     catch (Exception musicEx)
                     {
-                        System.Diagnostics.Debug.WriteLine($"Warning: Failed to stop music during cleanup: {musicEx.Message}");
+                        System.Diagnostics.Debug.WriteLine(
+                            $"Warning: Failed to stop music during cleanup: {musicEx.Message}"
+                        );
                         // Continue with other cleanup even if music stop fails
                     }
                 }
-                
+
                 // Dispose column persistence utility
                 _columnPersistence?.Dispose();
                 _columnPersistence = null;
-                
+
                 // Unsubscribe from events to prevent memory leaks
                 if (viewModel != null)
                 {

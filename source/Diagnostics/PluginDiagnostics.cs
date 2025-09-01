@@ -4,8 +4,8 @@
 
 using System;
 using System.Diagnostics;
-using Playnite.SDK;
 using OstPlayer.Services;
+using Playnite.SDK;
 
 namespace OstPlayer.Diagnostics
 {
@@ -22,9 +22,9 @@ namespace OstPlayer.Diagnostics
         {
             var logger = LogManager.GetLogger();
             var report = new System.Text.StringBuilder();
-            
+
             report.AppendLine("=== OstPlayer Plugin Diagnostics ===");
-            
+
             try
             {
                 // Test 1: Basic API access
@@ -34,13 +34,13 @@ namespace OstPlayer.Diagnostics
                     report.AppendLine($"? Games count: {api.Database.Games.Count}");
                     report.AppendLine($"? Config path: {api.Paths.ConfigurationPath}");
                 }
-                
+
                 // Test 2: Service container
                 try
                 {
                     var container = ServiceContainer.Instance;
                     report.AppendLine($"? Service container initialized: {container != null}");
-                    
+
                     // Test basic service registration
                     if (TestServiceRegistration())
                     {
@@ -55,13 +55,13 @@ namespace OstPlayer.Diagnostics
                 {
                     report.AppendLine($"? Service container error: {ex.Message}");
                 }
-                
+
                 // Test 3: Settings loading
                 try
                 {
                     var settings = new OstPlayerSettings();
                     report.AppendLine($"? Settings class instantiable: {settings != null}");
-                    
+
                     // Test settings validation
                     var errors = settings.Validate();
                     if (errors.Count == 0)
@@ -77,7 +77,7 @@ namespace OstPlayer.Diagnostics
                 {
                     report.AppendLine($"? Settings error: {ex.Message}");
                 }
-                
+
                 // Test 4: NAudio availability
                 try
                 {
@@ -89,7 +89,7 @@ namespace OstPlayer.Diagnostics
                 {
                     report.AppendLine($"? NAudio error: {ex.Message}");
                 }
-                
+
                 // Test 5: Interface types accessibility
                 try
                 {
@@ -97,22 +97,21 @@ namespace OstPlayer.Diagnostics
                     {
                         typeof(Services.Interfaces.IAudioService),
                         typeof(Services.Interfaces.IGameService),
-                        typeof(Services.Interfaces.IMetadataService)
+                        typeof(Services.Interfaces.IMetadataService),
                     };
-                    
+
                     report.AppendLine($"? Interface types accessible: {interfaceTypes.Length}");
                 }
                 catch (Exception ex)
                 {
                     report.AppendLine($"? Interface types error: {ex.Message}");
                 }
-                
+
                 report.AppendLine("=== Diagnostics Complete ===");
-                
+
                 // Log results
                 logger.Info(report.ToString());
                 Debug.WriteLine(report.ToString());
-                
             }
             catch (Exception ex)
             {
@@ -121,7 +120,7 @@ namespace OstPlayer.Diagnostics
                 Debug.WriteLine(errorMsg);
             }
         }
-        
+
         /// <summary>
         /// Quick service registration test.
         /// </summary>
@@ -131,13 +130,13 @@ namespace OstPlayer.Diagnostics
             {
                 var container = ServiceContainer.Instance;
                 container.Clear(); // Start fresh
-                
+
                 // Register basic service
                 container.RegisterSingleton<ILogger>(LogManager.GetLogger());
-                
+
                 // Try to resolve it
                 var logger = container.GetService<ILogger>();
-                
+
                 return logger != null;
             }
             catch (Exception ex)

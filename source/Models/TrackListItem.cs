@@ -57,14 +57,14 @@
 // - Multi-column sorting support
 //
 // FUTURE REFACTORING:
-// TODO: Add validation for file path existence
-// TODO: Consider TimeSpan property for duration calculations
-// TODO: Add metadata preview properties (artist, album snippet)
-// TODO: Implement INotifyPropertyChanged for live updates
-// TODO: Add file format/codec information
-// TODO: Extract to shared UI models namespace
-// TODO: Add thumbnail/artwork support for rich lists
-// TODO: Consider implementing IComparable for sorting
+// FUTURE: Add validation for file path existence
+// FUTURE: Consider TimeSpan property for duration calculations
+// FUTURE: Add metadata preview properties (artist, album snippet)
+// FUTURE: Implement INotifyPropertyChanged for live updates
+// FUTURE: Add file format/codec information
+// FUTURE: Extract to shared UI models namespace
+// FUTURE: Add thumbnail/artwork support for rich lists
+// FUTURE: Consider implementing IComparable for sorting
 // CONSIDER: Adding metadata summary properties
 // CONSIDER: File validation and health checking
 // IDEA: Integration with playlist management systems
@@ -96,35 +96,27 @@
 using System;
 using System.ComponentModel;
 
-namespace OstPlayer.Models
-{
+namespace OstPlayer.Models {
     /// <summary>
     /// Model used to represent a track in the UI (e.g., track list in the sidebar).
     /// Enhanced with sorting capabilities for DataGrid scenarios.
     /// </summary>
-    public class TrackListItem : INotifyPropertyChanged, IComparable<TrackListItem>
-    {
-        #region Private Fields
-
+    public class TrackListItem : INotifyPropertyChanged, IComparable<TrackListItem> {
+        // Private Fields
         private string _trackTitle;
         private string _trackDuration;
         private uint _trackNumber;
         private double? _durationSeconds; // Cached parsed duration
 
-        #endregion
-
-        #region Public Properties
+        // Public Properties
 
         /// <summary>
         /// Track title with property change notification.
         /// </summary>
-        public string TrackTitle
-        {
+        public string TrackTitle {
             get => _trackTitle;
-            set
-            {
-                if (_trackTitle != value)
-                {
+            set {
+                if (_trackTitle != value) {
                     _trackTitle = value;
                     OnPropertyChanged(nameof(TrackTitle));
                 }
@@ -135,13 +127,10 @@ namespace OstPlayer.Models
         /// Track duration as a formatted string (e.g., "03:21").
         /// Setting this property also parses and caches the duration in seconds for sorting.
         /// </summary>
-        public string TrackDuration
-        {
+        public string TrackDuration {
             get => _trackDuration;
-            set
-            {
-                if (_trackDuration != value)
-                {
+            set {
+                if (_trackDuration != value) {
                     _trackDuration = value;
                     _durationSeconds = ParseDurationToSeconds(value);
                     OnPropertyChanged(nameof(TrackDuration));
@@ -157,13 +146,10 @@ namespace OstPlayer.Models
         /// <summary>
         /// Track number with property change notification.
         /// </summary>
-        public uint TrackNumber
-        {
+        public uint TrackNumber {
             get => _trackNumber;
-            set
-            {
-                if (_trackNumber != value)
-                {
+            set {
+                if (_trackNumber != value) {
                     _trackNumber = value;
                     OnPropertyChanged(nameof(TrackNumber));
                 }
@@ -181,9 +167,7 @@ namespace OstPlayer.Models
         /// </summary>
         public double DurationSeconds => _durationSeconds ?? 0;
 
-        #endregion
-
-        #region Duration Parsing
+        // Duration Parsing
 
         /// <summary>
         /// Parses duration string to seconds for sorting purposes.
@@ -191,17 +175,14 @@ namespace OstPlayer.Models
         /// </summary>
         /// <param name="durationString">Duration string to parse</param>
         /// <returns>Duration in seconds or null if parsing fails</returns>
-        private static double? ParseDurationToSeconds(string durationString)
-        {
+        private static double? ParseDurationToSeconds(string durationString) {
             if (string.IsNullOrWhiteSpace(durationString))
                 return null;
 
-            try
-            {
+            try {
                 // Try parsing as TimeSpan (supports h:mm:ss format)
                 if (TimeSpan.TryParse("00:" + durationString, out TimeSpan duration) ||
-                    TimeSpan.TryParse(durationString, out duration))
-                {
+                    TimeSpan.TryParse(durationString, out duration)) {
                     return duration.TotalSeconds;
                 }
 
@@ -209,59 +190,50 @@ namespace OstPlayer.Models
                 var parts = durationString.Split(':');
                 if (parts.Length == 2 &&
                     int.TryParse(parts[0], out int minutes) &&
-                    double.TryParse(parts[1], out double seconds))
-                {
+                    double.TryParse(parts[1], out double seconds)) {
                     return (minutes * 60) + seconds;
                 }
             }
-            catch
-            {
+            catch {
                 // Ignore parsing errors
             }
 
             return null;
         }
 
-        #endregion
-
-        #region IComparable Implementation
+        // IComparable Implementation
 
         /// <summary>
         /// Compares tracks for default sorting (by track number, then by title).
         /// </summary>
         /// <param name="other">Other track to compare with</param>
         /// <returns>Comparison result for sorting</returns>
-        public int CompareTo(TrackListItem other)
-        {
+        public int CompareTo(TrackListItem other) {
             if (other == null)
                 return 1;
 
             // Primary sort: Track number (natural order)
-            if (TrackNumber != other.TrackNumber)
-            {
+            if (TrackNumber != other.TrackNumber) {
                 // Handle case where one track has no number (0)
                 if (TrackNumber == 0 && other.TrackNumber > 0)
                     return 1; // No number goes to end
                 if (other.TrackNumber == 0 && TrackNumber > 0)
                     return -1; // No number goes to end
-                    
+
                 return TrackNumber.CompareTo(other.TrackNumber);
             }
 
             // Secondary sort: Track title (case-insensitive)
-            return string.Compare(TrackTitle ?? "", other.TrackTitle ?? "", 
+            return string.Compare(TrackTitle ?? "", other.TrackTitle ?? "",
                 StringComparison.OrdinalIgnoreCase);
         }
 
-        #endregion
-
-        #region Static Comparison Methods for DataGrid Sorting
+        // Static Comparison Methods for DataGrid Sorting
 
         /// <summary>
         /// Compares tracks by track number for DataGrid column sorting.
         /// </summary>
-        public static int CompareByTrackNumber(TrackListItem a, TrackListItem b)
-        {
+        public static int CompareByTrackNumber(TrackListItem a, TrackListItem b) {
             if (a == null && b == null) return 0;
             if (a == null) return -1;
             if (b == null) return 1;
@@ -278,8 +250,7 @@ namespace OstPlayer.Models
         /// <summary>
         /// Compares tracks by title for DataGrid column sorting.
         /// </summary>
-        public static int CompareByTitle(TrackListItem a, TrackListItem b)
-        {
+        public static int CompareByTitle(TrackListItem a, TrackListItem b) {
             if (a == null && b == null) return 0;
             if (a == null) return -1;
             if (b == null) return 1;
@@ -290,8 +261,7 @@ namespace OstPlayer.Models
         /// <summary>
         /// Compares tracks by duration for DataGrid column sorting.
         /// </summary>
-        public static int CompareByDuration(TrackListItem a, TrackListItem b)
-        {
+        public static int CompareByDuration(TrackListItem a, TrackListItem b) {
             if (a == null && b == null) return 0;
             if (a == null) return -1;
             if (b == null) return 1;
@@ -299,9 +269,7 @@ namespace OstPlayer.Models
             return a.DurationSeconds.CompareTo(b.DurationSeconds);
         }
 
-        #endregion
-
-        #region INotifyPropertyChanged Implementation
+        // INotifyPropertyChanged Implementation
 
         /// <summary>
         /// Property changed event for data binding updates.
@@ -312,24 +280,18 @@ namespace OstPlayer.Models
         /// Raises property changed event.
         /// </summary>
         /// <param name="propertyName">Name of the changed property</param>
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
+        protected virtual void OnPropertyChanged(string propertyName) {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        #endregion
-
-        #region ToString Override for Debugging
+        // ToString Override for Debugging
 
         /// <summary>
         /// String representation for debugging purposes.
         /// </summary>
-        public override string ToString()
-        {
+        public override string ToString() {
             var trackNum = TrackNumber > 0 ? $"{TrackNumber:00}" : "--";
             return $"[{trackNum}] {TrackTitle ?? "Unknown"} ({TrackDuration ?? "Unknown"})";
         }
-
-        #endregion
     }
 }

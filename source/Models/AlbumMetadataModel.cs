@@ -62,14 +62,14 @@
 // - No validation or quality scoring
 //
 // FUTURE REFACTORING:
-// TODO: Implement IMetadataModel interface for consistency
-// TODO: Add metadata source tracking per property
-// TODO: Implement multi-disc album support
-// TODO: Add metadata validation and quality scoring
-// TODO: Support multiple cover images and artwork types
-// TODO: Add metadata merging rules and conflict resolution
-// TODO: Extract album/release distinction for clarity
-// TODO: Add metadata change tracking and history
+// FUTURE: Implement IMetadataModel interface for consistency
+// FUTURE: Add metadata source tracking per property
+// FUTURE: Implement multi-disc album support
+// FUTURE: Add metadata validation and quality scoring
+// FUTURE: Support multiple cover images and artwork types
+// FUTURE: Add metadata merging rules and conflict resolution
+// FUTURE: Extract album/release distinction for clarity
+// FUTURE: Add metadata change tracking and history
 // CONSIDER: Separating release metadata from album metadata
 // CONSIDER: Adding metadata confidence and reliability scoring
 // IDEA: Real-time metadata synchronization across sources
@@ -100,24 +100,64 @@
 using System.Collections.Generic;
 using System.Windows.Media.Imaging;
 
-namespace OstPlayer.Models
-{
+namespace OstPlayer.Models {
     /// <summary>
     /// Unified model for displaying album metadata in the plugin UI.
     /// </summary>
-    public class AlbumMetadataModel
-    {
+    public class AlbumMetadataModel {
+        /// <summary>
+        /// Gets or sets the album title.
+        /// </summary>
         public string Title { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the primary artist name.
+        /// </summary>
         public string Artist { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the album name.
+        /// </summary>
         public string Album { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the release date or year.
+        /// </summary>
         public string Released { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the list of musical genres.
+        /// </summary>
         public List<string> Genres { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the list of musical styles.
+        /// </summary>
         public List<string> Styles { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the album comment or description.
+        /// </summary>
         public string Comment { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the country of release.
+        /// </summary>
         public string Country { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the Discogs URL for this album.
+        /// </summary>
         public string DiscogsUrl { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the album cover image.
+        /// </summary>
         public BitmapImage Cover { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the list of tracks in the album.
+        /// </summary>
         public List<string> Tracklist { get; set; }
-        // Add more properties as needed
     }
 }

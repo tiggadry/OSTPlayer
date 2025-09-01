@@ -53,10 +53,10 @@
 // - No real-time configuration synchronization
 //
 // FUTURE REFACTORING:
-// TODO: Add support for user-specific configuration profiles
-// TODO: Implement real-time configuration change notifications
-// TODO: Add configuration encryption for sensitive settings
-// TODO: Implement configuration backup and restore
+// FUTURE: Add support for user-specific configuration profiles
+// FUTURE: Implement real-time configuration change notifications
+// FUTURE: Add configuration encryption for sensitive settings
+// FUTURE: Implement configuration backup and restore
 // CONSIDER: Integration with external configuration services
 // CONSIDER: Support for environment-specific configurations
 //
@@ -80,45 +80,39 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace OstPlayer.DevTools
-{
+namespace OstPlayer.DevTools {
     /// <summary>
     /// Configuration management system for DevTools automation and AI assistant integration
     /// </summary>
-    public static class DevToolsConfig
-    {
+    public static class DevToolsConfig {
         // Configuration file path
         private static readonly string ConfigFilePath = "DevTools/config.json";
-        
+
         // Default configuration
         private static DevToolsConfiguration _configuration;
         private static readonly object _configLock = new object();
         private static DateTime _lastConfigLoad = DateTime.MinValue;
 
         // Configuration change event
+        /// <summary>
+        /// Occurs when the configuration is changed.
+        /// </summary>
         public static event Action<DevToolsConfiguration> ConfigurationChanged;
 
-        static DevToolsConfig()
-        {
+        static DevToolsConfig() {
             LoadConfiguration();
         }
-
-        #region Configuration Access
 
         /// <summary>
         /// Gets the current configuration
         /// </summary>
         /// <returns>Current DevTools configuration</returns>
-        public static DevToolsConfiguration GetConfiguration()
-        {
-            lock (_configLock)
-            {
+        public static DevToolsConfiguration GetConfiguration() {
+            lock (_configLock) {
                 // Reload if file has changed
-                if (File.Exists(ConfigFilePath))
-                {
+                if (File.Exists(ConfigFilePath)) {
                     var lastWrite = File.GetLastWriteTime(ConfigFilePath);
-                    if (lastWrite > _lastConfigLoad)
-                    {
+                    if (lastWrite > _lastConfigLoad) {
                         LoadConfiguration();
                     }
                 }
@@ -132,14 +126,10 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="newConfiguration">New configuration to apply</param>
         /// <returns>True if successfully updated, false otherwise</returns>
-        public static bool UpdateConfiguration(DevToolsConfiguration newConfiguration)
-        {
-            try
-            {
-                lock (_configLock)
-                {
-                    if (ValidateConfiguration(newConfiguration))
-                    {
+        public static bool UpdateConfiguration(DevToolsConfiguration newConfiguration) {
+            try {
+                lock (_configLock) {
+                    if (ValidateConfiguration(newConfiguration)) {
                         _configuration = newConfiguration;
                         SaveConfiguration();
                         ConfigurationChanged?.Invoke(_configuration);
@@ -147,8 +137,7 @@ namespace OstPlayer.DevTools
                     }
                 }
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 // Log error but don't throw
             }
 
@@ -162,25 +151,20 @@ namespace OstPlayer.DevTools
         /// <param name="key">Configuration key</param>
         /// <param name="defaultValue">Default value if key not found</param>
         /// <returns>Configuration value or default</returns>
-        public static T GetValue<T>(string key, T defaultValue = default(T))
-        {
+        public static T GetValue<T>(string key, T defaultValue = default(T)) {
             var config = GetConfiguration();
-            
-            if (config.CustomSettings.ContainsKey(key))
-            {
-                try
-                {
+
+            if (config.CustomSettings.ContainsKey(key)) {
+                try {
                     var value = config.CustomSettings[key];
-                    if (value is T typedValue)
-                    {
+                    if (value is T typedValue) {
                         return typedValue;
                     }
-                    
+
                     // Try to convert
                     return (T)Convert.ChangeType(value, typeof(T));
                 }
-                catch (Exception)
-                {
+                catch (Exception) {
                     return defaultValue;
                 }
             }
@@ -194,30 +178,22 @@ namespace OstPlayer.DevTools
         /// <param name="key">Configuration key</param>
         /// <param name="value">Value to set</param>
         /// <returns>True if successfully set, false otherwise</returns>
-        public static bool SetValue(string key, object value)
-        {
-            try
-            {
+        public static bool SetValue(string key, object value) {
+            try {
                 var config = GetConfiguration();
                 config.CustomSettings[key] = value;
                 return UpdateConfiguration(config);
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 return false;
             }
         }
-
-        #endregion
-
-        #region Configuration Management
 
         /// <summary>
         /// Resets configuration to defaults
         /// </summary>
         /// <returns>True if successfully reset, false otherwise</returns>
-        public static bool ResetToDefaults()
-        {
+        public static bool ResetToDefaults() {
             var defaultConfig = CreateDefaultConfiguration();
             return UpdateConfiguration(defaultConfig);
         }
@@ -227,26 +203,22 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="backupPath">Path for backup file</param>
         /// <returns>True if successfully backed up, false otherwise</returns>
-        public static bool BackupConfiguration(string backupPath = null)
-        {
-            try
-            {
+        public static bool BackupConfiguration(string backupPath = null) {
+            try {
                 backupPath = backupPath ?? $"DevTools/config_backup_{DateTime.Now:yyyyMMdd_HHmmss}.json";
-                
+
                 var config = GetConfiguration();
                 var json = SerializeConfiguration(config);
-                
+
                 var backupDir = Path.GetDirectoryName(backupPath);
-                if (!string.IsNullOrEmpty(backupDir) && !Directory.Exists(backupDir))
-                {
+                if (!string.IsNullOrEmpty(backupDir) && !Directory.Exists(backupDir)) {
                     Directory.CreateDirectory(backupDir);
                 }
-                
+
                 File.WriteAllText(backupPath, json, Encoding.UTF8);
                 return true;
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 return false;
             }
         }
@@ -256,59 +228,46 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="backupPath">Path to backup file</param>
         /// <returns>True if successfully restored, false otherwise</returns>
-        public static bool RestoreConfiguration(string backupPath)
-        {
-            try
-            {
-                if (!File.Exists(backupPath))
-                {
+        public static bool RestoreConfiguration(string backupPath) {
+            try {
+                if (!File.Exists(backupPath)) {
                     return false;
                 }
 
                 var json = File.ReadAllText(backupPath, Encoding.UTF8);
                 var config = DeserializeConfiguration(json);
-                
-                if (config != null && ValidateConfiguration(config))
-                {
+
+                if (config != null && ValidateConfiguration(config)) {
                     return UpdateConfiguration(config);
                 }
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 // Ignore restore errors
             }
 
             return false;
         }
 
-        #endregion
-
-        #region Profile Management
-
         /// <summary>
         /// Saves current configuration as a named profile
         /// </summary>
         /// <param name="profileName">Name of the profile</param>
         /// <returns>True if successfully saved, false otherwise</returns>
-        public static bool SaveProfile(string profileName)
-        {
-            try
-            {
+        public static bool SaveProfile(string profileName) {
+            try {
                 var config = GetConfiguration();
                 var profilePath = $"DevTools/profiles/{profileName}.json";
-                
+
                 var profileDir = Path.GetDirectoryName(profilePath);
-                if (!Directory.Exists(profileDir))
-                {
+                if (!Directory.Exists(profileDir)) {
                     Directory.CreateDirectory(profileDir);
                 }
-                
+
                 var json = SerializeConfiguration(config);
                 File.WriteAllText(profilePath, json, Encoding.UTF8);
                 return true;
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 return false;
             }
         }
@@ -318,15 +277,12 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="profileName">Name of the profile to load</param>
         /// <returns>True if successfully loaded, false otherwise</returns>
-        public static bool LoadProfile(string profileName)
-        {
-            try
-            {
+        public static bool LoadProfile(string profileName) {
+            try {
                 var profilePath = $"DevTools/profiles/{profileName}.json";
                 return RestoreConfiguration(profilePath);
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 return false;
             }
         }
@@ -335,56 +291,42 @@ namespace OstPlayer.DevTools
         /// Gets a list of available configuration profiles
         /// </summary>
         /// <returns>List of profile names</returns>
-        public static List<string> GetAvailableProfiles()
-        {
+        public static List<string> GetAvailableProfiles() {
             var profiles = new List<string>();
-            
-            try
-            {
+
+            try {
                 var profileDir = "DevTools/profiles/";
-                if (Directory.Exists(profileDir))
-                {
+                if (Directory.Exists(profileDir)) {
                     var profileFiles = Directory.GetFiles(profileDir, "*.json");
-                    foreach (var file in profileFiles)
-                    {
+                    foreach (var file in profileFiles) {
                         profiles.Add(Path.GetFileNameWithoutExtension(file));
                     }
                 }
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 // Ignore errors
             }
 
             return profiles;
         }
 
-        #endregion
-
-        #region Private Methods
-
         /// <summary>
         /// Loads configuration from file
         /// </summary>
-        private static void LoadConfiguration()
-        {
-            try
-            {
-                if (File.Exists(ConfigFilePath))
-                {
+        private static void LoadConfiguration() {
+            try {
+                if (File.Exists(ConfigFilePath)) {
                     var json = File.ReadAllText(ConfigFilePath, Encoding.UTF8);
                     _configuration = DeserializeConfiguration(json);
                     _lastConfigLoad = DateTime.Now;
                 }
 
-                if (_configuration == null)
-                {
+                if (_configuration == null) {
                     _configuration = CreateDefaultConfiguration();
                     SaveConfiguration();
                 }
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 _configuration = CreateDefaultConfiguration();
             }
         }
@@ -392,23 +334,19 @@ namespace OstPlayer.DevTools
         /// <summary>
         /// Saves configuration to file
         /// </summary>
-        private static void SaveConfiguration()
-        {
-            try
-            {
+        private static void SaveConfiguration() {
+            try {
                 var json = SerializeConfiguration(_configuration);
-                
+
                 var configDir = Path.GetDirectoryName(ConfigFilePath);
-                if (!string.IsNullOrEmpty(configDir) && !Directory.Exists(configDir))
-                {
+                if (!string.IsNullOrEmpty(configDir) && !Directory.Exists(configDir)) {
                     Directory.CreateDirectory(configDir);
                 }
-                
+
                 File.WriteAllText(ConfigFilePath, json, Encoding.UTF8);
                 _lastConfigLoad = DateTime.Now;
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 // Ignore save errors
             }
         }
@@ -417,10 +355,8 @@ namespace OstPlayer.DevTools
         /// Creates default configuration
         /// </summary>
         /// <returns>Default configuration</returns>
-        private static DevToolsConfiguration CreateDefaultConfiguration()
-        {
-            return new DevToolsConfiguration
-            {
+        private static DevToolsConfiguration CreateDefaultConfiguration() {
+            return new DevToolsConfiguration {
                 AutoUpdateDocumentation = true,
                 AutoGenerateFileHeaders = true,
                 AutoUpdateFileHeaders = true,
@@ -436,16 +372,14 @@ namespace OstPlayer.DevTools
                 ExcludedFilePatterns = new List<string> { "*.tmp", "*.log", "*.cache" },
                 CustomTemplates = new Dictionary<string, string>(),
                 CustomSettings = new Dictionary<string, object>(),
-                AIAssistantSettings = new AIAssistantSettings
-                {
+                AIAssistantSettings = new AIAssistantSettings {
                     EnableAutomaticSuggestions = true,
                     EnableContextTracking = true,
                     AutoTriggerDocumentationUpdates = true,
                     MaxContextHistory = 50,
                     SuggestionThreshold = 0.8
                 },
-                CodeGenerationSettings = new CodeGenerationSettings
-                {
+                CodeGenerationSettings = new CodeGenerationSettings {
                     DefaultCommentStyle = CommentStyle.Explanatory,
                     GenerateXmlDocumentation = true,
                     GenerateInlineComments = false,
@@ -459,34 +393,28 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="config">Configuration to validate</param>
         /// <returns>True if valid, false otherwise</returns>
-        private static bool ValidateConfiguration(DevToolsConfiguration config)
-        {
-            if (config == null)
-            {
+        private static bool ValidateConfiguration(DevToolsConfiguration config) {
+            if (config == null) {
                 return false;
             }
 
             // Validate required fields
             if (string.IsNullOrEmpty(config.DateFormat) ||
                 string.IsNullOrEmpty(config.DefaultAuthor) ||
-                string.IsNullOrEmpty(config.DefaultFramework))
-            {
+                string.IsNullOrEmpty(config.DefaultFramework)) {
                 return false;
             }
 
             // Validate date format
-            try
-            {
+            try {
                 DateTime.Now.ToString(config.DateFormat);
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 return false;
             }
 
             // Validate numeric ranges
-            if (config.MaxLogEntries < 100 || config.MaxLogEntries > 10000)
-            {
+            if (config.MaxLogEntries < 100 || config.MaxLogEntries > 10000) {
                 return false;
             }
 
@@ -498,8 +426,7 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="config">Configuration to serialize</param>
         /// <returns>JSON string</returns>
-        private static string SerializeConfiguration(DevToolsConfiguration config)
-        {
+        private static string SerializeConfiguration(DevToolsConfiguration config) {
             // Simple JSON serialization without external dependencies
             var json = new StringBuilder();
             json.AppendLine("{");
@@ -515,7 +442,7 @@ namespace OstPlayer.DevTools
             json.AppendLine($"  \"MaxLogEntries\": {config.MaxLogEntries},");
             json.AppendLine($"  \"EnablePerformanceLogging\": {config.EnablePerformanceLogging.ToString().ToLower()}");
             json.AppendLine("}");
-            
+
             return json.ToString();
         }
 
@@ -524,28 +451,22 @@ namespace OstPlayer.DevTools
         /// </summary>
         /// <param name="json">JSON string</param>
         /// <returns>Configuration object</returns>
-        private static DevToolsConfiguration DeserializeConfiguration(string json)
-        {
-            try
-            {
+        private static DevToolsConfiguration DeserializeConfiguration(string json) {
+            try {
                 // Simple JSON deserialization without external dependencies
                 var config = CreateDefaultConfiguration();
-                
+
                 // Parse key-value pairs (simplified JSON parsing)
                 var lines = json.Split('\n');
-                foreach (var line in lines)
-                {
+                foreach (var line in lines) {
                     var trimmed = line.Trim();
-                    if (trimmed.Contains(":"))
-                    {
+                    if (trimmed.Contains(":")) {
                         var parts = trimmed.Split(':');
-                        if (parts.Length == 2)
-                        {
+                        if (parts.Length == 2) {
                             var key = parts[0].Trim().Trim('"');
                             var value = parts[1].Trim().TrimEnd(',').Trim('"');
-                            
-                            switch (key)
-                            {
+
+                            switch (key) {
                                 case "AutoUpdateDocumentation":
                                     config.AutoUpdateDocumentation = bool.Parse(value);
                                     break;
@@ -583,23 +504,19 @@ namespace OstPlayer.DevTools
                         }
                     }
                 }
-                
+
                 return config;
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 return null;
             }
         }
-
-        #endregion
     }
 
     /// <summary>
     /// DevTools configuration settings
     /// </summary>
-    public class DevToolsConfiguration
-    {
+    public class DevToolsConfiguration {
         /// <summary>
         /// Whether to automatically update documentation
         /// </summary>
@@ -689,8 +606,7 @@ namespace OstPlayer.DevTools
     /// <summary>
     /// AI Assistant specific configuration settings
     /// </summary>
-    public class AIAssistantSettings
-    {
+    public class AIAssistantSettings {
         /// <summary>
         /// Whether to enable automatic suggestions
         /// </summary>
@@ -720,8 +636,7 @@ namespace OstPlayer.DevTools
     /// <summary>
     /// Code generation specific configuration settings
     /// </summary>
-    public class CodeGenerationSettings
-    {
+    public class CodeGenerationSettings {
         /// <summary>
         /// Default comment style for code generation
         /// </summary>

@@ -113,18 +113,18 @@ LIMITATIONS:
 - Some complex UI events still require code-behind
 
 FUTURE REFACTORING:
-TODO: Add batch metadata refresh capabilities
-TODO: Implement visual loading indicators for refresh operations
-TODO: Add keyboard shortcuts for refresh functionality
-TODO: Extract metadata section UI to user controls
-TODO: Implement drag-and-drop support for music files
-TODO: Add context menu for metadata operations
-TODO: Implement visual feedback for cache invalidation
-TODO: Add progress indicators for long-running operations
-TODO: Add accessibility improvements for screen readers
-TODO: Convert remaining event handlers to InputBindings
-TODO: Implement proper CanExecuteChanged notifications in RelayCommand
-TODO: Extract complex ComboBox filtering to Behaviors
+FUTURE: Add batch metadata refresh capabilities
+FUTURE: Implement visual loading indicators for refresh operations
+FUTURE: Add keyboard shortcuts for refresh functionality
+FUTURE: Extract metadata section UI to user controls
+FUTURE: Implement drag-and-drop support for music files
+FUTURE: Add context menu for metadata operations
+FUTURE: Implement visual feedback for cache invalidation
+FUTURE: Add progress indicators for long-running operations
+FUTURE: Add accessibility improvements for screen readers
+FUTURE: Convert remaining event handlers to InputBindings
+FUTURE: Implement proper CanExecuteChanged notifications in RelayCommand
+FUTURE: Extract complex ComboBox filtering to Behaviors
 CONSIDER: Template-based metadata section generation
 CONSIDER: User-configurable UI layouts and themes
 IDEA: Real-time metadata validation and conflict resolution
@@ -169,35 +169,35 @@ CHANGELOG:
              xmlns:conv="clr-namespace:OstPlayer.Converters"
              mc:Ignorable="d"
              d:DesignHeight="1200" d:DesignWidth="1920">
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../Styles.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-            <!-- Converters for visibility and formatting -->
-            <conv:NullOrEmptyToVisibilityConverter x:Key="NullOrEmptyToVisibilityConverter" />
-            <conv:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
-            <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-            <conv:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" />
-            <conv:DiscogsGroupBoxVisibilityConverter x:Key="DiscogsGroupBoxVisibilityConverter" />
-            <conv:Mp3GroupBoxVisibilityConverter x:Key="Mp3GroupBoxVisibilityConverter" />
-            <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
-            <conv:NotNullToVisibilityConverter x:Key="NotNullToVisibilityConverter" />
-        </ResourceDictionary>
-    </UserControl.Resources>
-    <Grid Margin="10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <!-- Game selection -->
-        <StackPanel Grid.Row="0" Margin="0,0,0,10">
-            <TextBlock Text="Select Game:" FontWeight="Bold" Margin="0,0,0,5" Foreground="White"/>
-            <ComboBox Name="GameComboBox"
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="../Styles.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+      <!-- Converters for visibility and formatting -->
+      <conv:NullOrEmptyToVisibilityConverter x:Key="NullOrEmptyToVisibilityConverter" />
+      <conv:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
+      <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+      <conv:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" />
+      <conv:DiscogsGroupBoxVisibilityConverter x:Key="DiscogsGroupBoxVisibilityConverter" />
+      <conv:Mp3GroupBoxVisibilityConverter x:Key="Mp3GroupBoxVisibilityConverter" />
+      <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+      <conv:NotNullToVisibilityConverter x:Key="NotNullToVisibilityConverter" />
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <Grid Margin="10">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+    <!-- Game selection -->
+    <StackPanel Grid.Row="0" Margin="0,0,0,10">
+      <TextBlock Text="Select Game:" FontWeight="Bold" Margin="0,0,0,5" Foreground="White"/>
+      <ComboBox Name="GameComboBox"
                       ItemsSource="{Binding Games}"
                       SelectedItem="{Binding SelectedGame}"
                       DisplayMemberPath="Name"
@@ -208,24 +208,24 @@ CHANGELOG:
                       KeyUp="GameComboBox_KeyUp"
                       DropDownOpened="GameComboBox_DropDownOpened"
                       LostFocus="GameComboBox_LostFocus"/>
-        </StackPanel>
-        <!-- Main content: track list and metadata -->
-        <Grid Grid.Row="1" Grid.RowSpan="2" Margin="0,0,0,10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <!-- Left: track list -->
-            <Border Grid.Column="0" Padding="8,0,8,8" Background="#222" Margin="2,0,5,0">
-                <Grid Margin="0,0,0,0" VerticalAlignment="Stretch">
-                    <GroupBox Header="Track List" FontWeight="Bold" FontSize="20" Foreground="White" Margin="0,0,0,0">
-                        <GroupBox.Style>
-                            <Style TargetType="GroupBox">
-                                <Setter Property="Visibility" Value="Visible"/>
-                            </Style>
-                        </GroupBox.Style>
-                        <!-- List of tracks with sorting capabilities -->
-                        <DataGrid Padding="4" Background="#222"
+    </StackPanel>
+    <!-- Main content: track list and metadata -->
+    <Grid Grid.Row="1" Grid.RowSpan="2" Margin="0,0,0,10">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <!-- Left: track list -->
+      <Border Grid.Column="0" Padding="8,0,8,8" Background="#222" Margin="2,0,5,0">
+        <Grid Margin="0,0,0,0" VerticalAlignment="Stretch">
+          <GroupBox Header="Track List" FontWeight="Bold" FontSize="20" Foreground="White" Margin="0,0,0,0">
+            <GroupBox.Style>
+              <Style TargetType="GroupBox">
+                <Setter Property="Visibility" Value="Visible"/>
+              </Style>
+            </GroupBox.Style>
+            <!-- List of tracks with sorting capabilities -->
+            <DataGrid Padding="4" Background="#222"
                                  Name="MusicDataGrid"
                                  ItemsSource="{Binding MusicFiles}"
                                  SelectedValue="{Binding SelectedMusicFile, Mode=TwoWay}"
@@ -247,480 +247,480 @@ CHANGELOG:
                                  VerticalScrollBarVisibility="Auto"
                                  MouseDoubleClick="MusicDataGrid_MouseDoubleClick"
                                  KeyUp="MusicDataGrid_KeyUp">
-                            <DataGrid.ColumnHeaderStyle>
-                                <Style TargetType="DataGridColumnHeader">
-                                    <Setter Property="Background" Value="#333" />
-                                    <Setter Property="Foreground" Value="White" />
-                                    <Setter Property="FontWeight" Value="Bold" />
-                                    <Setter Property="Padding" Value="8,4" />
-                                    <Setter Property="BorderBrush" Value="#555" />
-                                    <Setter Property="BorderThickness" Value="0,0,1,1" />
-                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
-                                    <Setter Property="Cursor" Value="Hand" />
-                                </Style>
-                            </DataGrid.ColumnHeaderStyle>
-                            <DataGrid.RowStyle>
-                                <Style TargetType="DataGridRow">
-                                    <Setter Property="Background" Value="#222" />
-                                    <Setter Property="Foreground" Value="White" />
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="#444" />
-                                        </Trigger>
-                                        <Trigger Property="IsSelected" Value="True">
-                                            <Setter Property="Background" Value="#007ACC" />
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </DataGrid.RowStyle>
-                            <DataGrid.CellStyle>
-                                <Style TargetType="DataGridCell">
-                                    <Setter Property="BorderThickness" Value="0" />
-                                    <Setter Property="Padding" Value="4,2" />
-                                    <Style.Triggers>
-                                        <Trigger Property="IsSelected" Value="True">
-                                            <Setter Property="Background" Value="Transparent" />
-                                            <Setter Property="Foreground" Value="White" />
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </DataGrid.CellStyle>
-                            <DataGrid.Columns>
-                                <!-- Track Number Column - Expandable only (current behavior preserved) -->
-                                <DataGridTextColumn Header="#" 
-                                                   Binding="{Binding TrackNumber}" 
+              <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="DataGridColumnHeader">
+                  <Setter Property="Background" Value="#333" />
+                  <Setter Property="Foreground" Value="White" />
+                  <Setter Property="FontWeight" Value="Bold" />
+                  <Setter Property="Padding" Value="8,4" />
+                  <Setter Property="BorderBrush" Value="#555" />
+                  <Setter Property="BorderThickness" Value="0,0,1,1" />
+                  <Setter Property="HorizontalContentAlignment" Value="Left" />
+                  <Setter Property="Cursor" Value="Hand" />
+                </Style>
+              </DataGrid.ColumnHeaderStyle>
+              <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                  <Setter Property="Background" Value="#222" />
+                  <Setter Property="Foreground" Value="White" />
+                  <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                      <Setter Property="Background" Value="#444" />
+                    </Trigger>
+                    <Trigger Property="IsSelected" Value="True">
+                      <Setter Property="Background" Value="#007ACC" />
+                    </Trigger>
+                  </Style.Triggers>
+                </Style>
+              </DataGrid.RowStyle>
+              <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                  <Setter Property="BorderThickness" Value="0" />
+                  <Setter Property="Padding" Value="4,2" />
+                  <Style.Triggers>
+                    <Trigger Property="IsSelected" Value="True">
+                      <Setter Property="Background" Value="Transparent" />
+                      <Setter Property="Foreground" Value="White" />
+                    </Trigger>
+                  </Style.Triggers>
+                </Style>
+              </DataGrid.CellStyle>
+              <DataGrid.Columns>
+                <!-- Track Number Column - Expandable only (current behavior preserved) -->
+                <DataGridTextColumn Header="#"
+                                                   Binding="{Binding TrackNumber}"
                                                    Width="40"
                                                    CanUserResize="True"
                                                    MinWidth="40"
                                                    MaxWidth="200"
                                                    SortDirection="Ascending">
-                                    <DataGridTextColumn.ElementStyle>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="HorizontalAlignment" Value="Center" />
-                                            <Setter Property="FontFamily" Value="Consolas" />
-                                            <Setter Property="Foreground" Value="Gray" />
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding TrackNumber}" Value="0">
-                                                    <Setter Property="Text" Value="--" />
-                                                    <Setter Property="Foreground" Value="#666" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </DataGridTextColumn.ElementStyle>
-                                </DataGridTextColumn>
-                                
-                                <!-- Track Title Column - Resizable, affects Duration indirectly -->
-                                <DataGridTextColumn Header="Track Title" 
-                                                   Binding="{Binding TrackTitle}" 
+                  <DataGridTextColumn.ElementStyle>
+                    <Style TargetType="TextBlock">
+                      <Setter Property="HorizontalAlignment" Value="Center" />
+                      <Setter Property="FontFamily" Value="Consolas" />
+                      <Setter Property="Foreground" Value="Gray" />
+                      <Style.Triggers>
+                        <DataTrigger Binding="{Binding TrackNumber}" Value="0">
+                          <Setter Property="Text" Value="--" />
+                          <Setter Property="Foreground" Value="#666" />
+                        </DataTrigger>
+                      </Style.Triggers>
+                    </Style>
+                  </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <!-- Track Title Column - Resizable, affects Duration indirectly -->
+                <DataGridTextColumn Header="Track Title"
+                                                   Binding="{Binding TrackTitle}"
                                                    Width="2*"
                                                    CanUserResize="True"
                                                    MinWidth="250">
-                                    <DataGridTextColumn.ElementStyle>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="TextWrapping" Value="NoWrap" />
-                                            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
-                                            <Setter Property="ToolTip" Value="{Binding TrackTitle}" />
-                                            <Setter Property="VerticalAlignment" Value="Center" />
-                                            <Setter Property="Margin" Value="4,0" />
-                                        </Style>
-                                    </DataGridTextColumn.ElementStyle>
-                                </DataGridTextColumn>
-                                
-                                <!-- Duration Column - Star sizing fills remaining space, right-anchored -->
-                                <DataGridTextColumn Header="Duration" 
-                                                   Binding="{Binding TrackDuration}" 
+                  <DataGridTextColumn.ElementStyle>
+                    <Style TargetType="TextBlock">
+                      <Setter Property="TextWrapping" Value="NoWrap" />
+                      <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+                      <Setter Property="ToolTip" Value="{Binding TrackTitle}" />
+                      <Setter Property="VerticalAlignment" Value="Center" />
+                      <Setter Property="Margin" Value="4,0" />
+                    </Style>
+                  </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <!-- Duration Column - Star sizing fills remaining space, right-anchored -->
+                <DataGridTextColumn Header="Duration"
+                                                   Binding="{Binding TrackDuration}"
                                                    Width="*"
                                                    CanUserResize="True"
                                                    MinWidth="80">
-                                    <DataGridTextColumn.ElementStyle>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="HorizontalAlignment" Value="Right" />
-                                            <Setter Property="FontFamily" Value="Consolas" />
-                                            <Setter Property="Foreground" Value="Gray" />
-                                            <Setter Property="VerticalAlignment" Value="Center" />
-                                            <Setter Property="Margin" Value="0,0,8,0" />
-                                        </Style>
-                                    </DataGridTextColumn.ElementStyle>
-                                </DataGridTextColumn>
-                            </DataGrid.Columns>
-                        </DataGrid>
-                    </GroupBox>
-                </Grid>
-            </Border>
-            <!-- Right: metadata -->
-            <Border Grid.Column="1" Padding="8,0,8,8" Background="#222" Margin="2,0,0,0">
-                <Grid Margin="0,0,0,0" VerticalAlignment="Stretch">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <!-- MP3 metadata section -->
-                    <Grid Grid.Row="0">
-                        <GroupBox FontWeight="Bold" FontSize="20" Foreground="White" Margin="0,0,0,0">
-                            <GroupBox.Style>
-                                <Style TargetType="GroupBox">
-                                    <Setter Property="Visibility">
-                                        <Setter.Value>
-                                            <MultiBinding Converter="{StaticResource Mp3GroupBoxVisibilityConverter}">
-                                                <Binding Path="IsMp3MetadataVisible"/>
-                                                <Binding Path="TrackTitle"/>
-                                            </MultiBinding>
-                                        </Setter.Value>
-                                    </Setter>
-                                    <Style.Triggers>
-                                        <!-- Hide if no track title -->
-                                        <DataTrigger Binding="{Binding TrackTitle}" Value="{x:Null}">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </GroupBox.Style>
-                            <GroupBox.Header>
-                                <TextBlock Text="Track Metadata" FontWeight="Bold" FontSize="20" Foreground="White" VerticalAlignment="Center"/>
-                            </GroupBox.Header>
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
-                                <!-- Track cover image -->
-                                <Image Width="200" Height="200" Source="{Binding TrackCover}" Stretch="UniformToFill" Margin="7,7,14,7"
+                  <DataGridTextColumn.ElementStyle>
+                    <Style TargetType="TextBlock">
+                      <Setter Property="HorizontalAlignment" Value="Right" />
+                      <Setter Property="FontFamily" Value="Consolas" />
+                      <Setter Property="Foreground" Value="Gray" />
+                      <Setter Property="VerticalAlignment" Value="Center" />
+                      <Setter Property="Margin" Value="0,0,8,0" />
+                    </Style>
+                  </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+              </DataGrid.Columns>
+            </DataGrid>
+          </GroupBox>
+        </Grid>
+      </Border>
+      <!-- Right: metadata -->
+      <Border Grid.Column="1" Padding="8,0,8,8" Background="#222" Margin="2,0,0,0">
+        <Grid Margin="0,0,0,0" VerticalAlignment="Stretch">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+          <!-- MP3 metadata section -->
+          <Grid Grid.Row="0">
+            <GroupBox FontWeight="Bold" FontSize="20" Foreground="White" Margin="0,0,0,0">
+              <GroupBox.Style>
+                <Style TargetType="GroupBox">
+                  <Setter Property="Visibility">
+                    <Setter.Value>
+                      <MultiBinding Converter="{StaticResource Mp3GroupBoxVisibilityConverter}">
+                        <Binding Path="IsMp3MetadataVisible"/>
+                        <Binding Path="TrackTitle"/>
+                      </MultiBinding>
+                    </Setter.Value>
+                  </Setter>
+                  <Style.Triggers>
+                    <!-- Hide if no track title -->
+                    <DataTrigger Binding="{Binding TrackTitle}" Value="{x:Null}">
+                      <Setter Property="Visibility" Value="Collapsed"/>
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </GroupBox.Style>
+              <GroupBox.Header>
+                <TextBlock Text="Track Metadata" FontWeight="Bold" FontSize="20" Foreground="White" VerticalAlignment="Center"/>
+              </GroupBox.Header>
+              <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                <!-- Track cover image -->
+                <Image Width="200" Height="200" Source="{Binding TrackCover}" Stretch="UniformToFill" Margin="7,7,14,7"
                                        Cursor="Hand">
-                                    <Image.InputBindings>
-                                        <MouseBinding MouseAction="LeftClick" Command="{Binding ShowTrackCoverCommand}" />
-                                    </Image.InputBindings>
-                                </Image>
-                                <StackPanel>
-                                    <!-- Track metadata fields -->
-                                    <TextBlock FontSize="18" Foreground="White" Margin="0,6,0,6">
+                  <Image.InputBindings>
+                    <MouseBinding MouseAction="LeftClick" Command="{Binding ShowTrackCoverCommand}" />
+                  </Image.InputBindings>
+                </Image>
+                <StackPanel>
+                  <!-- Track metadata fields -->
+                  <TextBlock FontSize="18" Foreground="White" Margin="0,6,0,6">
                                         <Run Text="Title: "/>
                                         <Run Text="{Binding TrackTitle}"/>
-                                    </TextBlock>
-                                    <TextBlock FontSize="15" Foreground="White" Margin="0,0,0,2">
+                  </TextBlock>
+                  <TextBlock FontSize="15" Foreground="White" Margin="0,0,0,2">
                                         <Run Text="Artist: "/>
                                         <Run Text="{Binding TrackArtist}"/>
-                                    </TextBlock>
-                                    <TextBlock FontSize="15" Foreground="White" Margin="0,0,0,2">
+                  </TextBlock>
+                  <TextBlock FontSize="15" Foreground="White" Margin="0,0,0,2">
                                         <Run Text="Album: "/>
                                         <Run Text="{Binding TrackAlbum}"/>
-                                    </TextBlock>
-                                    <TextBlock FontSize="15" Foreground="White" Margin="0,0,0,2">
+                  </TextBlock>
+                  <TextBlock FontSize="15" Foreground="White" Margin="0,0,0,2">
                                         <Run Text="Year: "/>
                                         <Run Text="{Binding TrackYear}"/>
-                                    </TextBlock>
-                                    <TextBlock FontSize="15" Foreground="White" Margin="0,0,0,2">
+                  </TextBlock>
+                  <TextBlock FontSize="15" Foreground="White" Margin="0,0,0,2">
                                         <Run Text="Genre: "/>
                                         <Run Text="{Binding TrackGenre}"/>
-                                    </TextBlock>
-                                    <TextBlock FontSize="15" Foreground="White" Margin="0,0,0,2">
+                  </TextBlock>
+                  <TextBlock FontSize="15" Foreground="White" Margin="0,0,0,2">
                                         <Run Text="Duration: "/>
                                         <Run Text="{Binding TrackDuration}"/>
-                                    </TextBlock>
-                                    <!-- Track number (if present) -->
-                                    <TextBlock FontSize="15" Foreground="White" Margin="0,0,0,2">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding TrackNumber}" Value="0">
-                                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
+                  </TextBlock>
+                  <!-- Track number (if present) -->
+                  <TextBlock FontSize="15" Foreground="White" Margin="0,0,0,2">
+                    <TextBlock.Style>
+                      <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Style.Triggers>
+                          <DataTrigger Binding="{Binding TrackNumber}" Value="0">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                          </DataTrigger>
+                        </Style.Triggers>
+                      </Style>
+                    </TextBlock.Style>
                                         <Run Text="Track: "/>
                                         <Run Text="{Binding TrackNumber}"/>
-                                    </TextBlock>
-                                    <!-- Total tracks (if present) -->
-                                    <TextBlock FontSize="15" Foreground="White" Margin="0,0,0,2">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding TotalTracks}" Value="0">
-                                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
+                  </TextBlock>
+                  <!-- Total tracks (if present) -->
+                  <TextBlock FontSize="15" Foreground="White" Margin="0,0,0,2">
+                    <TextBlock.Style>
+                      <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Style.Triggers>
+                          <DataTrigger Binding="{Binding TotalTracks}" Value="0">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                          </DataTrigger>
+                        </Style.Triggers>
+                      </Style>
+                    </TextBlock.Style>
                                         <Run Text="Total Tracks: "/>
                                         <Run Text="{Binding TotalTracks}"/>
-                                    </TextBlock>
-                                    <!-- Track comment (if present) -->
-                                    <TextBlock FontSize="15" Foreground="Gray" FontStyle="Italic" TextWrapping="Wrap" Margin="0,0,0,2">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding TrackComment}" Value="">
-                                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding TrackComment}" Value="{x:Null}">
-                                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
+                  </TextBlock>
+                  <!-- Track comment (if present) -->
+                  <TextBlock FontSize="15" Foreground="Gray" FontStyle="Italic" TextWrapping="Wrap" Margin="0,0,0,2">
+                    <TextBlock.Style>
+                      <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Style.Triggers>
+                          <DataTrigger Binding="{Binding TrackComment}" Value="">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                          </DataTrigger>
+                          <DataTrigger Binding="{Binding TrackComment}" Value="{x:Null}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                          </DataTrigger>
+                        </Style.Triggers>
+                      </Style>
+                    </TextBlock.Style>
                                         <Run Text="Comment: "/>
                                         <Run Text="{Binding TrackComment}"/>
-                                    </TextBlock>
-                                </StackPanel>
-                            </StackPanel>
-                        </GroupBox>
-                        <!-- Button to hide MP3 metadata section -->
-                        <Button Content="✖" Width="16" Height="15" Padding="0" FontSize="12"
+                  </TextBlock>
+                </StackPanel>
+              </StackPanel>
+            </GroupBox>
+            <!-- Button to hide MP3 metadata section -->
+            <Button Content="✖" Width="16" Height="15" Padding="0" FontSize="12"
                                 Command="{Binding DataContext.HideMetadataSectionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="mp3" ToolTip="Hide section"
                                 BorderThickness="0" Foreground="White" Cursor="Hand"
                                 HorizontalAlignment="Right" VerticalAlignment="Top"
                                 Margin="0,7,7,0"
                                 Panel.ZIndex="100">
-                            <Button.Visibility>
-                                <MultiBinding Converter="{StaticResource Mp3GroupBoxVisibilityConverter}">
-                                    <Binding Path="IsMp3MetadataVisible"/>
-                                    <Binding Path="TrackTitle"/>
-                                </MultiBinding>
-                            </Button.Visibility>
-                        </Button>
-                    </Grid>
-                    <!-- Discogs metadata section -->
-                    <Grid Grid.Row="1">
-                        <GroupBox FontSize="20" Foreground="White" Margin="0,0,0,0">
-                            <GroupBox.Style>
-                                <Style TargetType="GroupBox">
-                                    <Setter Property="Visibility">
-                                        <Setter.Value>
-                                            <MultiBinding Converter="{StaticResource DiscogsGroupBoxVisibilityConverter}">
-                                                <Binding Path="IsDiscogsMetadataVisible"/>
-                                                <Binding Path="DiscogsMetadata"/>
-                                            </MultiBinding>
-                                        </Setter.Value>
-                                    </Setter>
-                                    <Setter Property="Margin" Value="0,10,0,0"/>
-                                    <Style.Triggers>
-                                        <!-- Remove margin if no track is selected -->
-                                        <DataTrigger Binding="{Binding TrackTitle}" Value="{x:Null}">
-                                            <Setter Property="Margin" Value="0,0,0,0"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding TrackTitle}" Value="{x:Static sys:String.Empty}">
-                                            <Setter Property="Margin" Value="0,0,0,0"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </GroupBox.Style>
-                            <GroupBox.Header>
-                                <TextBlock Text="Discogs Metadata" FontWeight="Bold" FontSize="20" Foreground="White" VerticalAlignment="Center"/>
-                            </GroupBox.Header>
-                            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                <Grid>    
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="*"/>
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="150"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <!-- Cover image (top right) -->
-                                    <Image Grid.Row="0" Grid.Column="2" Grid.RowSpan="8" Width="200" Height="200" Margin="10,10,40,10" Stretch="UniformToFill"
+              <Button.Visibility>
+                <MultiBinding Converter="{StaticResource Mp3GroupBoxVisibilityConverter}">
+                  <Binding Path="IsMp3MetadataVisible"/>
+                  <Binding Path="TrackTitle"/>
+                </MultiBinding>
+              </Button.Visibility>
+            </Button>
+          </Grid>
+          <!-- Discogs metadata section -->
+          <Grid Grid.Row="1">
+            <GroupBox FontSize="20" Foreground="White" Margin="0,0,0,0">
+              <GroupBox.Style>
+                <Style TargetType="GroupBox">
+                  <Setter Property="Visibility">
+                    <Setter.Value>
+                      <MultiBinding Converter="{StaticResource DiscogsGroupBoxVisibilityConverter}">
+                        <Binding Path="IsDiscogsMetadataVisible"/>
+                        <Binding Path="DiscogsMetadata"/>
+                      </MultiBinding>
+                    </Setter.Value>
+                  </Setter>
+                  <Setter Property="Margin" Value="0,10,0,0"/>
+                  <Style.Triggers>
+                    <!-- Remove margin if no track is selected -->
+                    <DataTrigger Binding="{Binding TrackTitle}" Value="{x:Null}">
+                      <Setter Property="Margin" Value="0,0,0,0"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding TrackTitle}" Value="{x:Static sys:String.Empty}">
+                      <Setter Property="Margin" Value="0,0,0,0"/>
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </GroupBox.Style>
+              <GroupBox.Header>
+                <TextBlock Text="Discogs Metadata" FontWeight="Bold" FontSize="20" Foreground="White" VerticalAlignment="Center"/>
+              </GroupBox.Header>
+              <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <Grid>
+                  <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                  </Grid.RowDefinitions>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                  </Grid.ColumnDefinitions>
+                  <!-- Cover image (top right) -->
+                  <Image Grid.Row="0" Grid.Column="2" Grid.RowSpan="8" Width="200" Height="200" Margin="10,10,40,10" Stretch="UniformToFill"
                                         Source="{Binding DiscogsMetadata.CoverUrl}"
                                         Visibility="{Binding DiscogsMetadata.CoverUrl, Converter={StaticResource NullOrEmptyToVisibilityConverter}}"
                                         Cursor="Hand">
-                                        <Image.InputBindings>
-                                            <MouseBinding MouseAction="LeftClick" Command="{Binding ShowDiscogsCoverCommand}" />
-                                        </Image.InputBindings>
-                                    </Image>
-                                    <!-- Title -->
-                                    <TextBlock Grid.Row="0" Grid.Column="0" FontWeight="Bold" FontSize="19" Text="Title:" Margin="5,5,0,5"/>
-                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding DiscogsMetadata.Title}" FontSize="18" Margin="0,5,0,5"/>
-                                    <!-- Discogs URL -->
-                                    <TextBlock Grid.Row="1" Grid.Column="0" FontWeight="Bold" FontSize="16" Text="Discogs URL:" Margin="5,7,0,0"/>
-                                    <TextBlock Grid.Row="1" Grid.Column="1" FontWeight="Bold" FontSize="15">
+                    <Image.InputBindings>
+                      <MouseBinding MouseAction="LeftClick" Command="{Binding ShowDiscogsCoverCommand}" />
+                    </Image.InputBindings>
+                  </Image>
+                  <!-- Title -->
+                  <TextBlock Grid.Row="0" Grid.Column="0" FontWeight="Bold" FontSize="19" Text="Title:" Margin="5,5,0,5"/>
+                  <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding DiscogsMetadata.Title}" FontSize="18" Margin="0,5,0,5"/>
+                  <!-- Discogs URL -->
+                  <TextBlock Grid.Row="1" Grid.Column="0" FontWeight="Bold" FontSize="16" Text="Discogs URL:" Margin="5,7,0,0"/>
+                  <TextBlock Grid.Row="1" Grid.Column="1" FontWeight="Bold" FontSize="15">
                                         <Hyperlink NavigateUri="{Binding DiscogsMetadata.DiscogsUrl}" RequestNavigate="DiscogsUrl_RequestNavigate">
                                             <TextBlock Text="{Binding DiscogsMetadata.DiscogsUrl}" Foreground="Blue" FontWeight="Bold" FontSize="15" Margin="0,7,0,0"/>
                                         </Hyperlink>
                                     </TextBlock>
-                                    <!-- Artist -->
-                                    <TextBlock Grid.Row="2" Grid.Column="0" FontWeight="Bold" FontSize="16" Text="Artist:" Margin="5,7,0,0"/>
-                                    <TextBlock Grid.Row="2" Grid.Column="1" FontSize="15" Text="{Binding DiscogsMetadata.Artist}" Margin="0,7,0,0"/>
-                                    <!-- Album (hidden if empty) -->
-                                    <TextBlock Grid.Row="3" Grid.Column="0" FontWeight="Bold" FontSize="16" Text="Album:" Margin="5,7,0,0">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding DiscogsMetadata.Album}" Value="">
-                                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding DiscogsMetadata.Album}" Value="{x:Null}">
-                                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                    <TextBlock Grid.Row="3" Grid.Column="1"  FontSize="15" Text="{Binding DiscogsMetadata.Album}" Margin="0,7,0,0">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding DiscogsMetadata.Album}" Value="">
-                                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding DiscogsMetadata.Album}" Value="{x:Null}">
-                                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                    <!-- Label -->
-                                    <TextBlock Grid.Row="4" Grid.Column="0" FontWeight="Bold" FontSize="16" Text="Label:" Margin="5,7,0,0"/>
-                                    <TextBlock Grid.Row="4" Grid.Column="1" FontSize="15" Text="{Binding DiscogsMetadata.Label}" Margin="0,7,0,0"/>
-                                    <!-- Released -->
-                                    <TextBlock Grid.Row="5" Grid.Column="0" FontWeight="Bold" FontSize="16" Text="Released:" Margin="5,7,0,0"/>
-                                    <TextBlock Grid.Row="5" Grid.Column="1" FontSize="15" Text="{Binding DiscogsMetadata.Released}" Margin="0,7,0,0"/>
-                                    <!-- Genres -->
-                                    <TextBlock Grid.Row="6" Grid.Column="0" FontWeight="Bold" FontSize="16" Text="Genres:" Margin="5,7,0,0"/>
-                                    <ItemsControl Grid.Row="6" Grid.Column="1" ItemsSource="{Binding DiscogsMetadata.Genres}">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <TextBlock FontSize="15" Margin="0,7,0,0">
-                                                    <TextBlock.Text>
-                                                        <Binding Path="." StringFormat="• {0}" />
-                                                    </TextBlock.Text>
-                                                </TextBlock>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                    <!-- Styles -->
-                                    <TextBlock Grid.Row="7" Grid.Column="0" FontWeight="Bold" FontSize="16" Text="Styles:" Margin="5,7,0,0"/>
-                                    <ItemsControl Grid.Row="7" Grid.Column="1" ItemsSource="{Binding DiscogsMetadata.Styles}">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <TextBlock FontSize="15"  Margin="0,7,0,0">
-                                                    <TextBlock.Text>
-                                                        <Binding Path="." StringFormat="• {0}" />
-                                                    </TextBlock.Text>
-                                                </TextBlock>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                    <!-- Notes (full width) -->
-                                    <TextBlock Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="3" FontWeight="Bold" FontSize="16" Text="Notes:" Margin="5,7,5,0"/>
-                                    <TextBlock Grid.Row="10" Grid.Column="1" Grid.ColumnSpan="2" FontSize="15" Text="{Binding DiscogsMetadata.Notes}" TextWrapping="Wrap" Margin="0,7,0,0"/>
-                                    <!-- Tracklist (full width) -->
-                                    <TextBlock Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="3" FontWeight="Bold" FontSize="16" Text="Tracklist:" Margin="5,7,0,0"/>
-                                    <ItemsControl Grid.Row="11" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding DiscogsMetadata.Tracklist}" Margin="0,7,0,5">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBlock FontSize="15" Text="{Binding Title}" VerticalAlignment="Center"/>
-                                                    <TextBlock FontSize="15" Text=" (" Foreground="Gray" VerticalAlignment="Center"/>
-                                                    <TextBlock FontSize="15" Text="{Binding Duration}" Foreground="Gray" VerticalAlignment="Center"/>
-                                                    <TextBlock FontSize="15" Text=")" Foreground="Gray" VerticalAlignment="Center"/>
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </Grid>
-                            </ScrollViewer>
-                        </GroupBox>
-                        <!-- Button to hide Discogs metadata section -->
-                        <Button Content="✖" Width="16" Height="15" Padding="0" FontSize="12"
+                  <!-- Artist -->
+                  <TextBlock Grid.Row="2" Grid.Column="0" FontWeight="Bold" FontSize="16" Text="Artist:" Margin="5,7,0,0"/>
+                  <TextBlock Grid.Row="2" Grid.Column="1" FontSize="15" Text="{Binding DiscogsMetadata.Artist}" Margin="0,7,0,0"/>
+                  <!-- Album (hidden if empty) -->
+                  <TextBlock Grid.Row="3" Grid.Column="0" FontWeight="Bold" FontSize="16" Text="Album:" Margin="5,7,0,0">
+                    <TextBlock.Style>
+                      <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Style.Triggers>
+                          <DataTrigger Binding="{Binding DiscogsMetadata.Album}" Value="">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                          </DataTrigger>
+                          <DataTrigger Binding="{Binding DiscogsMetadata.Album}" Value="{x:Null}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                          </DataTrigger>
+                        </Style.Triggers>
+                      </Style>
+                    </TextBlock.Style>
+                  </TextBlock>
+                  <TextBlock Grid.Row="3" Grid.Column="1"  FontSize="15" Text="{Binding DiscogsMetadata.Album}" Margin="0,7,0,0">
+                    <TextBlock.Style>
+                      <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Style.Triggers>
+                          <DataTrigger Binding="{Binding DiscogsMetadata.Album}" Value="">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                          </DataTrigger>
+                          <DataTrigger Binding="{Binding DiscogsMetadata.Album}" Value="{x:Null}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                          </DataTrigger>
+                        </Style.Triggers>
+                      </Style>
+                    </TextBlock.Style>
+                  </TextBlock>
+                  <!-- Label -->
+                  <TextBlock Grid.Row="4" Grid.Column="0" FontWeight="Bold" FontSize="16" Text="Label:" Margin="5,7,0,0"/>
+                  <TextBlock Grid.Row="4" Grid.Column="1" FontSize="15" Text="{Binding DiscogsMetadata.Label}" Margin="0,7,0,0"/>
+                  <!-- Released -->
+                  <TextBlock Grid.Row="5" Grid.Column="0" FontWeight="Bold" FontSize="16" Text="Released:" Margin="5,7,0,0"/>
+                  <TextBlock Grid.Row="5" Grid.Column="1" FontSize="15" Text="{Binding DiscogsMetadata.Released}" Margin="0,7,0,0"/>
+                  <!-- Genres -->
+                  <TextBlock Grid.Row="6" Grid.Column="0" FontWeight="Bold" FontSize="16" Text="Genres:" Margin="5,7,0,0"/>
+                  <ItemsControl Grid.Row="6" Grid.Column="1" ItemsSource="{Binding DiscogsMetadata.Genres}">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate>
+                        <TextBlock FontSize="15" Margin="0,7,0,0">
+                          <TextBlock.Text>
+                            <Binding Path="." StringFormat="• {0}" />
+                          </TextBlock.Text>
+                        </TextBlock>
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                  <!-- Styles -->
+                  <TextBlock Grid.Row="7" Grid.Column="0" FontWeight="Bold" FontSize="16" Text="Styles:" Margin="5,7,0,0"/>
+                  <ItemsControl Grid.Row="7" Grid.Column="1" ItemsSource="{Binding DiscogsMetadata.Styles}">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate>
+                        <TextBlock FontSize="15"  Margin="0,7,0,0">
+                          <TextBlock.Text>
+                            <Binding Path="." StringFormat="• {0}" />
+                          </TextBlock.Text>
+                        </TextBlock>
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                  <!-- Notes (full width) -->
+                  <TextBlock Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="3" FontWeight="Bold" FontSize="16" Text="Notes:" Margin="5,7,5,0"/>
+                  <TextBlock Grid.Row="10" Grid.Column="1" Grid.ColumnSpan="2" FontSize="15" Text="{Binding DiscogsMetadata.Notes}" TextWrapping="Wrap" Margin="0,7,0,0"/>
+                  <!-- Tracklist (full width) -->
+                  <TextBlock Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="3" FontWeight="Bold" FontSize="16" Text="Tracklist:" Margin="5,7,0,0"/>
+                  <ItemsControl Grid.Row="11" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding DiscogsMetadata.Tracklist}" Margin="0,7,0,5">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                          <TextBlock FontSize="15" Text="{Binding Title}" VerticalAlignment="Center"/>
+                          <TextBlock FontSize="15" Text=" (" Foreground="Gray" VerticalAlignment="Center"/>
+                          <TextBlock FontSize="15" Text="{Binding Duration}" Foreground="Gray" VerticalAlignment="Center"/>
+                          <TextBlock FontSize="15" Text=")" Foreground="Gray" VerticalAlignment="Center"/>
+                        </StackPanel>
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </Grid>
+              </ScrollViewer>
+            </GroupBox>
+            <!-- Button to hide Discogs metadata section -->
+            <Button Content="✖" Width="16" Height="15" Padding="0" FontSize="12"
                             Command="{Binding DataContext.HideMetadataSectionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="discogs" ToolTip="Hide section"
                             BorderThickness="0" Foreground="White" Cursor="Hand"
                             HorizontalAlignment="Right" VerticalAlignment="Top"
                             Margin="0,7,7,0"
                             Panel.ZIndex="100">
-                            <Button.Visibility>
-                                <MultiBinding Converter="{StaticResource DiscogsGroupBoxVisibilityConverter}">
-                                    <Binding Path="IsDiscogsMetadataVisible"/>
-                                    <Binding Path="DiscogsMetadata"/>
-                                </MultiBinding>
-                            </Button.Visibility>
-                        </Button>
-                    </Grid>
-                </Grid>
-            </Border>
+              <Button.Visibility>
+                <MultiBinding Converter="{StaticResource DiscogsGroupBoxVisibilityConverter}">
+                  <Binding Path="IsDiscogsMetadataVisible"/>
+                  <Binding Path="DiscogsMetadata"/>
+                </MultiBinding>
+              </Button.Visibility>
+            </Button>
+          </Grid>
         </Grid>
-        <!-- Controls -->
-        <StackPanel Grid.Row="4" Margin="0,0,0,10">
-            <!-- Buttons split left and right -->
-            <Grid Margin="0,0,0,10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Column="0">
-                    <Button Name="PlayPauseButton" 
-                            Content="{Binding PlayPauseButtonContent}" 
-                            Width="50" Height="35" 
+      </Border>
+    </Grid>
+    <!-- Controls -->
+    <StackPanel Grid.Row="4" Margin="0,0,0,10">
+      <!-- Buttons split left and right -->
+      <Grid Margin="0,0,0,10">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Column="0">
+          <Button Name="PlayPauseButton"
+                            Content="{Binding PlayPauseButtonContent}"
+                            Width="50" Height="35"
                             Margin="5,0"
                             Command="{Binding PlayPauseCommand}"
                             IsEnabled="{Binding CanPlayPause}"
                             ToolTip="{Binding PlayPauseButtonToolTip}"/>
-                    <Button Name="StopButton" 
-                            Content="⏹" 
-                            Width="50" Height="35" 
+          <Button Name="StopButton"
+                            Content="⏹"
+                            Width="50" Height="35"
                             Margin="5,0"
                             Command="{Binding StopCommand}"
                             IsEnabled="{Binding CanStop}"
                             ToolTip="Stop playback"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Column="1">
-                    <!-- Button to load Discogs metadata -->
-                    <Button Content="Load metadata from Discogs"
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Column="1">
+          <!-- Button to load Discogs metadata -->
+          <Button Content="Load metadata from Discogs"
                             Margin="5"
                             Padding="5"
                             Command="{Binding LoadDiscogsMetadataCommand}"
                             Visibility="{Binding DiscogsMetadata, Converter={StaticResource NullToVisibilityConverter}}" />
-                    <!-- Button to refresh existing Discogs metadata -->
-                    <Button Content="Refresh Discogs metadata"
+          <!-- Button to refresh existing Discogs metadata -->
+          <Button Content="Refresh Discogs metadata"
                             Margin="5"
                             Padding="5"
                             Command="{Binding RefreshDiscogsMetadataCommand}"
                             Visibility="{Binding DiscogsMetadata, Converter={StaticResource NotNullToVisibilityConverter}}"
                             ToolTip="Update metadata from Discogs (overwrites cached data)" />
-                    <!-- Toggle MP3 metadata section -->
-                    <Button Content="{Binding Mp3MetadataToggleText}"
+          <!-- Toggle MP3 metadata section -->
+          <Button Content="{Binding Mp3MetadataToggleText}"
                             Visibility="{Binding TrackTitle, Converter={StaticResource NullOrEmptyToVisibilityConverter}}"
                             Command="{Binding Mp3MetadataToggleCommand}" Margin="5" Padding="5"/>
-                    <!-- Toggle Discogs metadata section -->
-                    <Button Content="{Binding DiscogsMetadataToggleText}"
+          <!-- Toggle Discogs metadata section -->
+          <Button Content="{Binding DiscogsMetadataToggleText}"
                             Visibility="{Binding DiscogsMetadata, Converter={StaticResource NotNullToVisibilityConverter}}"
                             Command="{Binding DiscogsMetadataToggleCommand}" Margin="5" Padding="5"/>
-                </StackPanel>
-            </Grid>
-            <!-- Progress slider and time info -->
-            <StackPanel Margin="0,5,0,0">
-                <TextBlock Text="Track Position:" FontWeight="Bold" Margin="0,0,0,5" Foreground="White"/>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <!-- Current time -->
-                    <TextBlock Grid.Column="0" 
-                               Text="{Binding CurrentTime}" 
-                               Margin="0,0,8,0" 
+        </StackPanel>
+      </Grid>
+      <!-- Progress slider and time info -->
+      <StackPanel Margin="0,5,0,0">
+        <TextBlock Text="Track Position:" FontWeight="Bold" Margin="0,0,0,5" Foreground="White"/>
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <!-- Current time -->
+          <TextBlock Grid.Column="0"
+                               Text="{Binding CurrentTime}"
+                               Margin="0,0,8,0"
                                VerticalAlignment="Center"
                                FontFamily="Consolas"
                                FontSize="11"
                                MinWidth="35"
                                TextAlignment="Center"
                                Foreground="White"/>
-                    <!-- Progress slider -->
-                    <Slider Grid.Column="1" 
+          <!-- Progress slider -->
+          <Slider Grid.Column="1"
                         Name="ProgressSlider"
-                        Minimum="0" 
+                        Minimum="0"
                         Maximum="{Binding Duration}"
                         Value="{Binding Position}"
                         TickFrequency="1"
@@ -729,53 +729,53 @@ CHANGELOG:
                         PreviewMouseDown="ProgressSlider_PreviewMouseDown"
                         PreviewMouseUp="ProgressSlider_PreviewMouseUp"
                         Margin="5,0,5,0">
-                        <Slider.Resources>
-                            <Style TargetType="Thumb" BasedOn="{StaticResource LargeThumb}"/>
-                        </Slider.Resources>
-                    </Slider>
-                    <!-- Total duration -->
-                    <TextBlock Grid.Column="2" 
-                               Text="{Binding DurationTime}" 
-                               Margin="8,0,0,0" 
+            <Slider.Resources>
+              <Style TargetType="Thumb" BasedOn="{StaticResource LargeThumb}"/>
+            </Slider.Resources>
+          </Slider>
+          <!-- Total duration -->
+          <TextBlock Grid.Column="2"
+                               Text="{Binding DurationTime}"
+                               Margin="8,0,0,0"
                                VerticalAlignment="Center"
                                FontFamily="Consolas"
                                FontSize="11"
                                MinWidth="35"
                                TextAlignment="Center"
                                Foreground="White"/>
-                </Grid>
-            </StackPanel>
-        </StackPanel>
-        <!-- Volume control -->
-        <StackPanel Grid.Row="5" Margin="0,0,0,10">
-            <TextBlock Text="Volume:" FontWeight="Bold" Margin="0,0,0,5" Foreground="White"/>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="🔊" Margin="0,0,5,0" VerticalAlignment="Center" Foreground="White"/>
-                <Slider Grid.Column="1" 
+        </Grid>
+      </StackPanel>
+    </StackPanel>
+    <!-- Volume control -->
+    <StackPanel Grid.Row="5" Margin="0,0,0,10">
+      <TextBlock Text="Volume:" FontWeight="Bold" Margin="0,0,0,5" Foreground="White"/>
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Column="0" Text="🔊" Margin="0,0,5,0" VerticalAlignment="Center" Foreground="White"/>
+        <Slider Grid.Column="1"
                         Name="VolumeSlider"
-                        Minimum="0" 
-                        Maximum="100" 
+                        Minimum="0"
+                        Maximum="100"
                         Value="{Binding Volume}"
                         TickFrequency="10"
                         IsSnapToTickEnabled="False"
                         ValueChanged="VolumeSlider_ValueChanged">
-                    <Slider.Resources>
-                        <Style TargetType="Thumb" BasedOn="{StaticResource LargeThumb}"/>
-                    </Slider.Resources>
-                </Slider>
-                <TextBlock Grid.Column="2" 
-                           Text="{Binding VolumeDisplay}" 
-                           Margin="5,0,0,0" 
+          <Slider.Resources>
+            <Style TargetType="Thumb" BasedOn="{StaticResource LargeThumb}"/>
+          </Slider.Resources>
+        </Slider>
+        <TextBlock Grid.Column="2"
+                           Text="{Binding VolumeDisplay}"
+                           Margin="5,0,0,0"
                            VerticalAlignment="Center"
                            MinWidth="35"
                            TextAlignment="Right"
                            Foreground="White"/>
-            </Grid>
-        </StackPanel>
-    </Grid>
+      </Grid>
+    </StackPanel>
+  </Grid>
 </UserControl>

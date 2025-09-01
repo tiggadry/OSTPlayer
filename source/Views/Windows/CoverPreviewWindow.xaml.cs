@@ -64,14 +64,14 @@
 // - No batch preview or slideshow features
 //
 // FUTURE REFACTORING:
-// TODO: Add image zoom and pan capabilities
-// TODO: Implement image rotation and manipulation tools
-// TODO: Add support for image format validation
-// TODO: Implement slideshow mode for multiple images
-// TODO: Add image saving and export functionality
-// TODO: Extract image loading to separate service
-// TODO: Add keyboard shortcuts for common operations
-// TODO: Implement image metadata display overlay
+// FUTURE: Add image zoom and pan capabilities
+// FUTURE: Implement image rotation and manipulation tools
+// FUTURE: Add support for image format validation
+// FUTURE: Implement slideshow mode for multiple images
+// FUTURE: Add image saving and export functionality
+// FUTURE: Extract image loading to separate service
+// FUTURE: Add keyboard shortcuts for common operations
+// FUTURE: Implement image metadata display overlay
 // CONSIDER: Adding image editing capabilities
 // CONSIDER: Integration with external image viewers
 // IDEA: Batch preview mode for album collections

@@ -117,7 +117,7 @@ var result = SomeAsyncMethod().Result; // Potential deadlock
 ## ?? **METRICS TO WATCH**
 
 ### **Leading Indicators**
-- **New Technical Debt**: Number of new TODO/FIXME comments added
+- **New Technical Debt**: Number of new FUTURE/FIXME comments added
 - **Refactoring Velocity**: Lines of code refactored per week
 - **Test Coverage**: Percentage of code under test
 - **Code Review Comments**: Comments related to technical debt

@@ -13,6 +13,10 @@
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <LangVersion>7.3</LangVersion>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <SonarQubeTestProject>
+    </SonarQubeTestProject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,6 +26,11 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <DocumentationFile>bin\Debug\OstPlayer.xml</DocumentationFile>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,6 +39,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <DocumentationFile>bin\Release\OstPlayer.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Converters\DiscogsGroupBoxVisibilityConverter.cs" />
@@ -73,6 +85,7 @@
     <Compile Include="Utils\AsyncMusicFileHelper.cs" />
     <Compile Include="Utils\DataGridColumnPersistence.cs" />
     <Compile Include="Utils\Helpers\TimeHelper.cs" />
+    <Compile Include="Utils\Helpers\UIHelper.cs" />
     <Compile Include="Utils\Helpers\VolumeHelper.cs" />
     <Compile Include="Utils\Mp3MetadataReader.cs" />
     <Compile Include="Utils\MusicFileHelper.cs" />
@@ -137,9 +150,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include=".editorconfig" />
-    <None Include=".gitattributes" />
-    <None Include=".gitignore" />
     <None Include="DevTools\FixEncodingAndSymbols.ps1" />
     <None Include="DevTools\FixIncorrectDates.ps1" />
     <None Include="DevTools\GetCurrentDate.ps1" />
@@ -212,9 +222,9 @@
     <None Include="Documentation\Refactoring\Step2-Final-Complete-Summary.md" />
     <None Include="Documentation\Refactoring\Step3-Complete.md" />
     <None Include="Documentation\Refactoring\Step3-FirstMicroExtraction-Plan.md" />
-    <None Include="Documentation\Refactoring\Step4-SecondMicroExtraction-Plan.md" />
-    <None Include="Documentation\Testing\Step1-Infrastructure-TestChecklist.md" />
-    <None Include="Documentation\Testing\Step2-Helpers-TestChecklist.md" />
+    <None Include="Documentation\Refactoring\Step4-Complete.md" />
+    <None Include="Documentation\Refactoring\Step5-Complete.md" />
+    <None Include="Documentation\Refactoring\Step6-ButtonContentExtraction-Plan.md" />
     <None Include="extension.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -252,6 +262,11 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Analyzer Include="packages\AsyncFixer.1.6.0\analyzers\dotnet\cs\AsyncFixer.dll" />
+    <Analyzer Include="packages\Microsoft.CodeAnalysis.NetAnalyzers.9.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.NetAnalyzers.dll" />
+    <Analyzer Include="packages\Microsoft.CodeAnalysis.NetAnalyzers.9.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.NetAnalyzers.dll" />
+    <Analyzer Include="packages\SonarAnalyzer.CSharp.10.15.0.120848\analyzers\SonarAnalyzer.CSharp.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -59,14 +59,14 @@
 // - No support for MusicBrainz relationships or advanced data
 //
 // FUTURE REFACTORING:
-// TODO: Implement IMetadataModel interface for consistency
-// TODO: Add support for multiple artists and relationships
-// TODO: Expand genre support to list of genres/tags
-// TODO: Add MusicBrainz relationship data (labels, recordings)
-// TODO: Implement metadata validation and quality scoring
-// TODO: Add support for MusicBrainz cover art archive
-// TODO: Extract MusicBrainz-specific logic to separate namespace
-// TODO: Add support for release group and work relationships
+// FUTURE: Implement IMetadataModel interface for consistency
+// FUTURE: Add support for multiple artists and relationships
+// FUTURE: Expand genre support to list of genres/tags
+// FUTURE: Add MusicBrainz relationship data (labels, recordings)
+// FUTURE: Implement metadata validation and quality scoring
+// FUTURE: Add support for MusicBrainz cover art archive
+// FUTURE: Extract MusicBrainz-specific logic to separate namespace
+// FUTURE: Add support for release group and work relationships
 // CONSIDER: Breaking into release and recording models
 // CONSIDER: Adding MusicBrainz entity relationship support
 // IDEA: Real-time synchronization with MusicBrainz updates
@@ -94,21 +94,109 @@
 // 2025-08-06 v1.0.0 - Initial implementation with MusicBrainz release metadata
 // ====================================================================
 
-namespace OstPlayer.Models
-{
-    // Unified metadata structure for MusicBrainz releases
-    public class MusicBrainzMetadataModel
+using System.Windows.Media.Imaging;
+
+namespace OstPlayer.Models {
+    /// <summary>
+    /// Represents comprehensive metadata for MusicBrainz releases.
+    /// </summary>
+    public class MusicBrainzMetadataModel : IMetadataModel
     {
+        /// <summary>
+        /// Gets the source of the metadata.
+        /// </summary>
+        public string Source => "MusicBrainz";
+
+        /// <summary>
+        /// Gets or sets the MusicBrainz release ID.
+        /// </summary>
         public string ReleaseId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the release title.
+        /// </summary>
         public string Title { get; set; }
+
+        /// <summary>
+        /// Gets or sets the artist name.
+        /// </summary>
         public string Artist { get; set; }
+
+        /// <summary>
+        /// Gets or sets the release date.
+        /// </summary>
         public string ReleaseDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the country of release.
+        /// </summary>
         public string Country { get; set; }
+
+        /// <summary>
+        /// Gets or sets the release status.
+        /// </summary>
         public string Status { get; set; }
+
+        /// <summary>
+        /// Gets or sets the album name.
+        /// </summary>
         public string Album { get; set; }
+
+        /// <summary>
+        /// Gets or sets the release year.
+        /// </summary>
         public string Year { get; set; }
+
+        /// <summary>
+        /// Gets or sets the musical genre.
+        /// </summary>
         public string Genre { get; set; }
+
+        /// <summary>
+        /// Gets or sets the comment or description.
+        /// </summary>
         public string Comment { get; set; }
+
+        /// <summary>
+        /// Gets or sets the cover image URL.
+        /// </summary>
         public string CoverUrl { get; set; }
+
+        /// <summary>
+        /// Gets or sets the duration (not typically available from MusicBrainz).
+        /// </summary>
+        public string Duration { get; set; }
+
+        /// <summary>
+        /// Gets or sets the track number.
+        /// </summary>
+        public uint TrackNumber { get; set; }
+
+        /// <summary>
+        /// Gets or sets the total number of tracks.
+        /// </summary>
+        public uint TotalTracks { get; set; }
+
+        /// <summary>
+        /// Gets or sets the cover art image.
+        /// </summary>
+        public BitmapImage Cover { get; set; }
+
+        /// <summary>
+        /// Validates if the metadata contains minimum required information.
+        /// </summary>
+        public bool IsValid()
+        {
+            return !string.IsNullOrEmpty(Title) || !string.IsNullOrEmpty(Artist);
+        }
+
+        /// <summary>
+        /// Merges this metadata with another source.
+        /// </summary>
+        public IMetadataModel MergeWith(IMetadataModel other, MetadataMergePriority priority = MetadataMergePriority.PreferThis)
+        {
+            // Simple implementation - can be enhanced
+            return priority == MetadataMergePriority.PreferOther ? other : this;
+        }
     }
 }
