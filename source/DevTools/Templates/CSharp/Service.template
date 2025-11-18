@@ -1,0 +1,53 @@
+{{GeneratedHeader}}
+
+using System;
+{{#if HasCollections}}
+using System.Collections.Generic;
+{{/if}}
+{{#if HasLinq}}
+using System.Linq;
+{{/if}}
+{{#if HasAsync}}
+using System.Threading.Tasks;
+{{/if}}
+
+namespace {{Namespace}}
+{
+    /// <summary>
+    /// {{ServiceDescription}}
+    /// </summary>
+    public class {{ClassName}}
+    {
+        {{#if HasDependencies}}
+        // Dependencies
+        {{#each Dependencies}}
+        private readonly {{Type}} _{{Name}};
+        {{/each}}
+
+        {{/if}}
+        /// <summary>
+        /// Initializes a new instance of the {{ClassName}} class
+        /// </summary>
+        public {{ClassName}}({{#each Dependencies}}{{Type}} {{name}}{{#unless @last}}, {{/unless}}{{/each}})
+        {
+            {{#each Dependencies}}
+            _{{Name}} = {{name}} ?? throw new ArgumentNullException(nameof({{name}}));
+            {{/each}}
+        }
+
+        {{#each Methods}}
+        /// <summary>
+        /// {{Description}}
+        /// </summary>
+        {{#each Parameters}}
+        /// <param name="{{Name}}">{{Description}}</param>
+        {{/each}}
+        /// <returns>{{ReturnDescription}}</returns>
+        public {{#if IsAsync}}async {{/if}}{{ReturnType}} {{Name}}({{ParameterList}})
+        {
+            {{Body}}
+        }
+
+        {{/each}}
+    }
+}

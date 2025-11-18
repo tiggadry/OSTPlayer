@@ -1,0 +1,34 @@
+# {{ModuleName}} Module - Update Summary
+
+## ?? Module Overview
+{{ModuleDescription}}
+
+## ?? Recent Updates Summary
+
+### **{{CurrentDate}} - {{UpdateDescription}}**
+{{#each Updates}}
+- {{this}}
+{{/each}}
+
+## ?? Updated Files in {{ModuleName}} Folder
+
+{{#each Files}}
+### {{Index}}. **{{FileName}}** ?
+- **Purpose**: {{Purpose}}
+- **Features**: {{Features}}
+- **Status**: ? {{Status}}
+
+{{/each}}
+
+## ?? **Related Documentation**
+- **Documentation/Core/CHANGELOG.md** - Main project changelog
+{{#each RelatedDocs}}
+- **{{this}}**
+{{/each}}
+- **DevTools/README.md** - Development automation tools
+
+---
+
+**Module Status**: ? **{{Status}}**  
+**Last Updated**: {{CurrentDate}}  
+**Next Review**: {{NextReview}}

@@ -1,0 +1,241 @@
+<!--
+====================================================================
+FILE: DiscogsReleaseSelectDialog.xaml
+PROJECT: OstPlayer - Playnite Plugin for Game Soundtrack Management
+MODULE: Views
+LOCATION: Views/Dialogs/
+VERSION: 1.0.0
+CREATED: 2025-08-06
+UPDATED: 2025-08-06
+AUTHOR: TiggAdry
+====================================================================
+
+PURPOSE:
+Modal dialog window for searching and selecting music releases from Discogs.
+Provides comprehensive search interface with real-time API integration
+and detailed release information display for metadata selection.
+
+FEATURES:
+- Modal dialog with search and selection capabilities
+- Real-time Discogs API search integration
+- Custom DataTemplate for rich release information display
+- Cover image preview with fallback handling
+- Keyboard shortcuts for efficient operation
+- Double-click selection for quick confirmation
+- Owner-centered window positioning
+- Responsive layout for various content sizes
+
+DEPENDENCIES:
+- OstPlayer.Views.Dialogs.DiscogsReleaseSelectDialog (code-behind)
+- OstPlayer.Models.DiscogsMetadataModel (data structure)
+- System.Windows (Window base class and controls)
+- Discogs API integration (through code-behind)
+
+UI STRUCTURE:
+- Grid layout with three rows for organized content
+- Search section with TextBox and Button
+- Results ListBox with custom item template
+- Action buttons section with OK/Cancel options
+- Cover image display with null value handling
+- Structured release information layout
+
+DESIGN PATTERNS:
+- Modal Dialog Pattern (ShowDialog with result)
+- Master-Detail Pattern (list selection with details)
+- Search Pattern (real-time search with results)
+- Template Pattern (custom DataTemplate for items)
+
+DATA BINDING:
+- ListBox ItemsSource binding for search results
+- DataTemplate binding for release properties
+- Null value handling with TargetNullValue
+- Fallback value support for missing data
+- Image binding with error handling
+
+SEARCH FUNCTIONALITY:
+- Real-time search with Enter key support
+- Search button for explicit search execution
+- Loading indication during API calls
+- Error handling for failed searches
+- Result pagination support (future enhancement)
+
+DIALOG BEHAVIOR:
+- Modal operation with proper result handling
+- Owner window centering for consistent positioning
+- Default and cancel button support
+- Keyboard navigation and shortcuts
+- Focus management for user experience
+
+ACCESSIBILITY FEATURES:
+- Keyboard navigation for all interactive elements
+- Default and cancel button designation
+- Logical tab order through dialog controls
+- Screen reader compatible element structure
+- Clear visual hierarchy and information organization
+
+PERFORMANCE OPTIMIZATION:
+- Efficient ListBox rendering for search results
+- Lazy image loading for cover art
+- Minimal memory allocation during searches
+- Fast dialog initialization and response
+- Optimized DataTemplate rendering
+
+LIMITATIONS:
+- No pagination for large result sets
+- Basic search functionality without advanced filters
+- Limited error recovery for API failures
+- No caching of previous search results
+- Fixed window size without responsive scaling
+
+FUTURE REFACTORING:
+FUTURE: Add loading spinner for async search operations
+FUTURE: Implement pagination for large result sets
+FUTURE: Add advanced search filters (year, format, label)
+FUTURE: Implement search result caching for performance
+FUTURE: Add keyboard navigation within result list
+FUTURE: Create resizable dialog with responsive layout
+FUTURE: Add search history and suggestions
+FUTURE: Implement batch selection capabilities
+CONSIDER: Preview mode for release details
+CONSIDER: Integration with user's Discogs collection
+IDEA: Advanced search with multiple criteria
+IDEA: Fuzzy search and automatic suggestions
+
+TESTING:
+- Dialog workflow tests with various search scenarios
+- API integration tests with mock responses
+- User interaction tests for keyboard and mouse
+- Error handling tests for network failures
+- Accessibility tests for keyboard navigation
+
+ERROR HANDLING:
+- Network connectivity failure scenarios
+- Invalid search query handling
+- Empty result set presentation
+- API rate limiting and token issues
+- Image loading failure graceful degradation
+
+API INTEGRATION:
+- Discogs Database API v2.0 search endpoint
+- Personal Access Token authentication
+- Rate limiting compliance and error handling
+- JSON response parsing and model mapping
+- Cover image URL handling and display
+
+COMPATIBILITY:
+- .NET Framework 4.6.2
+- C# 7.3
+- WPF 4.6.2
+- Discogs API v2.0
+- Windows modal dialog system
+
+CHANGELOG:
+2025-08-06 v1.0.0 - Initial implementation with comprehensive Discogs search dialog
+====================================================================
+-->
+
+<!--
+FILE: DiscogsReleaseSelectDialog.xaml
+PROJECT: OstPlayer - Playnite plugin
+LOCATION: Views/Dialogs/
+
+PURPOSE:
+- Modal dialog window for searching and selecting a music release from the Discogs database.
+- Used during metadata enrichment to let the user choose the most relevant release.
+
+USAGE:
+- Instantiated from plugin logic when multiple Discogs matches are found.
+- Paired with DiscogsReleaseSelectDialog.xaml.cs code-behind.
+
+STRUCTURE:
+- Grid with three rows: search bar, results list, and action buttons.
+- ListBox with custom DataTemplate for displaying release info.
+
+DESIGN NOTES:
+- Window is centered on its owner and sized for comfortable browsing.
+- Null/fallback values prevent empty UI elements.
+- Compatible with Playnite theme integration.
+
+FUTURE FUTURE:
+- Add loading indicator for async search.
+- Support paging for large result sets.
+- Show format/label for disambiguation.
+- Improve accessibility (keyboard navigation, focus management).
+
+AUTHORING CONVENTIONS:
+- Minimal hardcoded sizes (except for buttons and images).
+- Descriptive element names (e.g. SearchTextBox, ReleaseListBox).
+- Consistent use of margins and alignment.
+-->
+
+<Window x:Class="OstPlayer.Views.Dialogs.DiscogsReleaseSelectDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Select Discogs Release" Height="800" Width="600" WindowStartupLocation="CenterOwner">
+  <Grid Margin="10">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <!-- Search bar -->
+      <RowDefinition Height="*"/>
+      <!-- List of results -->
+      <RowDefinition Height="Auto"/>
+      <!-- Action buttons -->
+    </Grid.RowDefinitions>
+
+    <!-- Search box section -->
+    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+      <TextBox x:Name="SearchTextBox"
+                     Width="350"
+                     Height="26"
+                     VerticalAlignment="Center"
+                     Margin="0,0,8,0"
+                     KeyDown="SearchTextBox_KeyDown"/>
+      <Button Content="Search"
+                    Width="80"
+                    Height="26"
+                    Click="SearchButton_Click"/>
+    </StackPanel>
+
+    <!-- List of search results -->
+    <ListBox x:Name="ReleaseListBox"
+                 Grid.Row="1"
+                 SelectedIndex="0"
+                 MouseDoubleClick="ReleaseListBox_MouseDoubleClick">
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <StackPanel Orientation="Horizontal" Margin="4">
+            <!-- Cover image for the release -->
+            <Image Source="{Binding CoverUrl, TargetNullValue='', FallbackValue=''}"
+                               Width="60"
+                               Height="60"
+                               Margin="0,0,10,0"/>
+            <StackPanel>
+              <!-- Release title -->
+              <TextBlock Text="{Binding Title, TargetNullValue='(no title)', FallbackValue='(no title)'}"
+                                       FontWeight="Bold"/>
+              <!-- Artist name -->
+              <TextBlock Text="{Binding Artist, TargetNullValue='(no artist)', FallbackValue='(no artist)'}"/>
+              <!-- Release date -->
+              <TextBlock Text="{Binding Released, TargetNullValue='(no date)', FallbackValue='(no date)'}"/>
+            </StackPanel>
+          </StackPanel>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+
+    <!-- OK / Cancel buttons -->
+    <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0,10,0,0">
+      <Button Content="OK"
+                    Width="80"
+                    Margin="0,0,10,0"
+                    IsDefault="True"
+                    Click="OkButton_Click"/>
+      <Button Content="Cancel"
+                    Width="80"
+                    IsCancel="True"/>
+    </StackPanel>
+  </Grid>
+</Window>

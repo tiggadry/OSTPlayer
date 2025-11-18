@@ -1,0 +1,308 @@
+# ================================
+# OstPlayer Plugin - .gitignore
+# ================================
+# Enhanced .gitignore for OstPlayer Playnite plugin
+# Based on .NET Framework 4.6.2 project analysis
+
+# ================================
+# Visual Studio / .NET Build Files
+# ================================
+
+# Build output directories
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+[Tt]emp/
+
+# MSBuild temporary files
+*.tmp
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+*.cache
+*.ilk
+*.meta
+*.ncb
+*.sdf
+*.opensdf
+*.cachefile
+*.VC.db
+*.VC.VC.opendb
+
+# Visual Studio files
+.vs/
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.pidb
+*.svclog
+*.scc
+
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# ================================
+# .NET Framework Specific
+# ================================
+
+# Assembly info and generated files
+**/AssemblyInfo.cs
+**/*.AssemblyAttributes.cs
+**/*_MarkupCompile.cache
+**/*_MarkupCompile.i.cache
+**/*_MarkupCompile.lref
+**/*.g.cs
+**/*.g.i.cs
+**/*.g.resources
+**/*.baml
+
+# Package restore files
+packages/
+!packages/build/
+!packages/*/build/
+
+# NuGet packages (specific exclusions for Playnite plugins)
+*.nupkg
+*.snupkg
+.nuget/
+project.lock.json
+project.fragment.lock.json
+packages.lock.json
+
+# ================================
+# Playnite Plugin Specific
+# ================================
+
+# Plugin output files
+*.dll.config
+*.exe.config
+*.manifest
+*.application
+
+# Playnite plugin cache and temporary files
+*.playnite.cache
+*.playnite.tmp
+*.plugin.cache
+*.plugin.tmp
+
+# Plugin test data and local configurations
+*.local.json
+*.local.yaml
+*.local.xml
+*.test.json
+*.dev.json
+
+# ================================
+# Development and Testing Files
+# ================================
+
+# Log files
+*.log
+*.log.*
+logs/
+[Ll]og/
+[Ll]ogs/
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+*~
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Test results and coverage
+TestResults/
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml
+*.testlog
+BenchmarkDotNet.Artifacts/
+
+# ================================
+# Operating System Files
+# ================================
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ================================
+# IDE and Editor Files
+# ================================
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# CodeRush personal settings
+.cr/personal
+
+# Local History for Visual Studio
+.localhistory/
+
+# BeatPulse healthcheck temp database
+healthchecksdb
+
+# Backup folder for Package Reference Convert tool in Visual Studio 2017
+MigrationBackup/
+
+# ================================
+# Documentation and Notes
+# ================================
+
+# Personal development notes (keep project docs)
+/DevNotes/
+/PersonalNotes/
+*.personal.md
+*.dev.md
+*.notes.txt
+
+# Generated documentation
+/Documentation/Generated/
+/docs/api/
+
+# ================================
+# Security and Sensitive Data
+# ================================
+
+# API keys and secrets
+*.key
+*.secrets
+*.env
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+secrets.json
+appsettings.local.json
+connectionstrings.local.json
+
+# Certificate files
+*.pfx
+*.p12
+*.pem
+*.crt
+*.cer
+
+# ================================
+# Media and Asset Cache
+# ================================
+
+# Large media files that shouldn't be in source control
+*.avi
+*.mp4
+*.mov
+*.wmv
+*.flv
+*.wav
+*.mp3
+*.aac
+*.ogg
+*.flac
+*.m4a
+
+# Image cache and thumbnails
+*.cache.jpg
+*.cache.png
+*.thumb.*
+/ImageCache/
+/ThumbnailCache/
+
+# ================================
+# Project Specific Exclusions
+# ================================
+
+# OstPlayer specific temporary files
+/OstPlayerCache/
+/MusicCache/
+/AlbumArtCache/
+*.ostplayer.cache
+*.ostplayer.tmp
+
+# Discogs API cache (if implemented)
+/DiscogsCache/
+*.discogs.cache
+
+# Music metadata cache
+/MetadataCache/
+*.metadata.cache
+
+# ================================
+# Keep Important Files
+# ================================
+
+# Ensure these important files are NOT ignored
+!.gitattributes
+!.editorconfig
+!README.md
+!LICENSE
+!CHANGELOG.md
+!extension.yaml
+!*.png
+!*.ico
+!*.xaml
+!/Localization/**/*.xaml
+
+# Keep essential project structure
+!/Documentation/**/*.md
+!/Documentation/**/*.yaml
+!/source/**/*.cs
+!/source/**/*.xaml
+!/source/**/*.config
+!/source/**/*.csproj
+!/source/**/*.sln

@@ -1,0 +1,41 @@
+# EditorConfig is awesome: https://EditorConfig.org
+root = true
+
+# ------------------------------
+# Global defaults
+# ------------------------------
+[*]
+indent_style = space
+end_of_line = crlf
+insert_final_newline = true
+trim_trailing_whitespace = true
+charset = utf-8
+
+# Markdown files
+[*.md]
+trim_trailing_whitespace = false
+
+# XML, XAML, Config
+[*.{xml,xaml,config}]
+indent_size = 2
+
+# JSON
+[*.json]
+indent_size = 2
+
+# YAML
+[*.{yml,yaml}]
+indent_size = 2
+
+# Solution & project files
+[*.{sln,csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj,props,targets}]
+indent_size = 2
+
+# ------------------------------
+# C# specific
+# ------------------------------
+[*.{cs,csx}]
+indent_size = 4
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = false
+max_line_length = 100
