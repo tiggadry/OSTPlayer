@@ -256,6 +256,44 @@ namespace OstPlayer.Utils.Helpers
 
         #endregion
 
+        #region Command Availability Methods
+
+        /// <summary>
+        /// Determines if play/pause command can be executed based on file selection.
+        /// Essential for proper MVVM command binding and UI state management.
+        /// </summary>
+        /// <param name="selectedFile">Currently selected music file path</param>
+        /// <returns>True if command can be executed, false otherwise</returns>
+        /// <example>
+        /// <code>
+        /// bool canPlay = UIHelper.CanPlayPause(viewModel.SelectedMusicFile);
+        /// // Returns: true if file is selected, false if null/empty
+        /// </code>
+        /// </example>
+        public static bool CanPlayPause(string selectedFile)
+        {
+            return !string.IsNullOrEmpty(selectedFile);
+        }
+
+        /// <summary>
+        /// Determines if stop command can be executed based on playback state.
+        /// Provides consistent command availability logic for UI binding.
+        /// </summary>
+        /// <param name="isPlaying">Whether audio is currently playing</param>
+        /// <returns>True if command can be executed, false otherwise</returns>
+        /// <example>
+        /// <code>
+        /// bool canStop = UIHelper.CanStop(viewModel.IsPlaying);
+        /// // Returns: true if playing, false if stopped/paused
+        /// </code>
+        /// </example>
+        public static bool CanStop(bool isPlaying)
+        {
+            return isPlaying;
+        }
+
+        #endregion
+
         #region Utility Methods
 
         /// <summary>

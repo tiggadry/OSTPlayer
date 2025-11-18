@@ -670,10 +670,10 @@ namespace OstPlayer.ViewModels {
         public string DurationTime => TimeHelper.FormatTimeWithFallback(Duration, false);
 
         /// <summary>Command availability: true when a music file is selected.</summary>
-        public bool CanPlayPause => !string.IsNullOrEmpty(SelectedMusicFile);
+        public bool CanPlayPause => UIHelper.CanPlayPause(SelectedMusicFile);
 
         /// <summary>Command availability: true when playback is active.</summary>
-        public bool CanStop => IsPlaying;
+        public bool CanStop => UIHelper.CanStop(IsPlaying);
 
         /// <summary>Play/pause button symbol: pause (?) when playing, play (?) when stopped/paused.</summary>
         public string PlayPauseButtonContent => UIHelper.GetPlayPauseButtonSymbol(IsPlaying, IsPaused);

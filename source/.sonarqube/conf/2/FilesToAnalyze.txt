@@ -1,8 +1,0 @@
-﻿C:\Playnite\_github\OstPlayer\UnitTestProject_OstPlayer\OstPlayerTests.cs
-C:\Playnite\_github\OstPlayer\UnitTestProject_OstPlayer\Properties\AssemblyInfo.cs
-C:\Playnite\_github\OstPlayer\source\packages\MSTest.TestAdapter.3.10.3\buildTransitive\_localization\cs\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.resources.dll
-C:\Playnite\_github\OstPlayer\UnitTestProject_OstPlayer\app.config
-C:\Playnite\_github\OstPlayer\UnitTestProject_OstPlayer\packages.config
-C:\Playnite\_github\OstPlayer\source\packages\MSTest.TestAdapter.3.10.3\buildTransitive\net462\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
-C:\Playnite\_github\OstPlayer\source\packages\MSTest.TestAdapter.3.10.3\buildTransitive\net462\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
-C:\Playnite\_github\OstPlayer\source\packages\MSTest.TestAdapter.3.10.3\buildTransitive\net462\Microsoft.TestPlatform.AdapterUtilities.dll
