@@ -742,11 +742,10 @@ namespace OstPlayer.Services {
                     cancellationToken.ThrowIfCancellationRequested();
 
                     var metadataDir = Path.Combine(
-                        playniteApi.Paths.ConfigurationPath,
-                        "ExtraMetadata",
-                        "games",
-                        game.Id.ToString(),
-                        "Music Files"
+                        playniteApi.Paths.ExtensionsDataPath,
+                        "OstPlayer_f3b0c108-5212-4b34-a303-47e859b31a92",
+                        "Metadata",
+                        game.Id.ToString()
                     );
 
                     if (!Directory.Exists(metadataDir)) {
@@ -784,11 +783,10 @@ namespace OstPlayer.Services {
                     cancellationToken.ThrowIfCancellationRequested();
 
                     var metadataDir = Path.Combine(
-                        playniteApi.Paths.ConfigurationPath,
-                        "ExtraMetadata",
-                        "games",
-                        game.Id.ToString(),
-                        "Music Files"
+                        playniteApi.Paths.ExtensionsDataPath,
+                        "OstPlayer_f3b0c108-5212-4b34-a303-47e859b31a92",
+                        "Metadata",
+                        game.Id.ToString()
                     );
 
                     return Directory.Exists(metadataDir) &&
@@ -821,9 +819,9 @@ namespace OstPlayer.Services {
                     cancellationToken.ThrowIfCancellationRequested();
 
                     var metadataBaseDir = Path.Combine(
-                        playniteApi.Paths.ConfigurationPath,
-                        "ExtraMetadata",
-                        "games"
+                        playniteApi.Paths.ExtensionsDataPath,
+                        "OstPlayer_f3b0c108-5212-4b34-a303-47e859b31a92",
+                        "Metadata"
                     );
 
                     if (!Directory.Exists(metadataBaseDir))

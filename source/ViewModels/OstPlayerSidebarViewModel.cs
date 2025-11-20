@@ -625,34 +625,34 @@ namespace OstPlayer.ViewModels {
         /// Reference: https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.imaging.bitmapimage
         /// </summary>
         public BitmapImage TrackCover { get => trackCover; set { trackCover = value; OnPropertyChanged(); } }
-        
+
         /// <summary>Track title from ID3 metadata.</summary>
         public string TrackTitle { get => trackTitle; set { trackTitle = value; OnPropertyChanged(); } }
-        
+
         /// <summary>Performing artist from ID3 metadata.</summary>
         public string TrackArtist { get => trackArtist; set { trackArtist = value; OnPropertyChanged(); } }
-        
+
         /// <summary>Album name from ID3 metadata.</summary>
         public string TrackAlbum { get => trackAlbum; set { trackAlbum = value; OnPropertyChanged(); } }
-        
+
         /// <summary>Release year from ID3 metadata.</summary>
         public string TrackYear { get => trackYear; set { trackYear = value; OnPropertyChanged(); } }
-        
+
         /// <summary>Musical genre from ID3 metadata.</summary>
         public string TrackGenre { get => trackGenre; set { trackGenre = value; OnPropertyChanged(); } }
-        
+
         /// <summary>Comment text from ID3 metadata.</summary>
         public string TrackComment { get => trackComment; set { trackComment = value; OnPropertyChanged(); } }
-        
+
         /// <summary>Formatted duration string from ID3 metadata.</summary>
         public string TrackDuration { get => trackDuration; set { trackDuration = value; OnPropertyChanged(); } }
-        
+
         /// <summary>Track number within album from ID3 metadata.</summary>
         public uint TrackNumber { get => trackNumber; set { trackNumber = value; OnPropertyChanged(); } }
-        
+
         /// <summary>Total tracks in album from ID3 metadata.</summary>
         public uint TotalTracks { get => totalTracks; set { totalTracks = value; OnPropertyChanged(); } }
-        
+
         /// <summary>Discogs metadata for currently selected track.</summary>
         public DiscogsMetadataModel DiscogsMetadata { get => discogsMetadata; set { discogsMetadata = value; OnPropertyChanged(); } }
 
@@ -1004,7 +1004,7 @@ namespace OstPlayer.ViewModels {
                             // Provide user feedback based on results
                             if (Games.Count == 0) {
                                 StatusText = "No games with MP3 files found. Make sure games have .mp3 files in " +
-                                           "ExtraMetadata/games/{GameId}/Music Files/ folder";
+                                           "ExtensionsData/OstPlayer_{PluginId}/Metadata/{GameId}/ folder";
                             }
                             else {
                                 StatusText = $"Found {Games.Count} games with MP3 music files";
@@ -1457,11 +1457,10 @@ namespace OstPlayer.ViewModels {
             try {
                 // Construct path to cached Discogs metadata JSON file
                 var musicDir = Path.Combine(
-                    plugin.PlayniteApi.Paths.ConfigurationPath,
-                    "ExtraMetadata",
-                    "games",
-                    SelectedGame.Id.ToString(),
-                    "Music Files"
+                    plugin.PlayniteApi.Paths.ExtensionsDataPath,
+                    "OstPlayer_f3b0c108-5212-4b34-a303-47e859b31a92",
+                    "Metadata",
+                    SelectedGame.Id.ToString()
                 );
 
                 var discogsJsonPath = Path.Combine(musicDir, $"{SelectedGame.Id}_discogs.json");
