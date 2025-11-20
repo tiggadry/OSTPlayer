@@ -93,7 +93,8 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using OstPlayer.Models;
 
-namespace OstPlayer.Clients {
+namespace OstPlayer.Clients
+{
     /// <summary>
     /// Static HTTP client for comprehensive Discogs API integration.
     /// Provides search and detailed metadata retrieval for music releases.
@@ -102,7 +103,8 @@ namespace OstPlayer.Clients {
     ///
     /// PERFORMANCE: Uses shared HttpClient instance for optimal connection pooling and resource management.
     /// </summary>
-    public static class DiscogsClient {
+    public static class DiscogsClient
+    {
         #region Private Static Fields
 
         /// <summary>
@@ -111,7 +113,9 @@ namespace OstPlayer.Clients {
         /// PERFORMANCE: Enables connection pooling and reduces socket exhaustion.
         /// THREAD SAFETY: HttpClient is thread-safe for concurrent use.
         /// </summary>
-        private static readonly Lazy<HttpClient> _httpClientLazy = new Lazy<HttpClient>(CreateHttpClient);
+        private static readonly Lazy<HttpClient> _httpClientLazy = new Lazy<HttpClient>(
+            CreateHttpClient
+        );
 
         /// <summary>
         /// Gets the shared HttpClient instance with lazy initialization.
@@ -153,10 +157,13 @@ namespace OstPlayer.Clients {
         /// CONFIGURATION: Sets User-Agent, timeout, and other required headers.
         /// </summary>
         /// <returns>Configured HttpClient instance ready for Discogs API calls</returns>
-        private static HttpClient CreateHttpClient() {
+        private static HttpClient CreateHttpClient()
+        {
             // Create HttpClientHandler with automatic decompression
-            var handler = new HttpClientHandler() {
-                AutomaticDecompression = System.Net.DecompressionMethods.GZip | System.Net.DecompressionMethods.Deflate
+            var handler = new HttpClientHandler()
+            {
+                AutomaticDecompression =
+                    System.Net.DecompressionMethods.GZip | System.Net.DecompressionMethods.Deflate,
             };
 
             var client = new HttpClient(handler);
@@ -196,10 +203,15 @@ namespace OstPlayer.Clients {
         /// </example>
         public static async Task<List<DiscogsMetadataModel>> SearchReleaseAsync(
             string query,
-            string token) {
+            string token
+        )
+        {
             // Validate required authentication token
             if (string.IsNullOrWhiteSpace(token))
-                throw new ArgumentException("Discogs Personal Access Token is required for API access.", nameof(token));
+                throw new ArgumentException(
+                    "Discogs Personal Access Token is required for API access.",
+                    nameof(token)
+                );
 
             // Validate search query parameter
             if (string.IsNullOrWhiteSpace(query))
@@ -207,15 +219,18 @@ namespace OstPlayer.Clients {
 
             // Construct search URL with query parameters and authentication
             // URI escaping prevents injection and handles special characters
-            var url = $"{ApiUrlSearch}?q={Uri.EscapeDataString(query)}&type=release&token={Uri.EscapeDataString(token)}";
+            var url =
+                $"{ApiUrlSearch}?q={Uri.EscapeDataString(query)}&type=release&token={Uri.EscapeDataString(token)}";
 
-            try {
+            try
+            {
                 // Send GET request using shared HttpClient instance
                 // PERFORMANCE: Reuses existing connections and enables pooling
                 var json = await HttpClient.GetStringAsync(url);
 
                 // Validate response content
-                if (string.IsNullOrEmpty(json)) {
+                if (string.IsNullOrEmpty(json))
+                {
                     throw new InvalidOperationException("Received empty response from Discogs API");
                 }
 
@@ -228,13 +243,21 @@ namespace OstPlayer.Clients {
                 // Process and transform search results to internal metadata model
                 return ProcessSearchResults(data);
             }
-            catch (HttpRequestException ex) {
+            catch (HttpRequestException ex)
+            {
                 // Re-throw with more context for API communication failures
-                throw new InvalidOperationException($"Failed to communicate with Discogs API: {ex.Message}", ex);
+                throw new InvalidOperationException(
+                    $"Failed to communicate with Discogs API: {ex.Message}",
+                    ex
+                );
             }
-            catch (JsonException ex) {
+            catch (JsonException ex)
+            {
                 // Enhanced error message for JSON parsing failures
-                throw new InvalidOperationException($"Failed to parse Discogs API response: {ex.Message}", ex);
+                throw new InvalidOperationException(
+                    $"Failed to parse Discogs API response: {ex.Message}",
+                    ex
+                );
             }
         }
 
@@ -255,18 +278,28 @@ namespace OstPlayer.Clients {
         /// </example>
         public static async Task<DiscogsMetadataModel> GetReleaseDetailsAsync(
             string releaseId,
-            string token) {
+            string token
+        )
+        {
             // Validate required parameters
             if (string.IsNullOrWhiteSpace(token))
-                throw new ArgumentException("Discogs Personal Access Token is required for API access.", nameof(token));
+                throw new ArgumentException(
+                    "Discogs Personal Access Token is required for API access.",
+                    nameof(token)
+                );
 
             if (string.IsNullOrWhiteSpace(releaseId))
-                throw new ArgumentException("Release ID is required for detailed metadata retrieval.", nameof(releaseId));
+                throw new ArgumentException(
+                    "Release ID is required for detailed metadata retrieval.",
+                    nameof(releaseId)
+                );
 
             // Construct release details URL with authentication
-            var url = $"{ApiUrlReleaseDetails}{Uri.EscapeDataString(releaseId)}?token={Uri.EscapeDataString(token)}";
+            var url =
+                $"{ApiUrlReleaseDetails}{Uri.EscapeDataString(releaseId)}?token={Uri.EscapeDataString(token)}";
 
-            try {
+            try
+            {
                 // Send GET request using shared HttpClient instance
                 // PERFORMANCE: Reuses existing connections and enables pooling
                 var json = await HttpClient.GetStringAsync(url);
@@ -284,13 +317,21 @@ namespace OstPlayer.Clients {
                 // Transform API response to internal metadata model
                 return MapReleaseDetailsToMetadataModel(data);
             }
-            catch (HttpRequestException ex) {
+            catch (HttpRequestException ex)
+            {
                 // Re-throw with more context for API communication failures
-                throw new InvalidOperationException($"Failed to retrieve release details from Discogs API: {ex.Message}", ex);
+                throw new InvalidOperationException(
+                    $"Failed to retrieve release details from Discogs API: {ex.Message}",
+                    ex
+                );
             }
-            catch (JsonException ex) {
+            catch (JsonException ex)
+            {
                 // Enhanced error message for JSON parsing failures
-                throw new InvalidOperationException($"Failed to parse Discogs release details response: {ex.Message}", ex);
+                throw new InvalidOperationException(
+                    $"Failed to parse Discogs release details response: {ex.Message}",
+                    ex
+                );
             }
         }
 
@@ -306,8 +347,11 @@ namespace OstPlayer.Clients {
         /// Keeping for reference and potential future per-request configuration.
         /// </summary>
         /// <param name="client">HttpClient instance to configure</param>
-        [Obsolete("Use CreateHttpClient() factory method instead. This method is kept for reference.")]
-        private static void ConfigureHttpClient(HttpClient client) {
+        [Obsolete(
+            "Use CreateHttpClient() factory method instead. This method is kept for reference."
+        )]
+        private static void ConfigureHttpClient(HttpClient client)
+        {
             // Discogs API requires User-Agent header for all requests
             // Format: ApplicationName/Version (Contact)
             client.DefaultRequestHeaders.UserAgent.ParseAdd(UserAgent);
@@ -323,7 +367,8 @@ namespace OstPlayer.Clients {
         /// </summary>
         /// <param name="data">Deserialized search result data from Discogs API</param>
         /// <returns>List of processed metadata models ready for UI consumption</returns>
-        private static List<DiscogsMetadataModel> ProcessSearchResults(DiscogsSearchResult data) {
+        private static List<DiscogsMetadataModel> ProcessSearchResults(DiscogsSearchResult data)
+        {
             var releases = new List<DiscogsMetadataModel>();
 
             // Validate input data structure
@@ -332,12 +377,15 @@ namespace OstPlayer.Clients {
 
             // Filter for release-type entries only (exclude masters, artists, labels)
             // This ensures consistent metadata structure across results
-            var releaseResults = data.Results
-                .Where(r => string.Equals(r.Type, "release", StringComparison.OrdinalIgnoreCase))
+            var releaseResults = data
+                .Results.Where(r =>
+                    string.Equals(r.Type, "release", StringComparison.OrdinalIgnoreCase)
+                )
                 .ToList();
 
             // Process each release result into internal metadata model
-            foreach (var result in releaseResults) {
+            foreach (var result in releaseResults)
+            {
                 // Exclude results with missing or blank title/id
                 if (string.IsNullOrWhiteSpace(result.Title) || result.Id <= 0)
                     continue; // Skip this result, it's incomplete
@@ -348,22 +396,27 @@ namespace OstPlayer.Clients {
 
                 // Handle cases where artist info is embedded in title field
                 // Common format: "Artist - Title" when artist field is empty
-                if (string.IsNullOrWhiteSpace(artist) && !string.IsNullOrWhiteSpace(title)) {
+                if (string.IsNullOrWhiteSpace(artist) && !string.IsNullOrWhiteSpace(title))
+                {
                     var parts = title.Split(new[] { " - " }, 2, StringSplitOptions.None);
-                    if (parts.Length == 2) {
+                    if (parts.Length == 2)
+                    {
                         artist = parts[0].Trim();
                         title = parts[1].Trim();
                     }
                 }
 
                 // Create internal metadata model with processed data
-                releases.Add(new DiscogsMetadataModel {
-                    Title = title ?? string.Empty,
-                    Artist = artist ?? string.Empty,
-                    Released = result.Year, // Map Year to Released for model consistency
-                    CoverUrl = result.Thumb, // Thumbnail image URL from search results
-                    DiscogsUrl = $"https://www.discogs.com/release/{result.Id}", // Construct full URL
-                });
+                releases.Add(
+                    new DiscogsMetadataModel
+                    {
+                        Title = title ?? string.Empty,
+                        Artist = artist ?? string.Empty,
+                        Released = result.Year, // Map Year to Released for model consistency
+                        CoverUrl = result.Thumb, // Thumbnail image URL from search results
+                        DiscogsUrl = $"https://www.discogs.com/release/{result.Id}", // Construct full URL
+                    }
+                );
             }
 
             return releases;
@@ -376,11 +429,15 @@ namespace OstPlayer.Clients {
         /// </summary>
         /// <param name="data">Detailed release data from Discogs API</param>
         /// <returns>Comprehensive metadata model with all available release information</returns>
-        private static DiscogsMetadataModel MapReleaseDetailsToMetadataModel(DiscogsReleaseDetails data) {
+        private static DiscogsMetadataModel MapReleaseDetailsToMetadataModel(
+            DiscogsReleaseDetails data
+        )
+        {
             // Extract cover image URL with fallback priority
             // Priority: Full-size image (Uri) > Medium-size image (150px) > None
             string coverUrl = null;
-            if (data.Images != null && data.Images.Count > 0) {
+            if (data.Images != null && data.Images.Count > 0)
+            {
                 var primaryImage = data.Images[0]; // Use first image as primary
                 coverUrl = !string.IsNullOrEmpty(primaryImage.Uri)
                     ? primaryImage.Uri
@@ -389,29 +446,35 @@ namespace OstPlayer.Clients {
 
             // Extract primary artist name from artists collection
             string primaryArtist = null;
-            if (data.Artists != null && data.Artists.Count > 0) {
+            if (data.Artists != null && data.Artists.Count > 0)
+            {
                 primaryArtist = data.Artists[0].Name;
             }
 
             // Combine multiple labels into single comma-separated string
             string labelString = null;
-            if (data.Labels != null && data.Labels.Count > 0) {
+            if (data.Labels != null && data.Labels.Count > 0)
+            {
                 labelString = string.Join(", ", data.Labels.Select(l => l.Name));
             }
 
             // Format physical format information with descriptions
             string formatString = null;
-            if (data.Formats != null && data.Formats.Count > 0) {
+            if (data.Formats != null && data.Formats.Count > 0)
+            {
                 var formatDescriptions = data.Formats.Select(f =>
-                    f.Name + (string.IsNullOrEmpty(f.Description) ? "" : $" ({f.Description})"));
+                    f.Name + (string.IsNullOrEmpty(f.Description) ? "" : $" ({f.Description})")
+                );
                 formatString = string.Join(", ", formatDescriptions);
             }
 
             // Convert tracklist to internal model format
             var tracklistModels = new List<DiscogsMetadataModel.DiscogsTrack>();
-            if (data.Tracklist != null) {
-                tracklistModels = data.Tracklist
-                    .Select(t => new DiscogsMetadataModel.DiscogsTrack {
+            if (data.Tracklist != null)
+            {
+                tracklistModels = data
+                    .Tracklist.Select(t => new DiscogsMetadataModel.DiscogsTrack
+                    {
                         Title = t.Title ?? string.Empty,
                         Duration = t.Duration ?? string.Empty,
                     })
@@ -419,7 +482,8 @@ namespace OstPlayer.Clients {
             }
 
             // Create comprehensive metadata model with all processed data
-            return new DiscogsMetadataModel {
+            return new DiscogsMetadataModel
+            {
                 Title = data.Title ?? string.Empty,
                 Album = data.Title ?? string.Empty, // Alias: treat title as album name
                 Artist = primaryArtist ?? string.Empty,
@@ -443,13 +507,15 @@ namespace OstPlayer.Clients {
         /// </summary>
         /// <param name="json">Raw JSON string from API response</param>
         /// <returns>Cleaned JSON string ready for deserialization</returns>
-        private static string CleanJsonResponse(string json) {
+        private static string CleanJsonResponse(string json)
+        {
             if (string.IsNullOrEmpty(json))
                 return json;
 
             // Remove BOM (Byte Order Mark) if present
             // UTF-8 BOM is EF BB BF (239 187 191)
-            if (json.Length > 0 && json[0] == '\uFEFF') {
+            if (json.Length > 0 && json[0] == '\uFEFF')
+            {
                 json = json.Substring(1);
             }
 
@@ -460,8 +526,10 @@ namespace OstPlayer.Clients {
             // Replace any remaining control characters that might interfere with JSON parsing
             // Keep only printable characters and standard JSON whitespace
             var cleaned = new System.Text.StringBuilder(json.Length);
-            foreach (char c in json) {
-                if (char.IsControl(c) && c != '\n' && c != '\r' && c != '\t') {
+            foreach (char c in json)
+            {
+                if (char.IsControl(c) && c != '\n' && c != '\r' && c != '\t')
+                {
                     // Skip control characters except for standard JSON whitespace
                     continue;
                 }
@@ -481,7 +549,8 @@ namespace OstPlayer.Clients {
         /// Maps directly to JSON structure returned by /database/search endpoint.
         /// Reference: https://www.discogs.com/developers/#page:database,header:database-search
         /// </summary>
-        private sealed class DiscogsSearchResult {
+        private sealed class DiscogsSearchResult
+        {
             /// <summary>Collection of search result items matching the query.</summary>
             [JsonProperty("results")]
             public List<Result> Results { get; set; }
@@ -490,7 +559,8 @@ namespace OstPlayer.Clients {
             /// Individual search result item containing basic release information.
             /// Minimal data set optimized for search result display and selection.
             /// </summary>
-            public sealed class Result {
+            public sealed class Result
+            {
                 /// <summary>Release title, may include artist information in "Artist - Title" format.</summary>
                 [JsonProperty("title")]
                 public string Title { get; set; }
@@ -522,7 +592,8 @@ namespace OstPlayer.Clients {
         /// Maps to complete JSON structure returned by /releases/{id} endpoint.
         /// Reference: https://www.discogs.com/developers/#page:database,header:database-release
         /// </summary>
-        private sealed class DiscogsReleaseDetails {
+        private sealed class DiscogsReleaseDetails
+        {
             /// <summary>Release title (album/single name).</summary>
             [JsonProperty("title")]
             public string Title { get; set; }
@@ -576,14 +647,16 @@ namespace OstPlayer.Clients {
             public List<Artist> Artists { get; set; }
 
             /// <summary>Record label information including name and catalog number.</summary>
-            public sealed class Label {
+            public sealed class Label
+            {
                 /// <summary>Record label name.</summary>
                 [JsonProperty("name")]
                 public string Name { get; set; }
             }
 
             /// <summary>Physical format details including media type and description.</summary>
-            public sealed class Format {
+            public sealed class Format
+            {
                 /// <summary>Format name (CD, Vinyl, Cassette, etc.).</summary>
                 [JsonProperty("name")]
                 public string Name { get; set; }
@@ -594,7 +667,8 @@ namespace OstPlayer.Clients {
             }
 
             /// <summary>Image metadata including multiple resolution options.</summary>
-            public sealed class Image {
+            public sealed class Image
+            {
                 /// <summary>Full-resolution image URL.</summary>
                 [JsonProperty("uri")]
                 public string Uri { get; set; }
@@ -605,7 +679,8 @@ namespace OstPlayer.Clients {
             }
 
             /// <summary>Individual track information from release tracklist.</summary>
-            public sealed class Track {
+            public sealed class Track
+            {
                 /// <summary>Track title including any featuring artists or subtitles.</summary>
                 [JsonProperty("title")]
                 public string Title { get; set; }
@@ -616,7 +691,8 @@ namespace OstPlayer.Clients {
             }
 
             /// <summary>Artist credit information including role and collaboration details.</summary>
-            public sealed class Artist {
+            public sealed class Artist
+            {
                 /// <summary>Artist name as credited on release.</summary>
                 [JsonProperty("name")]
                 public string Name { get; set; }

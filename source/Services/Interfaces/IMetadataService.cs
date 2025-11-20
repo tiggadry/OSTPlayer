@@ -74,28 +74,40 @@ using System.Threading.Tasks;
 using OstPlayer.Models;
 using Playnite.SDK.Models;
 
-namespace OstPlayer.Services.Interfaces {
+namespace OstPlayer.Services.Interfaces
+{
     /// <summary>
     /// Interface for metadata service providing comprehensive metadata operations.
     /// </summary>
-    public interface IMetadataService {
+    public interface IMetadataService
+    {
         #region Track Metadata Operations
 
         /// <summary>
         /// Loads metadata for a specific track asynchronously.
         /// </summary>
-        Task<TrackMetadataModel> LoadTrackMetadataAsync(string filePath, CancellationToken cancellationToken = default);
+        Task<TrackMetadataModel> LoadTrackMetadataAsync(
+            string filePath,
+            CancellationToken cancellationToken = default
+        );
 
         /// <summary>
         /// Loads metadata for multiple tracks with progress reporting.
         /// </summary>
-        Task<List<TrackMetadataModel>> LoadMultipleTracksMetadataAsync(IEnumerable<string> filePaths,
-            IProgress<int> progress = null, CancellationToken cancellationToken = default);
+        Task<List<TrackMetadataModel>> LoadMultipleTracksMetadataAsync(
+            IEnumerable<string> filePaths,
+            IProgress<int> progress = null,
+            CancellationToken cancellationToken = default
+        );
 
         /// <summary>
         /// Saves track metadata to cache storage.
         /// </summary>
-        Task SaveTrackMetadataAsync(string filePath, TrackMetadataModel metadata, CancellationToken cancellationToken = default);
+        Task SaveTrackMetadataAsync(
+            string filePath,
+            TrackMetadataModel metadata,
+            CancellationToken cancellationToken = default
+        );
 
         #endregion
 
@@ -104,18 +116,27 @@ namespace OstPlayer.Services.Interfaces {
         /// <summary>
         /// Loads album metadata for a game from external sources.
         /// </summary>
-        Task<AlbumMetadataModel> LoadAlbumMetadataAsync(Game game, CancellationToken cancellationToken = default);
+        Task<AlbumMetadataModel> LoadAlbumMetadataAsync(
+            Game game,
+            CancellationToken cancellationToken = default
+        );
 
         /// <summary>
         /// Loads Discogs metadata for a specific game.
         /// </summary>
-        Task<DiscogsMetadataModel> LoadDiscogsMetadataAsync(Game game, string discogsToken,
-            CancellationToken cancellationToken = default);
+        Task<DiscogsMetadataModel> LoadDiscogsMetadataAsync(
+            Game game,
+            string discogsToken,
+            CancellationToken cancellationToken = default
+        );
 
         /// <summary>
         /// Loads MusicBrainz metadata for a specific game.
         /// </summary>
-        Task<MusicBrainzMetadataModel> LoadMusicBrainzMetadataAsync(Game game, CancellationToken cancellationToken = default);
+        Task<MusicBrainzMetadataModel> LoadMusicBrainzMetadataAsync(
+            Game game,
+            CancellationToken cancellationToken = default
+        );
 
         #endregion
 
@@ -134,7 +155,9 @@ namespace OstPlayer.Services.Interfaces {
         /// <summary>
         /// Gets cache statistics and performance metrics.
         /// </summary>
-        Task<CacheStatistics> GetCacheStatisticsAsync(CancellationToken cancellationToken = default);
+        Task<CacheStatistics> GetCacheStatisticsAsync(
+            CancellationToken cancellationToken = default
+        );
 
         #endregion
 
@@ -162,32 +185,32 @@ namespace OstPlayer.Services.Interfaces {
         /// Gets or sets the total number of cache entries.
         /// </summary>
         public int TotalEntries { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the number of cache hits.
         /// </summary>
         public int HitCount { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the number of cache misses.
         /// </summary>
         public int MissCount { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the cache hit ratio.
         /// </summary>
         public double HitRatio { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the total number of requests.
         /// </summary>
         public int TotalRequests { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the memory usage in bytes.
         /// </summary>
         public long MemoryUsageBytes { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the average response time.
         /// </summary>
@@ -203,17 +226,17 @@ namespace OstPlayer.Services.Interfaces {
         /// Gets or sets whether the service is healthy.
         /// </summary>
         public bool IsHealthy { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the status message.
         /// </summary>
         public string Status { get; set; }
-        
+
         /// <summary>
         /// Gets or sets additional details about the health status.
         /// </summary>
         public Dictionary<string, object> Details { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the response time for health checks.
         /// </summary>

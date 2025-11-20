@@ -42,15 +42,18 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace OstPlayer.DevTools {
+namespace OstPlayer.DevTools
+{
     /// <summary>
     /// Demonstration and testing utility for DevTools AI automation capabilities
     /// </summary>
-    public static class DevToolsDemo {
+    public static class DevToolsDemo
+    {
         /// <summary>
         /// Demonstrates all DevTools capabilities
         /// </summary>
-        public static async Task RunComprehensiveDemo() {
+        public static async Task RunComprehensiveDemo()
+        {
             Console.WriteLine("?? DevTools v1.3.0 - AI Enhancement Demonstration");
             Console.WriteLine("================================================");
 
@@ -66,7 +69,8 @@ namespace OstPlayer.DevTools {
         /// <summary>
         /// Demonstrates CodeGenerator capabilities
         /// </summary>
-        private static Task DemoCodeGeneration() {
+        private static Task DemoCodeGeneration()
+        {
             Console.WriteLine("\n?? CodeGenerator Demonstration");
             Console.WriteLine("------------------------------");
 
@@ -74,7 +78,8 @@ namespace OstPlayer.DevTools {
             var header = CodeGenerator.GenerateFileHeader(
                 "DemoService.cs",
                 "Services",
-                "Demonstration service for showcasing DevTools capabilities");
+                "Demonstration service for showcasing DevTools capabilities"
+            );
 
             Console.WriteLine("Generated File Header:");
             Console.WriteLine(header.Substring(0, Math.Min(300, header.Length)) + "...");
@@ -82,7 +87,8 @@ namespace OstPlayer.DevTools {
             // Generate method documentation
             var methodDoc = CodeGenerator.GenerateMethodDocumentation(
                 "public async Task<bool> ProcessDataAsync(string input, int timeout)",
-                "Processes input data asynchronously with specified timeout");
+                "Processes input data asynchronously with specified timeout"
+            );
 
             Console.WriteLine("\nGenerated Method Documentation:");
             Console.WriteLine(methodDoc);
@@ -92,7 +98,8 @@ namespace OstPlayer.DevTools {
                 "DemoService",
                 "Service for demonstrating AI-assisted development workflows",
                 new List<string> { "Repository Pattern", "Async/Await", "Dependency Injection" },
-                new List<string> { "System.Threading.Tasks", "OstPlayer.Core" });
+                new List<string> { "System.Threading.Tasks", "OstPlayer.Core" }
+            );
 
             Console.WriteLine("Generated Class Documentation:");
             Console.WriteLine(classDoc);
@@ -103,7 +110,8 @@ namespace OstPlayer.DevTools {
         /// <summary>
         /// Demonstrates TemplateEngine capabilities
         /// </summary>
-        private static Task DemoTemplateEngine() {
+        private static Task DemoTemplateEngine()
+        {
             Console.WriteLine("\n?? TemplateEngine Demonstration");
             Console.WriteLine("-------------------------------");
 
@@ -111,12 +119,16 @@ namespace OstPlayer.DevTools {
             var templates = TemplateEngine.GetAvailableTemplates();
             Console.WriteLine($"Available Templates: {templates.Count}");
 
-            foreach (var template in templates) {
-                Console.WriteLine($"  - {template.Name} ({template.Category}): {template.Description}");
+            foreach (var template in templates)
+            {
+                Console.WriteLine(
+                    $"  - {template.Name} ({template.Category}): {template.Description}"
+                );
             }
 
             // Generate from template
-            var parameters = new Dictionary<string, object> {
+            var parameters = new Dictionary<string, object>
+            {
                 ["ClassName"] = "DemoViewModel",
                 ["Namespace"] = "OstPlayer.ViewModels.Demo",
                 ["ViewModelDescription"] = "Demo ViewModel for showcasing DevTools",
@@ -126,24 +138,42 @@ namespace OstPlayer.DevTools {
                 ["Fields"] = new[]
                 {
                     new { Type = "string", Name = "title" },
-                    new { Type = "bool", Name = "isLoading" }
+                    new { Type = "bool", Name = "isLoading" },
                 },
                 ["Properties"] = new[]
                 {
-                    new { Type = "string", Name = "Title", Description = "Gets or sets the demo title" },
-                    new { Type = "bool", Name = "IsLoading", Description = "Gets or sets loading state" }
+                    new
+                    {
+                        Type = "string",
+                        Name = "Title",
+                        Description = "Gets or sets the demo title",
+                    },
+                    new
+                    {
+                        Type = "bool",
+                        Name = "IsLoading",
+                        Description = "Gets or sets loading state",
+                    },
                 },
                 ["Commands"] = new[]
                 {
-                    new { Name = "Load", Description = "Loads demo data", ExecuteMethod = "LoadData" }
-                }
+                    new
+                    {
+                        Name = "Load",
+                        Description = "Loads demo data",
+                        ExecuteMethod = "LoadData",
+                    },
+                },
             };
 
             var generatedCode = TemplateEngine.GenerateFromTemplate("ViewModel", parameters);
 
-            if (!string.IsNullOrEmpty(generatedCode)) {
+            if (!string.IsNullOrEmpty(generatedCode))
+            {
                 Console.WriteLine("\nGenerated ViewModel Code:");
-                Console.WriteLine(generatedCode.Substring(0, Math.Min(500, generatedCode.Length)) + "...");
+                Console.WriteLine(
+                    generatedCode.Substring(0, Math.Min(500, generatedCode.Length)) + "..."
+                );
             }
 
             // Validate template
@@ -157,28 +187,37 @@ namespace OstPlayer.DevTools {
         /// <summary>
         /// Demonstrates AIAssistantHooks capabilities
         /// </summary>
-        private static async Task DemoAIAssistantHooks() {
+        private static async Task DemoAIAssistantHooks()
+        {
             Console.WriteLine("\n?? AIAssistantHooks Demonstration");
             Console.WriteLine("--------------------------------");
 
             // Register demo hooks
-            AIAssistantHooks.RegisterFileChangeHook("*.demo", async (filePath) => {
-                Console.WriteLine($"Demo file change detected: {filePath}");
-                await Task.Delay(10); // Simulate processing
-            });
+            AIAssistantHooks.RegisterFileChangeHook(
+                "*.demo",
+                async (filePath) =>
+                {
+                    Console.WriteLine($"Demo file change detected: {filePath}");
+                    await Task.Delay(10); // Simulate processing
+                }
+            );
 
-            AIAssistantHooks.RegisterContextHook("Demo", async (aiContext) => {
-                Console.WriteLine($"Demo context hook triggered: {aiContext.CurrentOperation}");
-                await Task.Delay(10); // Simulate processing
-            });
+            AIAssistantHooks.RegisterContextHook(
+                "Demo",
+                async (aiContext) =>
+                {
+                    Console.WriteLine($"Demo context hook triggered: {aiContext.CurrentOperation}");
+                    await Task.Delay(10); // Simulate processing
+                }
+            );
 
             // Trigger workflows
             await AIAssistantHooks.TriggerDocumentationUpdate("Demo update", new[] { "demo.cs" });
 
-            await AIAssistantHooks.TriggerCodeGeneration("Demo", new Dictionary<string, object> {
-                ["Type"] = "Class",
-                ["Name"] = "DemoClass"
-            });
+            await AIAssistantHooks.TriggerCodeGeneration(
+                "Demo",
+                new Dictionary<string, object> { ["Type"] = "Class", ["Name"] = "DemoClass" }
+            );
 
             // Get context
             var context = AIAssistantHooks.GetCurrentContext();
@@ -189,7 +228,8 @@ namespace OstPlayer.DevTools {
             // Get action statistics
             var stats = AIAssistantHooks.GetActionStatistics();
             Console.WriteLine("\nAI Action Statistics:");
-            foreach (var stat in stats) {
+            foreach (var stat in stats)
+            {
                 Console.WriteLine($"  {stat.Key}: {stat.Value}");
             }
         }
@@ -197,7 +237,8 @@ namespace OstPlayer.DevTools {
         /// <summary>
         /// Demonstrates DevToolsConfig capabilities
         /// </summary>
-        private static void DemoConfiguration() {
+        private static void DemoConfiguration()
+        {
             Console.WriteLine("\n?? DevToolsConfig Demonstration");
             Console.WriteLine("-------------------------------");
 
@@ -225,13 +266,15 @@ namespace OstPlayer.DevTools {
         /// <summary>
         /// Demonstrates performance benchmarks
         /// </summary>
-        private static void DemoPerformanceBenchmarks() {
+        private static void DemoPerformanceBenchmarks()
+        {
             Console.WriteLine("\n?? Performance Benchmarks");
             Console.WriteLine("-------------------------");
 
             // Benchmark file header generation
             var sw = Stopwatch.StartNew();
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < 100; i++)
+            {
                 CodeGenerator.GenerateFileHeader($"TestFile{i}.cs", "Services", "Test service");
             }
             sw.Stop();
@@ -239,12 +282,14 @@ namespace OstPlayer.DevTools {
 
             // Benchmark template processing
             sw.Restart();
-            var templateParams = new Dictionary<string, object> {
+            var templateParams = new Dictionary<string, object>
+            {
                 ["ClassName"] = "TestClass",
-                ["Namespace"] = "Test.Namespace"
+                ["Namespace"] = "Test.Namespace",
             };
 
-            for (int i = 0; i < 50; i++) {
+            for (int i = 0; i < 50; i++)
+            {
                 TemplateEngine.GenerateFromTemplate("CSharpClass", templateParams);
             }
             sw.Stop();
@@ -252,8 +297,12 @@ namespace OstPlayer.DevTools {
 
             // Benchmark AI context updates
             sw.Restart();
-            for (int i = 0; i < 200; i++) {
-                AIAssistantHooks.UpdateContext($"Test{i}", new Dictionary<string, object> { ["Test"] = i });
+            for (int i = 0; i < 200; i++)
+            {
+                AIAssistantHooks.UpdateContext(
+                    $"Test{i}",
+                    new Dictionary<string, object> { ["Test"] = i }
+                );
             }
             sw.Stop();
             Console.WriteLine($"AI Context Updates (200x): {sw.ElapsedMilliseconds}ms");
@@ -262,7 +311,8 @@ namespace OstPlayer.DevTools {
         /// <summary>
         /// Demonstrates AI-assisted workflow scenario
         /// </summary>
-        public static async Task DemoAIWorkflowScenario() {
+        public static async Task DemoAIWorkflowScenario()
+        {
             Console.WriteLine("\n?? AI-Assisted Workflow Scenario");
             Console.WriteLine("================================");
 
@@ -271,40 +321,48 @@ namespace OstPlayer.DevTools {
 
             // Step 1: AI detects intent to create service
             Console.WriteLine("\n1. AI detects service creation intent...");
-            await AIAssistantHooks.TriggerCodeGeneration("Service", new Dictionary<string, object> {
-                ["ClassName"] = "AudioProcessingService",
-                ["Module"] = "Services",
-                ["Purpose"] = "Audio file processing and metadata extraction"
-            });
+            await AIAssistantHooks.TriggerCodeGeneration(
+                "Service",
+                new Dictionary<string, object>
+                {
+                    ["ClassName"] = "AudioProcessingService",
+                    ["Module"] = "Services",
+                    ["Purpose"] = "Audio file processing and metadata extraction",
+                }
+            );
 
             // Step 2: Generate service template
             Console.WriteLine("2. Generating service template...");
-            var serviceParams = new Dictionary<string, object> {
+            var serviceParams = new Dictionary<string, object>
+            {
                 ["ClassName"] = "AudioProcessingService",
                 ["Namespace"] = "OstPlayer.Services",
-                ["ServiceDescription"] = "Service for processing audio files and extracting metadata",
+                ["ServiceDescription"] =
+                    "Service for processing audio files and extracting metadata",
                 ["HasDependencies"] = true,
                 ["HasAsync"] = true,
                 ["Dependencies"] = new[]
                 {
                     new { Type = "IAudioReader", Name = "audioReader" },
-                    new { Type = "IMetadataExtractor", Name = "metadataExtractor" }
+                    new { Type = "IMetadataExtractor", Name = "metadataExtractor" },
                 },
                 ["Methods"] = new[]
                 {
-                    new {
+                    new
+                    {
                         Name = "ProcessAudioFileAsync",
                         ReturnType = "Task<AudioMetadata>",
                         Description = "Processes audio file and extracts metadata",
                         IsAsync = true,
                         ParameterList = "string filePath",
-                        Body = "// FUTURE: Implement audio processing logic"
-                    }
-                }
+                        Body = "// FUTURE: Implement audio processing logic",
+                    },
+                },
             };
 
             var serviceCode = TemplateEngine.GenerateFromTemplate("Service", serviceParams);
-            if (!string.IsNullOrEmpty(serviceCode)) {
+            if (!string.IsNullOrEmpty(serviceCode))
+            {
                 Console.WriteLine("   ? Service template generated successfully");
             }
 
@@ -315,13 +373,15 @@ namespace OstPlayer.DevTools {
                 "Services",
                 "Service for processing audio files and extracting metadata for the OstPlayer plugin",
                 "Services/",
-                "1.0.0");
+                "1.0.0"
+            );
 
             var classDoc = CodeGenerator.GenerateClassDocumentation(
                 "AudioProcessingService",
                 "Service responsible for processing audio files and extracting metadata",
                 new List<string> { "Service Pattern", "Async/Await", "Dependency Injection" },
-                new List<string> { "System.Threading.Tasks", "OstPlayer.Models", "TagLibSharp" });
+                new List<string> { "System.Threading.Tasks", "OstPlayer.Models", "TagLibSharp" }
+            );
 
             Console.WriteLine("   ? Documentation generated successfully");
 
@@ -329,13 +389,17 @@ namespace OstPlayer.DevTools {
             Console.WriteLine("4. Updating project documentation...");
             await AIAssistantHooks.TriggerDocumentationUpdate(
                 "Added AudioProcessingService",
-                new[] { "Services/AudioProcessingService.cs" });
+                new[] { "Services/AudioProcessingService.cs" }
+            );
 
             Console.WriteLine("   ? Project documentation updated");
 
             // Step 5: Log completion
-            AIAssistantHooks.LogAIAction("DemoWorkflowScenario", true,
-                "Successfully demonstrated AI-assisted service creation workflow");
+            AIAssistantHooks.LogAIAction(
+                "DemoWorkflowScenario",
+                true,
+                "Successfully demonstrated AI-assisted service creation workflow"
+            );
 
             Console.WriteLine("\n?? AI-assisted workflow completed successfully!");
             Console.WriteLine("The AI helped with:");

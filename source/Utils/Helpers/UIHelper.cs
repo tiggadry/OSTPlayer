@@ -58,7 +58,7 @@ namespace OstPlayer.Utils.Helpers
     /// <summary>
     /// Static helper class for UI-related operations and formatting.
     /// Provides utility methods for button symbols, tooltips, and display text.
-    /// 
+    ///
     /// SAFETY NOTE: This is part of micro-extraction Step 6 - minimal risk UI helper.
     /// Contains only pure functions with no side effects.
     /// </summary>
@@ -116,7 +116,7 @@ namespace OstPlayer.Utils.Helpers
         /// <code>
         /// string symbol = UIHelper.GetPlayPauseButtonSymbol(true, false);
         /// // Returns: "⏸" (pause symbol when playing)
-        /// 
+        ///
         /// string symbol2 = UIHelper.GetPlayPauseButtonSymbol(false, true);
         /// // Returns: "▶" (play symbol when paused)
         /// </code>
@@ -153,7 +153,7 @@ namespace OstPlayer.Utils.Helpers
         /// <code>
         /// string text = UIHelper.GetToggleText("MP3 metadata", true);
         /// // Returns: "Hide MP3 metadata"
-        /// 
+        ///
         /// string text2 = UIHelper.GetToggleText("MP3 metadata", false);
         /// // Returns: "Show MP3 metadata"
         /// </code>
@@ -175,10 +175,15 @@ namespace OstPlayer.Utils.Helpers
         /// <param name="activeVerb">Verb to use when item is active (e.g., "Disable", "Stop")</param>
         /// <param name="inactiveVerb">Verb to use when item is inactive (e.g., "Enable", "Start")</param>
         /// <returns>Formatted toggle text with custom verbs</returns>
-        public static string GetToggleTextWithVerbs(string itemName, bool isActive, string activeVerb, string inactiveVerb)
+        public static string GetToggleTextWithVerbs(
+            string itemName,
+            bool isActive,
+            string activeVerb,
+            string inactiveVerb
+        )
         {
             var verb = isActive ? activeVerb : inactiveVerb;
-            
+
             if (string.IsNullOrWhiteSpace(itemName))
                 return verb ?? (isActive ? "Disable" : "Enable");
 
@@ -204,10 +209,10 @@ namespace OstPlayer.Utils.Helpers
 
             if (isPlaying && !isPaused)
                 return $"Playing: {trackName}";
-            
+
             if (isPaused)
                 return $"Paused: {trackName}";
-            
+
             return string.Empty; // Stopped state shows no status
         }
 

@@ -97,11 +97,13 @@
 using System.Collections.Generic;
 using System.Windows.Media.Imaging;
 
-namespace OstPlayer.Models {
+namespace OstPlayer.Models
+{
     /// <summary>
     /// Represents unified metadata for a single track, aggregating data from various sources.
     /// </summary>
-    public class TrackMetadataModel {
+    public class TrackMetadataModel
+    {
         /// <summary>
         /// Gets or sets the cover art image for the track.
         /// </summary>

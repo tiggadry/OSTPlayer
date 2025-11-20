@@ -68,15 +68,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using OstPlayer.Models;
 
-namespace OstPlayer.Services.Interfaces {
+namespace OstPlayer.Services.Interfaces
+{
     /// <summary>
     /// Interface for MusicBrainz API client supporting dependency injection.
     /// </summary>
-    public interface IMusicBrainzClient {
+    public interface IMusicBrainzClient
+    {
         /// <summary>
         /// Searches MusicBrainz database for releases matching the provided artist and album.
         /// </summary>
-        Task<MusicBrainzMetadataModel> SearchReleaseAsync(string artist, string album, CancellationToken cancellationToken = default);
+        Task<MusicBrainzMetadataModel> SearchReleaseAsync(
+            string artist,
+            string album,
+            CancellationToken cancellationToken = default
+        );
 
         /// <summary>
         /// Performs health check on MusicBrainz API service.

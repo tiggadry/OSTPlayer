@@ -84,30 +84,44 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace OstPlayer.DevTools {
+namespace OstPlayer.DevTools
+{
     /// <summary>
     /// Advanced template engine for AI-assisted code generation and automation
     /// </summary>
-    public static class TemplateEngine {
+    public static class TemplateEngine
+    {
         // Template cache for performance
-        private static readonly Dictionary<string, Template> TemplateCache = new Dictionary<string, Template>();
+        private static readonly Dictionary<string, Template> TemplateCache =
+            new Dictionary<string, Template>();
 
         // Template directories
-        private static readonly string[] TemplatePaths = {
+        private static readonly string[] TemplatePaths =
+        {
             "DevTools/Templates/",
             "Documentation/Templates/",
-            "Templates/"
+            "Templates/",
         };
 
         // Template parsing regex patterns
-        private static readonly Regex ParameterRegex = new Regex(@"\{\{(\w+)(?::([^}]+))?\}\}", RegexOptions.Compiled);
-        private static readonly Regex ConditionalRegex = new Regex(@"\{\{#if\s+(\w+)\}\}(.*?)\{\{/if\}\}", RegexOptions.Compiled | RegexOptions.Singleline);
-        private static readonly Regex LoopRegex = new Regex(@"\{\{#each\s+(\w+)\}\}(.*?)\{\{/each\}\}", RegexOptions.Compiled | RegexOptions.Singleline);
+        private static readonly Regex ParameterRegex = new Regex(
+            @"\{\{(\w+)(?::([^}]+))?\}\}",
+            RegexOptions.Compiled
+        );
+        private static readonly Regex ConditionalRegex = new Regex(
+            @"\{\{#if\s+(\w+)\}\}(.*?)\{\{/if\}\}",
+            RegexOptions.Compiled | RegexOptions.Singleline
+        );
+        private static readonly Regex LoopRegex = new Regex(
+            @"\{\{#each\s+(\w+)\}\}(.*?)\{\{/each\}\}",
+            RegexOptions.Compiled | RegexOptions.Singleline
+        );
 
         // Template cache timestamp
         private static DateTime _cacheLastUpdated = DateTime.MinValue;
 
-        static TemplateEngine() {
+        static TemplateEngine()
+        {
             InitializeBuiltInTemplates();
         }
 
@@ -119,16 +133,23 @@ namespace OstPlayer.DevTools {
         /// <param name="templateName">Name of the template to use</param>
         /// <param name="parameters">Parameters for template substitution</param>
         /// <returns>Generated content string</returns>
-        public static string GenerateFromTemplate(string templateName, Dictionary<string, object> parameters) {
-            try {
+        public static string GenerateFromTemplate(
+            string templateName,
+            Dictionary<string, object> parameters
+        )
+        {
+            try
+            {
                 var template = GetTemplate(templateName);
-                if (template == null) {
+                if (template == null)
+                {
                     return null;
                 }
 
                 return ProcessTemplate(template.Content, parameters);
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return null;
             }
         }
@@ -140,10 +161,17 @@ namespace OstPlayer.DevTools {
         /// <param name="outputPath">Path where the generated file should be saved</param>
         /// <param name="model">Model object containing template data</param>
         /// <returns>True if successfully created, false otherwise</returns>
-        public static bool CreateFileFromTemplate(string templatePath, string outputPath, object model) {
-            try {
+        public static bool CreateFileFromTemplate(
+            string templatePath,
+            string outputPath,
+            object model
+        )
+        {
+            try
+            {
                 var template = LoadTemplateFromFile(templatePath);
-                if (template == null) {
+                if (template == null)
+                {
                     return false;
                 }
 
@@ -152,14 +180,16 @@ namespace OstPlayer.DevTools {
 
                 // Ensure output directory exists
                 var outputDir = Path.GetDirectoryName(outputPath);
-                if (!string.IsNullOrEmpty(outputDir) && !Directory.Exists(outputDir)) {
+                if (!string.IsNullOrEmpty(outputDir) && !Directory.Exists(outputDir))
+                {
                     Directory.CreateDirectory(outputDir);
                 }
 
                 File.WriteAllText(outputPath, content, Encoding.UTF8);
                 return true;
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -170,7 +200,11 @@ namespace OstPlayer.DevTools {
         /// <param name="templateContent">Template content to process</param>
         /// <param name="parameters">Parameters for substitution</param>
         /// <returns>Processed template content</returns>
-        private static string ProcessTemplate(string templateContent, Dictionary<string, object> parameters) {
+        private static string ProcessTemplate(
+            string templateContent,
+            Dictionary<string, object> parameters
+        )
+        {
             var result = templateContent;
 
             // Process conditional sections
@@ -197,13 +231,17 @@ namespace OstPlayer.DevTools {
         /// </summary>
         /// <param name="category">Template category (e.g., "CSharp", "XAML", "Documentation")</param>
         /// <returns>List of available templates</returns>
-        public static List<Template> GetAvailableTemplates(string category = null) {
+        public static List<Template> GetAvailableTemplates(string category = null)
+        {
             RefreshTemplateCache();
 
             var templates = TemplateCache.Values.ToList();
 
-            if (!string.IsNullOrEmpty(category)) {
-                templates = templates.Where(t => t.Category.Equals(category, StringComparison.OrdinalIgnoreCase)).ToList();
+            if (!string.IsNullOrEmpty(category))
+            {
+                templates = templates
+                    .Where(t => t.Category.Equals(category, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
             }
 
             return templates;
@@ -214,34 +252,41 @@ namespace OstPlayer.DevTools {
         /// </summary>
         /// <param name="templateContent">Template content to validate</param>
         /// <returns>True if template is valid, false otherwise</returns>
-        public static bool ValidateTemplate(string templateContent) {
-            try {
+        public static bool ValidateTemplate(string templateContent)
+        {
+            try
+            {
                 // Check for balanced conditionals
                 var ifCount = Regex.Matches(templateContent, @"\{\{#if\s+\w+\}\}").Count;
                 var endIfCount = Regex.Matches(templateContent, @"\{\{/if\}\}").Count;
-                if (ifCount != endIfCount) {
+                if (ifCount != endIfCount)
+                {
                     return false;
                 }
 
                 // Check for balanced loops
                 var eachCount = Regex.Matches(templateContent, @"\{\{#each\s+\w+\}\}").Count;
                 var endEachCount = Regex.Matches(templateContent, @"\{\{/each\}\}").Count;
-                if (eachCount != endEachCount) {
+                if (eachCount != endEachCount)
+                {
                     return false;
                 }
 
                 // Check for valid parameter syntax
                 var paramMatches = ParameterRegex.Matches(templateContent);
-                foreach (Match match in paramMatches) {
+                foreach (Match match in paramMatches)
+                {
                     var paramName = match.Groups[1].Value;
-                    if (string.IsNullOrWhiteSpace(paramName)) {
+                    if (string.IsNullOrWhiteSpace(paramName))
+                    {
                         return false;
                     }
                 }
 
                 return true;
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -254,24 +299,34 @@ namespace OstPlayer.DevTools {
         /// <param name="category">Template category</param>
         /// <param name="description">Template description</param>
         /// <returns>True if successfully registered, false otherwise</returns>
-        public static bool RegisterTemplate(string name, string content, string category, string description = null) {
-            try {
-                if (!ValidateTemplate(content)) {
+        public static bool RegisterTemplate(
+            string name,
+            string content,
+            string category,
+            string description = null
+        )
+        {
+            try
+            {
+                if (!ValidateTemplate(content))
+                {
                     return false;
                 }
 
-                var template = new Template {
+                var template = new Template
+                {
                     Name = name,
                     Content = content,
                     Category = category,
                     Description = description ?? $"Custom {category} template",
-                    IsBuiltIn = false
+                    IsBuiltIn = false,
                 };
 
                 TemplateCache[name] = template;
                 return true;
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -286,17 +341,26 @@ namespace OstPlayer.DevTools {
         /// <param name="content">Template content</param>
         /// <param name="parameters">Template parameters</param>
         /// <returns>Processed content</returns>
-        private static string ProcessConditionals(string content, Dictionary<string, object> parameters) {
-            return ConditionalRegex.Replace(content, match => {
-                var condition = match.Groups[1].Value;
-                var innerContent = match.Groups[2].Value;
+        private static string ProcessConditionals(
+            string content,
+            Dictionary<string, object> parameters
+        )
+        {
+            return ConditionalRegex.Replace(
+                content,
+                match =>
+                {
+                    var condition = match.Groups[1].Value;
+                    var innerContent = match.Groups[2].Value;
 
-                if (parameters.ContainsKey(condition) && IsTrue(parameters[condition])) {
-                    return innerContent;
+                    if (parameters.ContainsKey(condition) && IsTrue(parameters[condition]))
+                    {
+                        return innerContent;
+                    }
+
+                    return string.Empty;
                 }
-
-                return string.Empty;
-            });
+            );
         }
 
         /// <summary>
@@ -305,39 +369,55 @@ namespace OstPlayer.DevTools {
         /// <param name="content">Template content</param>
         /// <param name="parameters">Template parameters</param>
         /// <returns>Processed content</returns>
-        private static string ProcessLoops(string content, Dictionary<string, object> parameters) {
-            return LoopRegex.Replace(content, match => {
-                var arrayName = match.Groups[1].Value;
-                var loopContent = match.Groups[2].Value;
+        private static string ProcessLoops(string content, Dictionary<string, object> parameters)
+        {
+            return LoopRegex.Replace(
+                content,
+                match =>
+                {
+                    var arrayName = match.Groups[1].Value;
+                    var loopContent = match.Groups[2].Value;
 
-                if (!parameters.ContainsKey(arrayName)) {
-                    return string.Empty;
-                }
-
-                var array = parameters[arrayName] as IEnumerable<object>;
-                if (array == null) {
-                    return string.Empty;
-                }
-
-                var result = new StringBuilder();
-                foreach (var item in array) {
-                    var itemContent = loopContent;
-
-                    // Replace {{this}} with item value
-                    itemContent = itemContent.Replace("{{this}}", item?.ToString() ?? string.Empty);
-
-                    // If item is a dictionary/object, replace property references
-                    if (item is Dictionary<string, object> itemDict) {
-                        foreach (var prop in itemDict) {
-                            itemContent = itemContent.Replace($"{{{{{prop.Key}}}}}", prop.Value?.ToString() ?? string.Empty);
-                        }
+                    if (!parameters.ContainsKey(arrayName))
+                    {
+                        return string.Empty;
                     }
 
-                    result.AppendLine(itemContent);
-                }
+                    var array = parameters[arrayName] as IEnumerable<object>;
+                    if (array == null)
+                    {
+                        return string.Empty;
+                    }
 
-                return result.ToString();
-            });
+                    var result = new StringBuilder();
+                    foreach (var item in array)
+                    {
+                        var itemContent = loopContent;
+
+                        // Replace {{this}} with item value
+                        itemContent = itemContent.Replace(
+                            "{{this}}",
+                            item?.ToString() ?? string.Empty
+                        );
+
+                        // If item is a dictionary/object, replace property references
+                        if (item is Dictionary<string, object> itemDict)
+                        {
+                            foreach (var prop in itemDict)
+                            {
+                                itemContent = itemContent.Replace(
+                                    $"{{{{{prop.Key}}}}}",
+                                    prop.Value?.ToString() ?? string.Empty
+                                );
+                            }
+                        }
+
+                        result.AppendLine(itemContent);
+                    }
+
+                    return result.ToString();
+                }
+            );
         }
 
         /// <summary>
@@ -346,17 +426,28 @@ namespace OstPlayer.DevTools {
         /// <param name="content">Template content</param>
         /// <param name="parameters">Template parameters</param>
         /// <returns>Processed content</returns>
-        private static string ProcessParameters(string content, Dictionary<string, object> parameters) {
-            return ParameterRegex.Replace(content, match => {
-                var paramName = match.Groups[1].Value;
-                var defaultValue = match.Groups[2].Success ? match.Groups[2].Value : string.Empty;
+        private static string ProcessParameters(
+            string content,
+            Dictionary<string, object> parameters
+        )
+        {
+            return ParameterRegex.Replace(
+                content,
+                match =>
+                {
+                    var paramName = match.Groups[1].Value;
+                    var defaultValue = match.Groups[2].Success
+                        ? match.Groups[2].Value
+                        : string.Empty;
 
-                if (parameters.ContainsKey(paramName)) {
-                    return parameters[paramName]?.ToString() ?? defaultValue;
+                    if (parameters.ContainsKey(paramName))
+                    {
+                        return parameters[paramName]?.ToString() ?? defaultValue;
+                    }
+
+                    return defaultValue;
                 }
-
-                return defaultValue;
-            });
+            );
         }
 
         /// <summary>
@@ -365,7 +456,11 @@ namespace OstPlayer.DevTools {
         /// <param name="content">Template content</param>
         /// <param name="parameters">Template parameters</param>
         /// <returns>Processed content</returns>
-        private static string ProcessSpecialFunctions(string content, Dictionary<string, object> parameters) {
+        private static string ProcessSpecialFunctions(
+            string content,
+            Dictionary<string, object> parameters
+        )
+        {
             // Process date functions
             content = content.Replace("{{CurrentDate}}", DateHelper.GetCurrentDateString());
             content = content.Replace("{{CurrentYear}}", DateTime.Now.Year.ToString());
@@ -388,7 +483,8 @@ namespace OstPlayer.DevTools {
         /// </summary>
         /// <param name="templateName">Name of the template</param>
         /// <returns>Template object or null if not found</returns>
-        private static Template GetTemplate(string templateName) {
+        private static Template GetTemplate(string templateName)
+        {
             RefreshTemplateCache();
 
             return TemplateCache.ContainsKey(templateName) ? TemplateCache[templateName] : null;
@@ -399,9 +495,12 @@ namespace OstPlayer.DevTools {
         /// </summary>
         /// <param name="templatePath">Path to the template file</param>
         /// <returns>Template object or null if not found</returns>
-        private static Template LoadTemplateFromFile(string templatePath) {
-            try {
-                if (!File.Exists(templatePath)) {
+        private static Template LoadTemplateFromFile(string templatePath)
+        {
+            try
+            {
+                if (!File.Exists(templatePath))
+                {
                     return null;
                 }
 
@@ -409,15 +508,17 @@ namespace OstPlayer.DevTools {
                 var fileName = Path.GetFileNameWithoutExtension(templatePath);
                 var category = DetermineCategoryFromPath(templatePath);
 
-                return new Template {
+                return new Template
+                {
                     Name = fileName,
                     Content = content,
                     Category = category,
                     Description = $"Template loaded from {templatePath}",
-                    IsBuiltIn = false
+                    IsBuiltIn = false,
                 };
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return null;
             }
         }
@@ -425,13 +526,17 @@ namespace OstPlayer.DevTools {
         /// <summary>
         /// Refreshes the template cache by scanning template directories
         /// </summary>
-        private static void RefreshTemplateCache() {
-            if (DateTime.Now - _cacheLastUpdated < TimeSpan.FromMinutes(5)) {
+        private static void RefreshTemplateCache()
+        {
+            if (DateTime.Now - _cacheLastUpdated < TimeSpan.FromMinutes(5))
+            {
                 return; // Cache is still fresh
             }
 
-            foreach (var templatePath in TemplatePaths) {
-                if (Directory.Exists(templatePath)) {
+            foreach (var templatePath in TemplatePaths)
+            {
+                if (Directory.Exists(templatePath))
+                {
                     LoadTemplatesFromDirectory(templatePath);
                 }
             }
@@ -443,18 +548,27 @@ namespace OstPlayer.DevTools {
         /// Loads templates from a directory
         /// </summary>
         /// <param name="directoryPath">Path to the template directory</param>
-        private static void LoadTemplatesFromDirectory(string directoryPath) {
-            try {
-                var templateFiles = Directory.GetFiles(directoryPath, "*.template", SearchOption.AllDirectories);
+        private static void LoadTemplatesFromDirectory(string directoryPath)
+        {
+            try
+            {
+                var templateFiles = Directory.GetFiles(
+                    directoryPath,
+                    "*.template",
+                    SearchOption.AllDirectories
+                );
 
-                foreach (var templateFile in templateFiles) {
+                foreach (var templateFile in templateFiles)
+                {
                     var template = LoadTemplateFromFile(templateFile);
-                    if (template != null) {
+                    if (template != null)
+                    {
                         TemplateCache[template.Name] = template;
                     }
                 }
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 // Ignore errors in template loading
             }
         }
@@ -466,9 +580,12 @@ namespace OstPlayer.DevTools {
         /// <summary>
         /// Initializes built-in templates
         /// </summary>
-        private static void InitializeBuiltInTemplates() {
+        private static void InitializeBuiltInTemplates()
+        {
             // C# Class Template
-            RegisterTemplate("CSharpClass", @"{{GeneratedHeader}}
+            RegisterTemplate(
+                "CSharpClass",
+                @"{{GeneratedHeader}}
 
 using System;
 {{#if HasCollections}}
@@ -529,10 +646,15 @@ namespace {{Namespace}}
         {{/each}}
         {{/if}}
     }
-}", "CSharp", "Basic C# class template");
+}",
+                "CSharp",
+                "Basic C# class template"
+            );
 
             // ViewModel Template
-            RegisterTemplate("ViewModel", @"{{GeneratedHeader}}
+            RegisterTemplate(
+                "ViewModel",
+                @"{{GeneratedHeader}}
 
 using System;
 using System.ComponentModel;
@@ -611,10 +733,15 @@ namespace {{Namespace}}
         {{/each}}
         {{/if}}
     }
-}", "CSharp", "MVVM ViewModel template");
+}",
+                "CSharp",
+                "MVVM ViewModel template"
+            );
 
             // Service Template
-            RegisterTemplate("Service", @"{{GeneratedHeader}}
+            RegisterTemplate(
+                "Service",
+                @"{{GeneratedHeader}}
 
 using System;
 {{#if HasAsync}}
@@ -663,10 +790,15 @@ namespace {{Namespace}}
 
         {{/each}}
     }
-}", "CSharp", "Service class template");
+}",
+                "CSharp",
+                "Service class template"
+            );
 
             // Documentation Template
-            RegisterTemplate("ModuleSummary", @"# {{ModuleName}} Module - Update Summary
+            RegisterTemplate(
+                "ModuleSummary",
+                @"# {{ModuleName}} Module - Update Summary
 
 ## ?? Module Overview
 {{ModuleDescription}}
@@ -700,7 +832,10 @@ namespace {{Namespace}}
 **Module Status**: ? **{{Status}}**
 **Last Updated**: {{CurrentDate}}
 **Next Review**: {{NextReview}}
-", "Documentation", "Module summary documentation template");
+",
+                "Documentation",
+                "Module summary documentation template"
+            );
         }
 
         #endregion
@@ -712,25 +847,31 @@ namespace {{Namespace}}
         /// </summary>
         /// <param name="obj">Object to convert</param>
         /// <returns>Dictionary representation</returns>
-        private static Dictionary<string, object> ConvertObjectToDictionary(object obj) {
+        private static Dictionary<string, object> ConvertObjectToDictionary(object obj)
+        {
             var result = new Dictionary<string, object>();
 
-            if (obj == null) {
+            if (obj == null)
+            {
                 return result;
             }
 
-            if (obj is Dictionary<string, object> dict) {
+            if (obj is Dictionary<string, object> dict)
+            {
                 return dict;
             }
 
             // Use reflection to convert object properties
             var properties = obj.GetType().GetProperties();
-            foreach (var prop in properties) {
-                try {
+            foreach (var prop in properties)
+            {
+                try
+                {
                     var value = prop.GetValue(obj);
                     result[prop.Name] = value;
                 }
-                catch (Exception) {
+                catch (Exception)
+                {
                     // Ignore property access errors
                 }
             }
@@ -743,21 +884,26 @@ namespace {{Namespace}}
         /// </summary>
         /// <param name="value">Value to check</param>
         /// <returns>True if the value is considered true</returns>
-        private static bool IsTrue(object value) {
-            if (value == null) {
+        private static bool IsTrue(object value)
+        {
+            if (value == null)
+            {
                 return false;
             }
 
-            if (value is bool boolValue) {
+            if (value is bool boolValue)
+            {
                 return boolValue;
             }
 
-            if (value is string stringValue) {
-                return !string.IsNullOrWhiteSpace(stringValue) &&
-                       !stringValue.Equals("false", StringComparison.OrdinalIgnoreCase);
+            if (value is string stringValue)
+            {
+                return !string.IsNullOrWhiteSpace(stringValue)
+                    && !stringValue.Equals("false", StringComparison.OrdinalIgnoreCase);
             }
 
-            if (value is int intValue) {
+            if (value is int intValue)
+            {
                 return intValue != 0;
             }
 
@@ -769,20 +915,25 @@ namespace {{Namespace}}
         /// </summary>
         /// <param name="path">File path</param>
         /// <returns>Template category</returns>
-        private static string DetermineCategoryFromPath(string path) {
+        private static string DetermineCategoryFromPath(string path)
+        {
             var extension = Path.GetExtension(path).ToLowerInvariant();
             var directory = Path.GetDirectoryName(path).ToLowerInvariant();
 
-            if (directory.Contains("csharp") || extension == ".cs") {
+            if (directory.Contains("csharp") || extension == ".cs")
+            {
                 return "CSharp";
             }
-            if (directory.Contains("xaml") || extension == ".xaml") {
+            if (directory.Contains("xaml") || extension == ".xaml")
+            {
                 return "XAML";
             }
-            if (directory.Contains("doc") || extension == ".md") {
+            if (directory.Contains("doc") || extension == ".md")
+            {
                 return "Documentation";
             }
-            if (directory.Contains("powershell") || extension == ".ps1") {
+            if (directory.Contains("powershell") || extension == ".ps1")
+            {
                 return "PowerShell";
             }
 
@@ -795,7 +946,8 @@ namespace {{Namespace}}
     /// <summary>
     /// Represents a template with metadata
     /// </summary>
-    public class Template {
+    public class Template
+    {
         /// <summary>
         /// Template name
         /// </summary>
@@ -830,7 +982,8 @@ namespace {{Namespace}}
     /// <summary>
     /// Represents a template parameter
     /// </summary>
-    public class TemplateParameter {
+    public class TemplateParameter
+    {
         /// <summary>
         /// Parameter name
         /// </summary>

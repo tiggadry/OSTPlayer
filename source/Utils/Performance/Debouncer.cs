@@ -83,14 +83,16 @@
 using System;
 using System.Threading;
 
-namespace OstPlayer.Utils.Performance {
+namespace OstPlayer.Utils.Performance
+{
     /// <summary>
     /// Debouncer for reducing frequent method calls
     /// PATTERN: Delays execution until a quiet period without new requests
     /// USE CASES: Search input, window resize, scroll events, validation
     /// THREAD SAFETY: Uses internal locking for timer coordination
     /// </summary>
-    public class Debouncer : IDisposable {
+    public class Debouncer : IDisposable
+    {
         #region Private Fields
 
         // Delay period in milliseconds before executing debounced action
@@ -121,9 +123,13 @@ namespace OstPlayer.Utils.Performance {
         /// </summary>
         /// <param name="delayMs">Delay in milliseconds</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when delay is negative</exception>
-        public Debouncer(int delayMs) {
+        public Debouncer(int delayMs)
+        {
             if (delayMs < 0)
-                throw new ArgumentOutOfRangeException(nameof(delayMs), "Delay must be non-negative");
+                throw new ArgumentOutOfRangeException(
+                    nameof(delayMs),
+                    "Delay must be non-negative"
+                );
 
             _delayMs = delayMs;
         }
@@ -141,14 +147,16 @@ namespace OstPlayer.Utils.Performance {
         /// <param name="action">Action to execute after delay</param>
         /// <exception cref="ArgumentNullException">Thrown when action is null</exception>
         /// <exception cref="ObjectDisposedException">Thrown when debouncer is disposed</exception>
-        public void Debounce(Action action) {
+        public void Debounce(Action action)
+        {
             if (action == null)
                 throw new ArgumentNullException(nameof(action));
 
             if (_disposed)
                 throw new ObjectDisposedException(nameof(Debouncer));
 
-            lock (_lock) {
+            lock (_lock)
+            {
                 // CANCELLATION: Dispose previous timer if it exists
                 // EFFECT: Prevents previous action from executing
                 _timer?.Dispose();
@@ -156,18 +164,21 @@ namespace OstPlayer.Utils.Performance {
                 // SCHEDULING: Create new timer for delayed execution
                 // PARAMETERS: action (callback), null (no state), delay, no repeat
                 _timer = new Timer(
-                    _ => {
-                        try {
+                    _ =>
+                    {
+                        try
+                        {
                             action();
                         }
-                        catch {
+                        catch
+                        {
                             // SWALLOW EXCEPTIONS: Prevent timer thread crashes
                             // NOTE: Consider adding logging here in future versions
                         }
-                    },                                           // Callback: execute action with exception handling
-                    null,                                        // State: not needed
-                    _delayMs,                                    // Due time: delay period
-                    Timeout.Infinite                             // Period: no repeat (one-shot)
+                    }, // Callback: execute action with exception handling
+                    null, // State: not needed
+                    _delayMs, // Due time: delay period
+                    Timeout.Infinite // Period: no repeat (one-shot)
                 );
             }
         }
@@ -177,11 +188,13 @@ namespace OstPlayer.Utils.Performance {
         /// USAGE: Cancel pending operations when component is being disposed
         /// THREAD SAFETY: Safe to call from multiple threads
         /// </summary>
-        public void Cancel() {
+        public void Cancel()
+        {
             if (_disposed)
                 return;
 
-            lock (_lock) {
+            lock (_lock)
+            {
                 _timer?.Dispose();
                 _timer = null;
             }
@@ -196,7 +209,8 @@ namespace OstPlayer.Utils.Performance {
         /// CLEANUP: Implements proper disposal pattern
         /// TIMING: Call when debouncer is no longer needed
         /// </summary>
-        public void Dispose() {
+        public void Dispose()
+        {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
@@ -205,9 +219,12 @@ namespace OstPlayer.Utils.Performance {
         /// Protected dispose method for proper disposal pattern
         /// </summary>
         /// <param name="disposing">True if disposing managed resources</param>
-        protected virtual void Dispose(bool disposing) {
-            if (!_disposed && disposing) {
-                lock (_lock) {
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed && disposing)
+            {
+                lock (_lock)
+                {
                     _timer?.Dispose();
                     _timer = null;
                 }

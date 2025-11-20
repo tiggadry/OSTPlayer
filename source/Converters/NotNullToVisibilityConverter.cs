@@ -83,7 +83,8 @@
 // 2025-08-06 v1.0.0 - Initial implementation with non-null to visibility conversion
 // ====================================================================
 
-namespace OstPlayer.Converters {
+namespace OstPlayer.Converters
+{
     using System;
     using System.Globalization;
     using System.Windows;
@@ -94,7 +95,8 @@ namespace OstPlayer.Converters {
     /// Suitable for displaying elements only if the object is set (e.g., DiscogsMetadata).
     /// </summary>
     [ValueConversion(typeof(object), typeof(Visibility))]
-    public class NotNullToVisibilityConverter : IValueConverter {
+    public class NotNullToVisibilityConverter : IValueConverter
+    {
         /// <summary>
         /// If the input value is not null, returns Visible, otherwise Collapsed.
         /// </summary>
@@ -106,7 +108,8 @@ namespace OstPlayer.Converters {
         /// <see cref="Visibility.Visible"/> if value is not null,
         /// <see cref="Visibility.Collapsed"/> if value is null.
         /// </returns>
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
             return value != null ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -121,8 +124,16 @@ namespace OstPlayer.Converters {
         /// <exception cref="NotImplementedException">
         /// Always thrown as this converter is designed for one-way binding only.
         /// </exception>
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
-            throw new NotImplementedException("NotNullToVisibilityConverter does not support backward conversion. Use one-way binding or implement a custom two-way converter if needed.");
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
+        {
+            throw new NotImplementedException(
+                "NotNullToVisibilityConverter does not support backward conversion. Use one-way binding or implement a custom two-way converter if needed."
+            );
         }
     }
 }

@@ -58,7 +58,8 @@
 
 using System;
 
-namespace OstPlayer.Utils.Helpers {
+namespace OstPlayer.Utils.Helpers
+{
     /// <summary>
     /// Static helper class for volume-related operations and calculations.
     /// Provides utility methods for volume formatting, validation, and conversion.
@@ -66,7 +67,8 @@ namespace OstPlayer.Utils.Helpers {
     /// SAFETY NOTE: This is infrastructure preparation - NOT USED by existing code yet.
     /// Can be safely added without affecting current functionality.
     /// </summary>
-    public static class VolumeHelper {
+    public static class VolumeHelper
+    {
         #region Constants
 
         /// <summary>
@@ -104,7 +106,8 @@ namespace OstPlayer.Utils.Helpers {
         /// // Returns: "76%" (rounded to nearest integer)
         /// </code>
         /// </example>
-        public static string FormatPercentage(double volume) {
+        public static string FormatPercentage(double volume)
+        {
             var clampedVolume = ClampVolume(volume);
             return $"{(int)Math.Round(clampedVolume)}%";
         }
@@ -115,7 +118,8 @@ namespace OstPlayer.Utils.Helpers {
         /// </summary>
         /// <param name="volume">Volume level (0-100)</param>
         /// <returns>Formatted string (e.g., "75")</returns>
-        public static string FormatPercentageValue(double volume) {
+        public static string FormatPercentageValue(double volume)
+        {
             var clampedVolume = ClampVolume(volume);
             return $"{(int)Math.Round(clampedVolume)}";
         }
@@ -126,7 +130,8 @@ namespace OstPlayer.Utils.Helpers {
         /// <param name="volume">Volume level (0-100)</param>
         /// <param name="decimalPlaces">Number of decimal places to show (default: 1)</param>
         /// <returns>Formatted string with specified precision</returns>
-        public static string FormatPrecise(double volume, int decimalPlaces = 1) {
+        public static string FormatPrecise(double volume, int decimalPlaces = 1)
+        {
             var clampedVolume = ClampVolume(volume);
             var format = $"F{Math.Max(0, Math.Min(10, decimalPlaces))}"; // Limit decimal places
             return $"{clampedVolume.ToString(format)}%";
@@ -151,7 +156,8 @@ namespace OstPlayer.Utils.Helpers {
         /// // Returns: 0.0 (clamped to minimum)
         /// </code>
         /// </example>
-        public static double ClampVolume(double volume) {
+        public static double ClampVolume(double volume)
+        {
             if (double.IsNaN(volume) || double.IsInfinity(volume))
                 return DefaultVolume;
 
@@ -163,11 +169,12 @@ namespace OstPlayer.Utils.Helpers {
         /// </summary>
         /// <param name="volume">Volume value to validate</param>
         /// <returns>True if volume is valid (0-100), false otherwise</returns>
-        public static bool IsValidVolume(double volume) {
-            return !double.IsNaN(volume) &&
-                   !double.IsInfinity(volume) &&
-                   volume >= MinVolume &&
-                   volume <= MaxVolume;
+        public static bool IsValidVolume(double volume)
+        {
+            return !double.IsNaN(volume)
+                && !double.IsInfinity(volume)
+                && volume >= MinVolume
+                && volume <= MaxVolume;
         }
 
         /// <summary>
@@ -177,7 +184,8 @@ namespace OstPlayer.Utils.Helpers {
         /// <param name="volume">Volume value to round</param>
         /// <param name="stepSize">Step size for rounding (default: 5.0)</param>
         /// <returns>Rounded volume value</returns>
-        public static double RoundToStep(double volume, double stepSize = VolumeStep) {
+        public static double RoundToStep(double volume, double stepSize = VolumeStep)
+        {
             var clampedVolume = ClampVolume(volume);
             var validStepSize = Math.Max(0.1, Math.Min(50.0, stepSize)); // Reasonable step limits
 
@@ -200,7 +208,8 @@ namespace OstPlayer.Utils.Helpers {
         /// // Returns: 0.75
         /// </code>
         /// </example>
-        public static double PercentageToNormalized(double percentage) {
+        public static double PercentageToNormalized(double percentage)
+        {
             var clampedPercentage = ClampVolume(percentage);
             return clampedPercentage / 100.0;
         }
@@ -217,7 +226,8 @@ namespace OstPlayer.Utils.Helpers {
         /// // Returns: 75.0
         /// </code>
         /// </example>
-        public static double NormalizedToPercentage(double normalized) {
+        public static double NormalizedToPercentage(double normalized)
+        {
             if (double.IsNaN(normalized) || double.IsInfinity(normalized))
                 return DefaultVolume;
 
@@ -235,7 +245,8 @@ namespace OstPlayer.Utils.Helpers {
         /// <param name="currentVolume">Current volume level</param>
         /// <param name="increment">Amount to increase (default: VolumeStep)</param>
         /// <returns>New volume level (clamped to valid range)</returns>
-        public static double IncreaseVolume(double currentVolume, double increment = VolumeStep) {
+        public static double IncreaseVolume(double currentVolume, double increment = VolumeStep)
+        {
             var validIncrement = Math.Max(0.0, increment);
             return ClampVolume(currentVolume + validIncrement);
         }
@@ -246,7 +257,8 @@ namespace OstPlayer.Utils.Helpers {
         /// <param name="currentVolume">Current volume level</param>
         /// <param name="decrement">Amount to decrease (default: VolumeStep)</param>
         /// <returns>New volume level (clamped to valid range)</returns>
-        public static double DecreaseVolume(double currentVolume, double decrement = VolumeStep) {
+        public static double DecreaseVolume(double currentVolume, double decrement = VolumeStep)
+        {
             var validDecrement = Math.Max(0.0, decrement);
             return ClampVolume(currentVolume - validDecrement);
         }
@@ -257,11 +269,13 @@ namespace OstPlayer.Utils.Helpers {
         /// <param name="currentVolume">Current volume level</param>
         /// <param name="previousVolume">Previous volume level to restore (default: DefaultVolume)</param>
         /// <returns>New volume level (0 if not muted, previousVolume if muted)</returns>
-        public static double ToggleMute(double currentVolume, double previousVolume = DefaultVolume) {
+        public static double ToggleMute(double currentVolume, double previousVolume = DefaultVolume)
+        {
             var validPreviousVolume = Math.Max(1.0, ClampVolume(previousVolume));
 
             // If currently muted (or very low), restore previous volume
-            if (currentVolume <= 0.5) {
+            if (currentVolume <= 0.5)
+            {
                 return validPreviousVolume;
             }
 
@@ -303,14 +317,15 @@ namespace OstPlayer.Utils.Helpers {
         /// Useful for creating volume selection UI controls.
         /// </summary>
         /// <returns>Array of preset volume values</returns>
-        public static double[] GetVolumePresets() {
+        public static double[] GetVolumePresets()
+        {
             return new double[]
             {
-                MuteVolume,    // 0%
-                LowVolume,     // 25%
-                MediumVolume,  // 50%
-                HighVolume,    // 75%
-                MaximumVolume  // 100%
+                MuteVolume, // 0%
+                LowVolume, // 25%
+                MediumVolume, // 50%
+                HighVolume, // 75%
+                MaximumVolume, // 100%
             };
         }
 
@@ -319,16 +334,24 @@ namespace OstPlayer.Utils.Helpers {
         /// </summary>
         /// <param name="volume">Volume level to identify</param>
         /// <returns>Preset name or null if not a standard preset</returns>
-        public static string GetPresetName(double volume) {
+        public static string GetPresetName(double volume)
+        {
             var rounded = Math.Round(volume);
 
-            switch (rounded) {
-                case 0: return "Mute";
-                case 25: return "Low";
-                case 50: return "Medium";
-                case 75: return "High";
-                case 100: return "Maximum";
-                default: return null;
+            switch (rounded)
+            {
+                case 0:
+                    return "Mute";
+                case 25:
+                    return "Low";
+                case 50:
+                    return "Medium";
+                case 75:
+                    return "High";
+                case 100:
+                    return "Maximum";
+                default:
+                    return null;
             }
         }
 
@@ -342,7 +365,8 @@ namespace OstPlayer.Utils.Helpers {
         /// <param name="fromVolume">Starting volume level</param>
         /// <param name="toVolume">Target volume level</param>
         /// <returns>Volume difference (positive for increase, negative for decrease)</returns>
-        public static double CalculateVolumeDifference(double fromVolume, double toVolume) {
+        public static double CalculateVolumeDifference(double fromVolume, double toVolume)
+        {
             return ClampVolume(toVolume) - ClampVolume(fromVolume);
         }
 
@@ -354,7 +378,8 @@ namespace OstPlayer.Utils.Helpers {
         /// <param name="toVolume">Target volume level</param>
         /// <param name="factor">Interpolation factor (0.0 = from, 1.0 = to)</param>
         /// <returns>Interpolated volume level</returns>
-        public static double InterpolateVolume(double fromVolume, double toVolume, double factor) {
+        public static double InterpolateVolume(double fromVolume, double toVolume, double factor)
+        {
             var clampedFrom = ClampVolume(fromVolume);
             var clampedTo = ClampVolume(toVolume);
             var clampedFactor = Math.Max(0.0, Math.Min(1.0, factor));

@@ -40,7 +40,7 @@ namespace OstPlayer.References.Interfaces
 {
     /// <summary>
     /// REFERENCE: Interface contract for audio-related ViewModels.
-    /// 
+    ///
     /// This interface demonstrates excellent design patterns for future use
     /// in our safe micro-extraction process.
     /// </summary>

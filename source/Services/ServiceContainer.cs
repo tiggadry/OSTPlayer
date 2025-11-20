@@ -136,12 +136,12 @@ namespace OstPlayer.Services
         /// Single instance for the entire application lifetime.
         /// </summary>
         Singleton,
-        
+
         /// <summary>
         /// New instance created for each resolution request.
         /// </summary>
         Transient,
-        
+
         /// <summary>
         /// Single instance per scope context.
         /// </summary>
@@ -158,22 +158,22 @@ namespace OstPlayer.Services
         /// Gets or sets the service interface or abstract type.
         /// </summary>
         public Type ServiceType { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the concrete implementation type.
         /// </summary>
         public Type ImplementationType { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the service lifetime.
         /// </summary>
         public ServiceLifetime Lifetime { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the factory function for creating service instances.
         /// </summary>
         public Func<IServiceProvider, object> Factory { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the singleton instance for singleton services.
         /// </summary>
@@ -303,14 +303,14 @@ namespace OstPlayer.Services
         /// <typeparam name="T">The service type.</typeparam>
         /// <returns>The service instance, or null if not registered.</returns>
         T GetService<T>();
-        
+
         /// <summary>
         /// Gets a service of the specified type.
         /// </summary>
         /// <param name="serviceType">The service type.</param>
         /// <returns>The service instance, or null if not registered.</returns>
         object GetService(Type serviceType);
-        
+
         /// <summary>
         /// Gets a required service of the specified type.
         /// </summary>
@@ -318,7 +318,7 @@ namespace OstPlayer.Services
         /// <returns>The service instance.</returns>
         /// <exception cref="InvalidOperationException">Thrown if the service is not registered.</exception>
         T GetRequiredService<T>();
-        
+
         /// <summary>
         /// Gets a required service of the specified type.
         /// </summary>
@@ -326,7 +326,7 @@ namespace OstPlayer.Services
         /// <returns>The service instance.</returns>
         /// <exception cref="InvalidOperationException">Thrown if the service is not registered.</exception>
         object GetRequiredService(Type serviceType);
-        
+
         /// <summary>
         /// Creates a new service scope for scoped service management.
         /// </summary>

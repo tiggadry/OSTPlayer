@@ -90,11 +90,13 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace OstPlayer.Clients {
+namespace OstPlayer.Clients
+{
     /// <summary>
     /// Represents the result of a MusicBrainz release search.
     /// </summary>
-    public class MusicBrainzReleaseResult {
+    public class MusicBrainzReleaseResult
+    {
         /// <summary>
         /// Gets or sets the list of releases found in the search.
         /// </summary>
@@ -104,27 +106,28 @@ namespace OstPlayer.Clients {
     /// <summary>
     /// Represents a single release entry from MusicBrainz.
     /// </summary>
-    public class Release {
+    public class Release
+    {
         /// <summary>
         /// Gets or sets the release title.
         /// </summary>
         public string title { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the release date.
         /// </summary>
         public string date { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the release status.
         /// </summary>
         public string status { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the country of release.
         /// </summary>
         public string country { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the MusicBrainz ID.
         /// </summary>
@@ -135,7 +138,8 @@ namespace OstPlayer.Clients {
     /// Client for querying the MusicBrainz API for release information.
     /// Uses shared HttpClient instance for optimal performance and connection pooling.
     /// </summary>
-    public static class MusicBrainzClient {
+    public static class MusicBrainzClient
+    {
         #region Private Static Fields
 
         /// <summary>
@@ -144,7 +148,9 @@ namespace OstPlayer.Clients {
         /// PERFORMANCE: Enables connection pooling and reduces socket exhaustion.
         /// THREAD SAFETY: HttpClient is thread-safe for concurrent use.
         /// </summary>
-        private static readonly Lazy<HttpClient> _httpClientLazy = new Lazy<HttpClient>(CreateHttpClient);
+        private static readonly Lazy<HttpClient> _httpClientLazy = new Lazy<HttpClient>(
+            CreateHttpClient
+        );
 
         /// <summary>
         /// Gets the shared HttpClient instance with lazy initialization.
@@ -169,10 +175,13 @@ namespace OstPlayer.Clients {
         /// CONFIGURATION: Sets User-Agent, timeout, and other required headers.
         /// </summary>
         /// <returns>Configured HttpClient instance ready for MusicBrainz API calls</returns>
-        private static HttpClient CreateHttpClient() {
+        private static HttpClient CreateHttpClient()
+        {
             // Create HttpClientHandler with automatic decompression
-            var handler = new HttpClientHandler() {
-                AutomaticDecompression = System.Net.DecompressionMethods.GZip | System.Net.DecompressionMethods.Deflate
+            var handler = new HttpClientHandler()
+            {
+                AutomaticDecompression =
+                    System.Net.DecompressionMethods.GZip | System.Net.DecompressionMethods.Deflate,
             };
 
             var client = new HttpClient(handler);
@@ -201,7 +210,11 @@ namespace OstPlayer.Clients {
         /// <param name="artist">Artist name</param>
         /// <param name="album">Album title</param>
         /// <returns>Deserialized MusicBrainzReleaseResult or null if not found</returns>
-        public static async Task<MusicBrainzReleaseResult> SearchReleaseAsync(string artist, string album) {
+        public static async Task<MusicBrainzReleaseResult> SearchReleaseAsync(
+            string artist,
+            string album
+        )
+        {
             if (string.IsNullOrWhiteSpace(artist) || string.IsNullOrWhiteSpace(album))
                 return null;
 
@@ -211,7 +224,8 @@ namespace OstPlayer.Clients {
                 Uri.EscapeDataString(album)
             );
 
-            try {
+            try
+            {
                 // Use shared HttpClient instance for optimal performance
                 var response = await HttpClient.GetAsync(url);
 
@@ -222,11 +236,13 @@ namespace OstPlayer.Clients {
                 var result = JsonConvert.DeserializeObject<MusicBrainzReleaseResult>(json);
                 return result;
             }
-            catch (HttpRequestException) {
+            catch (HttpRequestException)
+            {
                 // Return null for HTTP failures - graceful degradation
                 return null;
             }
-            catch (JsonException) {
+            catch (JsonException)
+            {
                 // Return null for JSON parsing failures - graceful degradation
                 return null;
             }
@@ -240,7 +256,8 @@ namespace OstPlayer.Clients {
         /// <param name="artist">Artist name</param>
         /// <param name="album">Album title</param>
         /// <returns>Deserialized MusicBrainzReleaseResult or null if not found</returns>
-        public static MusicBrainzReleaseResult SearchRelease(string artist, string album) {
+        public static MusicBrainzReleaseResult SearchRelease(string artist, string album)
+        {
             // Use GetAwaiter().GetResult() for synchronous execution
             // NOTE: This is not ideal but necessary for backward compatibility
             return SearchReleaseAsync(artist, album).GetAwaiter().GetResult();

@@ -191,14 +191,16 @@ using OstPlayer.Utils;
 using OstPlayer.Utils.Helpers;
 using Playnite.SDK.Models;
 
-namespace OstPlayer.ViewModels {
+namespace OstPlayer.ViewModels
+{
     /// <summary>
     /// Main ViewModel for the OstPlayer sidebar interface implementing comprehensive MVVM pattern.
     /// Manages game selection, music discovery, playback control, and external metadata integration.
     /// Inherits from ObservableObject to provide INotifyPropertyChanged implementation.
     /// Reference: https://docs.microsoft.com/en-us/dotnet/desktop/wpf/data/data-binding-overview
     /// </summary>
-    public class OstPlayerSidebarViewModel : ObservableObject {
+    public class OstPlayerSidebarViewModel : ObservableObject
+    {
         #region Private Fields and Constants
 
         /// <summary>
@@ -319,7 +321,6 @@ namespace OstPlayer.ViewModels {
         /// Converted to 0.0-1.0 range for NAudio playback service.
         /// </summary>
         private double volume = 50; // Default to 50% volume
-
         #endregion
 
         #region UI State Fields
@@ -421,14 +422,15 @@ namespace OstPlayer.ViewModels {
         /// <param name="plugin">Main plugin instance for API access (required)</param>
         /// <param name="preselectGame">Optional game to select initially (typically from context)</param>
         /// <exception cref="ArgumentNullException">Thrown when plugin parameter is null</exception>
-        public OstPlayerSidebarViewModel(OstPlayer plugin, Game preselectGame = null) {
+        public OstPlayerSidebarViewModel(OstPlayer plugin, Game preselectGame = null)
+        {
             // Validate required plugin dependency
             this.plugin = plugin ?? throw new ArgumentNullException(nameof(plugin));
 
             // Initialize core services and infrastructure (lightweight operations)
-            InitializePlaybackService();   // NAudio audio engine setup
-            InitializeTimer();            // Progress update timer configuration
-            InitializeCommands();         // MVVM command binding setup
+            InitializePlaybackService(); // NAudio audio engine setup
+            InitializeTimer(); // Progress update timer configuration
+            InitializeCommands(); // MVVM command binding setup
 
             // Initialize empty collections for immediate UI binding
             Games = new ObservableCollection<Game>();
@@ -456,27 +458,39 @@ namespace OstPlayer.ViewModels {
         /// Observable collection of games with music files for ComboBox binding.
         /// Filtered subset of allGamesWithMusic based on user search input.
         /// </summary>
-        public ObservableCollection<Game> Games {
+        public ObservableCollection<Game> Games
+        {
             get => games;
-            set { games = value; OnPropertyChanged(); }
+            set
+            {
+                games = value;
+                OnPropertyChanged();
+            }
         }
 
         /// <summary>
         /// Observable collection of music tracks for ListBox binding.
         /// Contains TrackListItem instances with display-optimized track information.
         /// </summary>
-        public ObservableCollection<TrackListItem> MusicFiles {
+        public ObservableCollection<TrackListItem> MusicFiles
+        {
             get => musicFiles;
-            set { musicFiles = value; OnPropertyChanged(); }
+            set
+            {
+                musicFiles = value;
+                OnPropertyChanged();
+            }
         }
 
         /// <summary>
         /// Currently selected game triggering music file enumeration and metadata operations.
         /// Property change triggers OnGameSelectionChanged() for cascading updates.
         /// </summary>
-        public Game SelectedGame {
+        public Game SelectedGame
+        {
             get => selectedGame;
-            set {
+            set
+            {
                 selectedGame = value;
                 OnPropertyChanged();
                 OnGameSelectionChanged(); // Cascade to load music files and metadata
@@ -487,9 +501,11 @@ namespace OstPlayer.ViewModels {
         /// File path of currently selected music file for playback operations.
         /// Property change triggers OnMusicFileSelectionChanged() and updates CanPlayPause.
         /// </summary>
-        public string SelectedMusicFile {
+        public string SelectedMusicFile
+        {
             get => selectedMusicFile;
-            set {
+            set
+            {
                 selectedMusicFile = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(CanPlayPause)); // Update command availability
@@ -501,9 +517,11 @@ namespace OstPlayer.ViewModels {
         /// Audio playback active state affecting UI button states and auto-play logic.
         /// Property change triggers updates to CanStop, PlayPauseButtonContent, and PlayPauseButtonToolTip.
         /// </summary>
-        public bool IsPlaying {
+        public bool IsPlaying
+        {
             get => isPlaying;
-            set {
+            set
+            {
                 isPlaying = value;
                 OnPropertyChanged();
                 // Cascade updates to dependent computed properties
@@ -517,9 +535,11 @@ namespace OstPlayer.ViewModels {
         /// Audio playback paused state (distinct from stopped) for resume functionality.
         /// Affects play/pause button appearance and tooltip text.
         /// </summary>
-        public bool IsPaused {
+        public bool IsPaused
+        {
             get => isPaused;
-            set {
+            set
+            {
                 isPaused = value;
                 OnPropertyChanged();
                 // Update UI elements that depend on pause state
@@ -533,9 +553,11 @@ namespace OstPlayer.ViewModels {
         /// Updated by timer during playback and by user during seek operations.
         /// Property change triggers CurrentTime computed property update.
         /// </summary>
-        public double Position {
+        public double Position
+        {
             get => position;
-            set {
+            set
+            {
                 position = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(CurrentTime)); // Update time display
@@ -547,9 +569,11 @@ namespace OstPlayer.ViewModels {
         /// Loaded from metadata or direct audio file analysis.
         /// Property change triggers DurationTime computed property update.
         /// </summary>
-        public double Duration {
+        public double Duration
+        {
             get => duration;
-            set {
+            set
+            {
                 duration = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(DurationTime)); // Update duration display
@@ -561,9 +585,11 @@ namespace OstPlayer.ViewModels {
         /// Automatically converted to 0.0-1.0 range for NAudio when set.
         /// Property change triggers VolumeDisplay computed property update and saves to settings.
         /// </summary>
-        public double Volume {
+        public double Volume
+        {
             get => volume;
-            set {
+            set
+            {
                 volume = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(VolumeDisplay)); // Update percentage display
@@ -578,27 +604,39 @@ namespace OstPlayer.ViewModels {
         /// Status message for user feedback about operations, loading, and errors.
         /// Displayed in status area of UI for user awareness.
         /// </summary>
-        public string StatusText {
+        public string StatusText
+        {
             get => statusText;
-            set { statusText = value; OnPropertyChanged(); }
+            set
+            {
+                statusText = value;
+                OnPropertyChanged();
+            }
         }
 
         /// <summary>
         /// Currently playing track display text with play/pause state indication.
         /// Format examples: "Playing: TrackName", "Paused: TrackName", or empty when stopped.
         /// </summary>
-        public string CurrentTrack {
+        public string CurrentTrack
+        {
             get => currentTrack;
-            set { currentTrack = value; OnPropertyChanged(); }
+            set
+            {
+                currentTrack = value;
+                OnPropertyChanged();
+            }
         }
 
         /// <summary>
         /// Visibility state for MP3 metadata section allowing user control over UI complexity.
         /// Property change triggers Mp3MetadataToggleText computed property update.
         /// </summary>
-        public bool IsMp3MetadataVisible {
+        public bool IsMp3MetadataVisible
+        {
             get => isMp3MetadataVisible;
-            set {
+            set
+            {
                 isMp3MetadataVisible = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(Mp3MetadataToggleText)); // Update toggle button text
@@ -609,9 +647,11 @@ namespace OstPlayer.ViewModels {
         /// Visibility state for Discogs metadata section for external data display control.
         /// Property change triggers DiscogsMetadataToggleText computed property update.
         /// </summary>
-        public bool IsDiscogsMetadataVisible {
+        public bool IsDiscogsMetadataVisible
+        {
             get => isDiscogsMetadataVisible;
-            set {
+            set
+            {
                 isDiscogsMetadataVisible = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(DiscogsMetadataToggleText)); // Update toggle button text
@@ -624,37 +664,125 @@ namespace OstPlayer.ViewModels {
         /// BitmapImage format for direct WPF data binding compatibility.
         /// Reference: https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.imaging.bitmapimage
         /// </summary>
-        public BitmapImage TrackCover { get => trackCover; set { trackCover = value; OnPropertyChanged(); } }
+        public BitmapImage TrackCover
+        {
+            get => trackCover;
+            set
+            {
+                trackCover = value;
+                OnPropertyChanged();
+            }
+        }
 
         /// <summary>Track title from ID3 metadata.</summary>
-        public string TrackTitle { get => trackTitle; set { trackTitle = value; OnPropertyChanged(); } }
+        public string TrackTitle
+        {
+            get => trackTitle;
+            set
+            {
+                trackTitle = value;
+                OnPropertyChanged();
+            }
+        }
 
         /// <summary>Performing artist from ID3 metadata.</summary>
-        public string TrackArtist { get => trackArtist; set { trackArtist = value; OnPropertyChanged(); } }
+        public string TrackArtist
+        {
+            get => trackArtist;
+            set
+            {
+                trackArtist = value;
+                OnPropertyChanged();
+            }
+        }
 
         /// <summary>Album name from ID3 metadata.</summary>
-        public string TrackAlbum { get => trackAlbum; set { trackAlbum = value; OnPropertyChanged(); } }
+        public string TrackAlbum
+        {
+            get => trackAlbum;
+            set
+            {
+                trackAlbum = value;
+                OnPropertyChanged();
+            }
+        }
 
         /// <summary>Release year from ID3 metadata.</summary>
-        public string TrackYear { get => trackYear; set { trackYear = value; OnPropertyChanged(); } }
+        public string TrackYear
+        {
+            get => trackYear;
+            set
+            {
+                trackYear = value;
+                OnPropertyChanged();
+            }
+        }
 
         /// <summary>Musical genre from ID3 metadata.</summary>
-        public string TrackGenre { get => trackGenre; set { trackGenre = value; OnPropertyChanged(); } }
+        public string TrackGenre
+        {
+            get => trackGenre;
+            set
+            {
+                trackGenre = value;
+                OnPropertyChanged();
+            }
+        }
 
         /// <summary>Comment text from ID3 metadata.</summary>
-        public string TrackComment { get => trackComment; set { trackComment = value; OnPropertyChanged(); } }
+        public string TrackComment
+        {
+            get => trackComment;
+            set
+            {
+                trackComment = value;
+                OnPropertyChanged();
+            }
+        }
 
         /// <summary>Formatted duration string from ID3 metadata.</summary>
-        public string TrackDuration { get => trackDuration; set { trackDuration = value; OnPropertyChanged(); } }
+        public string TrackDuration
+        {
+            get => trackDuration;
+            set
+            {
+                trackDuration = value;
+                OnPropertyChanged();
+            }
+        }
 
         /// <summary>Track number within album from ID3 metadata.</summary>
-        public uint TrackNumber { get => trackNumber; set { trackNumber = value; OnPropertyChanged(); } }
+        public uint TrackNumber
+        {
+            get => trackNumber;
+            set
+            {
+                trackNumber = value;
+                OnPropertyChanged();
+            }
+        }
 
         /// <summary>Total tracks in album from ID3 metadata.</summary>
-        public uint TotalTracks { get => totalTracks; set { totalTracks = value; OnPropertyChanged(); } }
+        public uint TotalTracks
+        {
+            get => totalTracks;
+            set
+            {
+                totalTracks = value;
+                OnPropertyChanged();
+            }
+        }
 
         /// <summary>Discogs metadata for currently selected track.</summary>
-        public DiscogsMetadataModel DiscogsMetadata { get => discogsMetadata; set { discogsMetadata = value; OnPropertyChanged(); } }
+        public DiscogsMetadataModel DiscogsMetadata
+        {
+            get => discogsMetadata;
+            set
+            {
+                discogsMetadata = value;
+                OnPropertyChanged();
+            }
+        }
 
         #endregion
 
@@ -676,16 +804,19 @@ namespace OstPlayer.ViewModels {
         public bool CanStop => UIHelper.CanStop(IsPlaying);
 
         /// <summary>Play/pause button symbol: pause (?) when playing, play (?) when stopped/paused.</summary>
-        public string PlayPauseButtonContent => UIHelper.GetPlayPauseButtonSymbol(IsPlaying, IsPaused);
+        public string PlayPauseButtonContent =>
+            UIHelper.GetPlayPauseButtonSymbol(IsPlaying, IsPaused);
 
         /// <summary>Play/pause button tooltip based on current state.</summary>
         public string PlayPauseButtonToolTip => UIHelper.GetPlayPauseTooltip(IsPlaying, IsPaused);
 
         /// <summary>MP3 metadata toggle button text based on current visibility.</summary>
-        public string Mp3MetadataToggleText => UIHelper.GetToggleText("MP3 metadata", IsMp3MetadataVisible);
+        public string Mp3MetadataToggleText =>
+            UIHelper.GetToggleText("MP3 metadata", IsMp3MetadataVisible);
 
         /// <summary>Discogs metadata toggle button text based on current visibility.</summary>
-        public string DiscogsMetadataToggleText => UIHelper.GetToggleText("Discogs metadata", IsDiscogsMetadataVisible);
+        public string DiscogsMetadataToggleText =>
+            UIHelper.GetToggleText("Discogs metadata", IsDiscogsMetadataVisible);
 
         /// <summary>Settings ViewModel for configuration access and binding.</summary>
         public OstPlayerSettingsViewModel SettingsViewModel { get; private set; }
@@ -753,18 +884,36 @@ namespace OstPlayer.ViewModels {
         /// Sets up event handlers for playback state changes and progress updates.
         /// Critical for audio engine functionality and UI synchronization.
         /// </summary>
-        private void InitializePlaybackService() {
+        private void InitializePlaybackService()
+        {
             playbackService = new MusicPlaybackService();
 
             // Load volume from settings
             LoadVolumeFromSettings();
 
             // Subscribe to playback events for UI state synchronization
-            playbackService.PlaybackStarted += (s, e) => { IsPlaying = true; IsPaused = false; };
-            playbackService.PlaybackPaused += (s, e) => { IsPaused = true; };
-            playbackService.PlaybackStopped += (s, e) => { IsPlaying = false; IsPaused = false; };
-            playbackService.PositionChanged += (s, pos) => { Position = pos; };
-            playbackService.DurationChanged += (s, dur) => { Duration = dur; };
+            playbackService.PlaybackStarted += (s, e) =>
+            {
+                IsPlaying = true;
+                IsPaused = false;
+            };
+            playbackService.PlaybackPaused += (s, e) =>
+            {
+                IsPaused = true;
+            };
+            playbackService.PlaybackStopped += (s, e) =>
+            {
+                IsPlaying = false;
+                IsPaused = false;
+            };
+            playbackService.PositionChanged += (s, pos) =>
+            {
+                Position = pos;
+            };
+            playbackService.DurationChanged += (s, dur) =>
+            {
+                Duration = dur;
+            };
             playbackService.PlaybackEnded += (s, e) => OnPlaybackEnded(); // Auto-play next track
         }
 
@@ -773,7 +922,8 @@ namespace OstPlayer.ViewModels {
         /// 100ms interval provides smooth progress without excessive CPU usage.
         /// Timer only updates position when user is not dragging the slider.
         /// </summary>
-        private void InitializeTimer() {
+        private void InitializeTimer()
+        {
             progressTimer = new DispatcherTimer();
             progressTimer.Interval = TimeSpan.FromMilliseconds(100); // 10 FPS for smooth progress
             progressTimer.Tick += (s, e) => UpdatePosition(); // Update progress bar
@@ -785,20 +935,29 @@ namespace OstPlayer.ViewModels {
         /// Commands provide the bridge between UI interactions and ViewModel logic.
         /// Updated to support async operations properly.
         /// </summary>
-        private void InitializeCommands() {
+        private void InitializeCommands()
+        {
             // Use async command wrapper to prevent UI deadlock
             PlayPauseCommand = new Utils.RelayCommand(async _ => await PlayPauseAsync());
             StopCommand = new Utils.RelayCommand(_ => Stop());
-            Mp3MetadataToggleCommand = new Utils.RelayCommand(_ => IsMp3MetadataVisible = !IsMp3MetadataVisible);
-            DiscogsMetadataToggleCommand = new Utils.RelayCommand(_ => IsDiscogsMetadataVisible = !IsDiscogsMetadataVisible);
+            Mp3MetadataToggleCommand = new Utils.RelayCommand(_ =>
+                IsMp3MetadataVisible = !IsMp3MetadataVisible
+            );
+            DiscogsMetadataToggleCommand = new Utils.RelayCommand(_ =>
+                IsDiscogsMetadataVisible = !IsDiscogsMetadataVisible
+            );
             HideMetadataSectionCommand = new Utils.RelayCommand(HideMetadataSection);
-            LoadDiscogsMetadataCommand = new Utils.RelayCommand(async _ => await LoadDiscogsMetadataAsync());
+            LoadDiscogsMetadataCommand = new Utils.RelayCommand(async _ =>
+                await LoadDiscogsMetadataAsync()
+            );
             ShowTrackCoverCommand = new Utils.RelayCommand(_ => ShowTrackCover());
             ShowDiscogsCoverCommand = new Utils.RelayCommand(_ => ShowDiscogsCover());
 
             // NEW COMMANDS FOR XAML BINDING REFACTORING - using inline lambdas with async support
-            RefreshDiscogsMetadataCommand = new Utils.RelayCommand(async _ => {
-                if (SelectedGame == null) {
+            RefreshDiscogsMetadataCommand = new Utils.RelayCommand(async _ =>
+            {
+                if (SelectedGame == null)
+                {
                     ShowError("Please select a game first.");
                     return;
                 }
@@ -808,8 +967,10 @@ namespace OstPlayer.ViewModels {
                 await LoadDiscogsMetadataAsync();
             });
 
-            PlaySelectedTrackCommand = new Utils.RelayCommand(async parameter => {
-                if (parameter is TrackListItem selectedItem) {
+            PlaySelectedTrackCommand = new Utils.RelayCommand(async parameter =>
+            {
+                if (parameter is TrackListItem selectedItem)
+                {
                     await PlaySelectedMusicFromListBoxAsync(selectedItem);
                 }
             });
@@ -824,7 +985,8 @@ namespace OstPlayer.ViewModels {
         /// Synchronous wrapper for backward compatibility.
         /// </summary>
         /// <param name="selectedItem">TrackListItem from ListBox selection</param>
-        public void PlaySelectedMusicFromListBox(TrackListItem selectedItem) {
+        public void PlaySelectedMusicFromListBox(TrackListItem selectedItem)
+        {
             // Use fire-and-forget async pattern to avoid blocking UI
             _ = PlaySelectedMusicFromListBoxAsync(selectedItem);
         }
@@ -836,15 +998,20 @@ namespace OstPlayer.ViewModels {
         /// Now async to prevent UI freezing.
         /// </summary>
         /// <param name="selectedItem">TrackListItem from ListBox selection</param>
-        public async Task PlaySelectedMusicFromListBoxAsync(TrackListItem selectedItem) {
-            if (selectedItem != null) {
+        public async Task PlaySelectedMusicFromListBoxAsync(TrackListItem selectedItem)
+        {
+            if (selectedItem != null)
+            {
                 Stop(); // Ensure clean state
                 SelectedMusicFile = selectedItem.FilePath; // Update selection (triggers metadata loading)
-                try {
+                try
+                {
                     await playbackService.PlayAsync(selectedItem.FilePath, 0); // Start from beginning
-                    CurrentTrack = $"Playing: {Path.GetFileNameWithoutExtension(selectedItem.FilePath)}";
+                    CurrentTrack =
+                        $"Playing: {Path.GetFileNameWithoutExtension(selectedItem.FilePath)}";
                 }
-                catch (Exception ex) {
+                catch (Exception ex)
+                {
                     StatusText = $"Error playing music: {ex.Message}";
                 }
             }
@@ -856,10 +1023,12 @@ namespace OstPlayer.ViewModels {
         /// Essential for smooth seek operation without UI glitches.
         /// </summary>
         /// <param name="dragging">True when user starts dragging, false when releasing</param>
-        public void SetUserDragging(bool dragging) {
+        public void SetUserDragging(bool dragging)
+        {
             isUserDragging = dragging;
             playbackService?.SetUserDragging(dragging); // Notify audio service
-            if (!dragging) {
+            if (!dragging)
+            {
                 playbackService?.SetPosition(Position); // Apply seek position
             }
         }
@@ -870,15 +1039,18 @@ namespace OstPlayer.ViewModels {
         /// Case-insensitive search across game names for user convenience.
         /// </summary>
         /// <param name="searchText">User input for filtering games</param>
-        public void FilterGames(string searchText) {
+        public void FilterGames(string searchText)
+        {
             if (allGamesWithMusic == null)
                 return;
 
-            if (string.IsNullOrWhiteSpace(searchText)) {
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
                 // No filter - show all games
                 Games = new ObservableCollection<Game>(allGamesWithMusic);
             }
-            else {
+            else
+            {
                 // Apply case-insensitive name filter
                 var filteredGames = allGamesWithMusic
                     .Where(g => g.Name.ToLower().Contains(searchText.ToLower()))
@@ -893,16 +1065,19 @@ namespace OstPlayer.ViewModels {
         /// </summary>
         /// <param name="gameName">Exact game name to locate</param>
         /// <returns>Matching Game instance or null if not found</returns>
-        public Game FindGameByName(string gameName) {
+        public Game FindGameByName(string gameName)
+        {
             return allGamesWithMusic?.FirstOrDefault(g =>
-                string.Equals(g.Name, gameName, StringComparison.OrdinalIgnoreCase));
+                string.Equals(g.Name, gameName, StringComparison.OrdinalIgnoreCase)
+            );
         }
 
         /// <summary>
         /// Initiates loading of games with music files.
         /// Called by View after UI is fully loaded to prevent constructor blocking.
         /// </summary>
-        public async Task InitializeAsync() {
+        public async Task InitializeAsync()
+        {
             await LoadGamesAsync(preselectGameForLoading);
         }
         #endregion
@@ -914,7 +1089,8 @@ namespace OstPlayer.ViewModels {
         /// Cascading operation: resets metadata ? loads cached Discogs data ? loads music files.
         /// Critical for maintaining consistent state during game transitions.
         /// </summary>
-        private void OnGameSelectionChanged() {
+        private void OnGameSelectionChanged()
+        {
             // Reset all metadata and playback state for clean transition
             SelectedMusicFile = null;
             ResetMetadata();
@@ -934,9 +1110,11 @@ namespace OstPlayer.ViewModels {
         /// Resets position for new tracks but preserves position during auto-play transitions.
         /// Ensures metadata consistency and proper UI state management.
         /// </summary>
-        private void OnMusicFileSelectionChanged() {
+        private void OnMusicFileSelectionChanged()
+        {
             // Reset position when selecting a different track (but not during auto-play)
-            if (!string.IsNullOrEmpty(SelectedMusicFile) && !isAutoPlayingNext) {
+            if (!string.IsNullOrEmpty(SelectedMusicFile) && !isAutoPlayingNext)
+            {
                 Position = 0; // Start from beginning for manual selection
                 LoadSelectedTrackMetadata(); // Load ID3 tags and metadata
             }
@@ -947,7 +1125,8 @@ namespace OstPlayer.ViewModels {
         /// Complete reset including both track-level and game-level metadata.
         /// Used during game selection changes for clean state transitions.
         /// </summary>
-        private void ResetMetadata() {
+        private void ResetMetadata()
+        {
             // Reset track-level metadata
             TrackCover = null;
             TrackTitle = null;
@@ -970,60 +1149,81 @@ namespace OstPlayer.ViewModels {
         /// Prevents UI blocking during initial construction.
         /// </summary>
         /// <param name="preselectGame">Optional game to select after loading</param>
-        private async Task LoadGamesAsync(Game preselectGame = null) {
-            try {
-                await Task.Run(() => {
-                    try {
+        private async Task LoadGamesAsync(Game preselectGame = null)
+        {
+            try
+            {
+                await Task.Run(() =>
+                {
+                    try
+                    {
                         // Validate Playnite API availability
-                        if (plugin?.PlayniteApi?.Database?.Games == null) {
-                            System.Windows.Application.Current.Dispatcher.Invoke(() => {
+                        if (plugin?.PlayniteApi?.Database?.Games == null)
+                        {
+                            System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                            {
                                 StatusText = "Error: Cannot access Playnite database";
                             });
                             return;
                         }
 
                         // Query database for games with music files
-                        var gamesWithMusic = plugin.PlayniteApi.Database.Games.Where(g => {
-                            try {
-                                var gameMusicFiles = MusicFileHelper.GetGameMusicFiles(plugin.PlayniteApi, g);
-                                return gameMusicFiles != null && gameMusicFiles.Count > 0;
-                            }
-                            catch {
-                                return false; // Skip games that cause errors
-                            }
-                        })
-                        .OrderBy(g => g.Name) // Alphabetical sorting for user convenience
-                        .ToList();
+                        var gamesWithMusic = plugin
+                            .PlayniteApi.Database.Games.Where(g =>
+                            {
+                                try
+                                {
+                                    var gameMusicFiles = MusicFileHelper.GetGameMusicFiles(
+                                        plugin.PlayniteApi,
+                                        g
+                                    );
+                                    return gameMusicFiles != null && gameMusicFiles.Count > 0;
+                                }
+                                catch
+                                {
+                                    return false; // Skip games that cause errors
+                                }
+                            })
+                            .OrderBy(g => g.Name) // Alphabetical sorting for user convenience
+                            .ToList();
 
                         // Update UI on main thread
-                        System.Windows.Application.Current.Dispatcher.Invoke(() => {
+                        System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                        {
                             // Update both master and filtered collections
                             allGamesWithMusic = gamesWithMusic; // Unfiltered master list
                             Games = new ObservableCollection<Game>(gamesWithMusic); // Initial filtered view
 
                             // Provide user feedback based on results
-                            if (Games.Count == 0) {
-                                StatusText = "No games with MP3 files found. Make sure games have .mp3 files in " +
-                                           "ExtensionsData/OstPlayer_{PluginId}/Metadata/{GameId}/ folder";
+                            if (Games.Count == 0)
+                            {
+                                StatusText =
+                                    "No games with MP3 files found. Make sure games have .mp3 files in "
+                                    + "ExtensionsData/OstPlayer_{PluginId}/Metadata/{GameId}/ folder";
                             }
-                            else {
+                            else
+                            {
                                 StatusText = $"Found {Games.Count} games with MP3 music files";
                             }
 
                             // Apply preselection if provided
-                            if (preselectGame != null) {
+                            if (preselectGame != null)
+                            {
                                 SelectedGame = Games?.FirstOrDefault(g => g.Id == preselectGame.Id);
                             }
                         });
                     }
-                    catch (Exception ex) {
-                        System.Windows.Application.Current.Dispatcher.Invoke(() => {
+                    catch (Exception ex)
+                    {
+                        System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                        {
                             StatusText = $"Error loading games: {ex.Message}";
                         });
                     }
                 });
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 StatusText = $"Critical error during game loading: {ex.Message}";
             }
         }
@@ -1034,7 +1234,8 @@ namespace OstPlayer.ViewModels {
         /// Updates both master list and filtered collection for UI binding.
         /// DEPRECATED: Use LoadGamesAsync() instead to prevent UI blocking.
         /// </summary>
-        private void LoadGames() {
+        private void LoadGames()
+        {
             // Redirect to async version for backward compatibility
             _ = LoadGamesAsync();
         }
@@ -1044,45 +1245,55 @@ namespace OstPlayer.ViewModels {
         /// Creates TrackListItem instances with metadata preview for UI display.
         /// Handles both successful loading and error scenarios with user feedback.
         /// </summary>
-        private void LoadMusicFiles() {
-            if (SelectedGame == null) {
+        private void LoadMusicFiles()
+        {
+            if (SelectedGame == null)
+            {
                 // Clear collection and show instructional message
                 MusicFiles = new ObservableCollection<TrackListItem>();
                 StatusText = "Select a game to see available music files";
                 return;
             }
 
-            try {
+            try
+            {
                 // Get MP3 files for selected game from file system
                 var files = MusicFileHelper.GetGameMusicFiles(plugin.PlayniteApi, SelectedGame);
                 var items = new List<TrackListItem>();
 
                 // Process each file to create UI-optimized track items
-                foreach (var file in files) {
+                foreach (var file in files)
+                {
                     var fileName = Path.GetFileNameWithoutExtension(file);
                     var metadata = Mp3MetadataReader.ReadMetadata(file); // Quick metadata read
 
-                    items.Add(new TrackListItem {
-                        TrackTitle = metadata?.Title ?? fileName, // Fallback to filename
-                        TrackDuration = metadata?.Duration,
-                        FilePath = file,
-                        TrackNumber = metadata?.TrackNumber ?? 0,
-                        TotalTracks = metadata?.TotalTracks ?? 0,
-                    });
+                    items.Add(
+                        new TrackListItem
+                        {
+                            TrackTitle = metadata?.Title ?? fileName, // Fallback to filename
+                            TrackDuration = metadata?.Duration,
+                            FilePath = file,
+                            TrackNumber = metadata?.TrackNumber ?? 0,
+                            TotalTracks = metadata?.TotalTracks ?? 0,
+                        }
+                    );
                 }
 
                 // Update UI collection with new track items
                 MusicFiles = new ObservableCollection<TrackListItem>(items);
 
                 // Provide user feedback based on results
-                if (MusicFiles.Count == 0) {
+                if (MusicFiles.Count == 0)
+                {
                     StatusText = $"No music files found for {SelectedGame.Name}";
                 }
-                else {
+                else
+                {
                     StatusText = $"Found {MusicFiles.Count} music files for {SelectedGame.Name}";
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 StatusText = $"Error loading music files: {ex.Message}";
                 MusicFiles = new ObservableCollection<TrackListItem>(); // Ensure clean state
             }
@@ -1093,7 +1304,8 @@ namespace OstPlayer.ViewModels {
         /// Resets only track-level metadata while preserving game-level Discogs data.
         /// Handles both ID3 tag extraction and duration loading for progress slider.
         /// </summary>
-        private void LoadSelectedTrackMetadata() {
+        private void LoadSelectedTrackMetadata()
+        {
             ResetTrackMetadata(); // Only reset track-level metadata
 
             if (SelectedGame == null || string.IsNullOrEmpty(SelectedMusicFile))
@@ -1118,12 +1330,14 @@ namespace OstPlayer.ViewModels {
 
             // Restore Discogs metadata from game-level cache
             // This preserves external metadata across track changes within the same game
-            if (gameDiscogsMetadata != null) {
+            if (gameDiscogsMetadata != null)
+            {
                 DiscogsMetadata = gameDiscogsMetadata;
             }
 
             // Load duration for progress slider if not currently playing
-            if (!IsPlaying) {
+            if (!IsPlaying)
+            {
                 LoadDurationFromMetadata(metadata);
             }
         }
@@ -1133,7 +1347,8 @@ namespace OstPlayer.ViewModels {
         /// Used during track selection changes to avoid losing Discogs album information.
         /// Maintains consistency between track and game metadata contexts.
         /// </summary>
-        private void ResetTrackMetadata() {
+        private void ResetTrackMetadata()
+        {
             // Reset track-specific properties
             TrackCover = null;
             TrackTitle = null;
@@ -1156,23 +1371,31 @@ namespace OstPlayer.ViewModels {
         /// Falls back to NAudio file analysis when metadata duration is unavailable.
         /// </summary>
         /// <param name="metadata">Track metadata containing potential duration information</param>
-        private void LoadDurationFromMetadata(TrackMetadataModel metadata) {
-            if (!string.IsNullOrEmpty(metadata.Duration)) {
+        private void LoadDurationFromMetadata(TrackMetadataModel metadata)
+        {
+            if (!string.IsNullOrEmpty(metadata.Duration))
+            {
                 // Try parsing various duration formats from metadata
-                if (TimeSpan.TryParse("00:" + metadata.Duration, out TimeSpan duration) ||
-                    TimeSpan.TryParse(metadata.Duration, out duration)) {
+                if (
+                    TimeSpan.TryParse("00:" + metadata.Duration, out TimeSpan duration)
+                    || TimeSpan.TryParse(metadata.Duration, out duration)
+                )
+                {
                     Duration = duration.TotalSeconds;
                     return;
                 }
             }
 
             // Fallback to reading directly from file using NAudio
-            try {
-                using (var audioFileReader = new AudioFileReader(SelectedMusicFile)) {
+            try
+            {
+                using (var audioFileReader = new AudioFileReader(SelectedMusicFile))
+                {
                     Duration = audioFileReader.TotalTime.TotalSeconds;
                 }
             }
-            catch {
+            catch
+            {
                 Duration = 0; // Unable to determine duration
             }
         }
@@ -1186,11 +1409,14 @@ namespace OstPlayer.ViewModels {
         /// Central method for play/pause button functionality.
         /// Now async to support non-blocking playback operations.
         /// </summary>
-        private async Task PlayPauseAsync() {
-            if (IsPlaying && !IsPaused) {
+        private async Task PlayPauseAsync()
+        {
+            if (IsPlaying && !IsPaused)
+            {
                 Pause();
             }
-            else {
+            else
+            {
                 await PlayAsync();
             }
         }
@@ -1200,21 +1426,25 @@ namespace OstPlayer.ViewModels {
         /// Validates file selection and handles playback errors gracefully.
         /// Now fully async to prevent UI thread deadlock.
         /// </summary>
-        private async Task PlayAsync() {
+        private async Task PlayAsync()
+        {
             if (string.IsNullOrEmpty(SelectedMusicFile) || SelectedGame == null)
                 return;
 
-            try {
+            try
+            {
                 // Determine start position (resume from current position if previously playing)
                 double? startPosition = null;
-                if (!IsPlaying && Position > 0) {
+                if (!IsPlaying && Position > 0)
+                {
                     startPosition = Position; // Resume from previous position
                 }
 
                 await playbackService.PlayAsync(SelectedMusicFile, startPosition);
                 CurrentTrack = $"Playing: {Path.GetFileNameWithoutExtension(SelectedMusicFile)}";
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 StatusText = $"Error playing music: {ex.Message}";
             }
         }
@@ -1223,7 +1453,8 @@ namespace OstPlayer.ViewModels {
         /// Pauses current playback and updates track display to show paused state.
         /// Maintains position for resume functionality.
         /// </summary>
-        private void Pause() {
+        private void Pause()
+        {
             playbackService.Pause();
             if (IsPlaying)
                 CurrentTrack = CurrentTrack.Replace("Playing:", "Paused:");
@@ -1233,7 +1464,8 @@ namespace OstPlayer.ViewModels {
         /// Stops playback completely and clears current track display.
         /// Resets position to beginning for next play operation.
         /// </summary>
-        private void Stop() {
+        private void Stop()
+        {
             playbackService.Stop();
             CurrentTrack = "";
         }
@@ -1242,8 +1474,10 @@ namespace OstPlayer.ViewModels {
         /// Updates position from playback service when user is not dragging slider.
         /// Called by timer every 100ms during playback for smooth progress updates.
         /// </summary>
-        private void UpdatePosition() {
-            if (!isUserDragging) {
+        private void UpdatePosition()
+        {
+            if (!isUserDragging)
+            {
                 Position = playbackService.GetPosition();
             }
         }
@@ -1258,25 +1492,32 @@ namespace OstPlayer.ViewModels {
         /// Resets state when reaching end of track list.
         /// Now async to prevent blocking during auto-play.
         /// </summary>
-        private async void OnPlaybackEnded() {
-            if (MusicFiles != null && SelectedMusicFile != null) {
+        private async void OnPlaybackEnded()
+        {
+            if (MusicFiles != null && SelectedMusicFile != null)
+            {
                 // Find current track index in the playlist
-                var currentIndex = MusicFiles.ToList().FindIndex(item => item.FilePath == SelectedMusicFile);
+                var currentIndex = MusicFiles
+                    .ToList()
+                    .FindIndex(item => item.FilePath == SelectedMusicFile);
 
-                if (currentIndex >= 0 && currentIndex < MusicFiles.Count - 1) {
+                if (currentIndex >= 0 && currentIndex < MusicFiles.Count - 1)
+                {
                     // Auto-advance to next track with retry capability
                     var nextFile = MusicFiles[currentIndex + 1].FilePath;
                     playRetryCount = 0; // Reset retry counter for new track
                     await TryPlayNextTrackWithRetryAsync(nextFile);
                 }
-                else {
+                else
+                {
                     // End of playlist - stop playback
                     IsPlaying = false;
                     IsPaused = false;
                     CurrentTrack = "";
                 }
             }
-            else {
+            else
+            {
                 // No playlist or invalid state - stop playback
                 IsPlaying = false;
                 IsPaused = false;
@@ -1291,11 +1532,13 @@ namespace OstPlayer.ViewModels {
         /// Now async to prevent blocking during auto-play transitions.
         /// </summary>
         /// <param name="nextFile">File path of next track to attempt</param>
-        private async Task TryPlayNextTrackWithRetryAsync(string nextFile) {
+        private async Task TryPlayNextTrackWithRetryAsync(string nextFile)
+        {
             isAutoPlayingNext = true; // Prevent position reset during transition
             SelectedMusicFile = nextFile; // Update selection (triggers metadata loading)
 
-            try {
+            try
+            {
                 // Small delay to allow UI updates before starting playback
                 await Task.Delay(100);
 
@@ -1310,12 +1553,15 @@ namespace OstPlayer.ViewModels {
                 LoadSelectedTrackMetadata(); // Load metadata for new track
                 isAutoPlayingNext = false; // Allow normal position updates
             }
-            catch (Exception ex) {
-                if (playRetryCount < MaxPlayRetries) {
+            catch (Exception ex)
+            {
+                if (playRetryCount < MaxPlayRetries)
+                {
                     playRetryCount++;
                     await TryPlayNextTrackWithRetryAsync(nextFile); // Recursive retry
                 }
-                else {
+                else
+                {
                     // Max retries exceeded - give up and stop
                     StatusText = $"Error playing next track: {ex.Message}";
                     playRetryCount = 0;
@@ -1336,12 +1582,15 @@ namespace OstPlayer.ViewModels {
         /// Supports both "mp3" and "discogs" parameters for section-specific hiding.
         /// </summary>
         /// <param name="parameter">Section identifier ("mp3" or "discogs")</param>
-        private void HideMetadataSection(object parameter) {
+        private void HideMetadataSection(object parameter)
+        {
             var section = parameter as string;
-            if (string.Equals(section, "mp3", StringComparison.OrdinalIgnoreCase)) {
+            if (string.Equals(section, "mp3", StringComparison.OrdinalIgnoreCase))
+            {
                 IsMp3MetadataVisible = false;
             }
-            else if (string.Equals(section, "discogs", StringComparison.OrdinalIgnoreCase)) {
+            else if (string.Equals(section, "discogs", StringComparison.OrdinalIgnoreCase))
+            {
                 IsDiscogsMetadataVisible = false;
             }
         }
@@ -1355,8 +1604,10 @@ namespace OstPlayer.ViewModels {
         /// Handles API communication, result selection dialog, and metadata caching.
         /// Provides comprehensive error handling and user feedback.
         /// </summary>
-        private async Task LoadDiscogsMetadataAsync() {
-            if (SelectedGame == null) {
+        private async Task LoadDiscogsMetadataAsync()
+        {
+            if (SelectedGame == null)
+            {
                 ShowError("Please select a game first.");
                 return;
             }
@@ -1365,35 +1616,43 @@ namespace OstPlayer.ViewModels {
             string token = SettingsViewModel?.Settings?.DiscogsToken; // User's API token
 
             // Check if token is available
-            if (string.IsNullOrWhiteSpace(token)) {
+            if (string.IsNullOrWhiteSpace(token))
+            {
                 ShowError("Discogs Personal Access Token is required for API access.");
                 return;
             }
 
-            try {
+            try
+            {
                 // Search Discogs database for releases matching game name
                 var results = await DiscogsClient.SearchReleaseAsync(query, token);
-                if (results != null && results.Count > 0) {
+                if (results != null && results.Count > 0)
+                {
                     DiscogsMetadataModel selected = null;
-                    if (results.Count == 1) {
+                    if (results.Count == 1)
+                    {
                         // Single result - auto-select
                         selected = results[0];
                     }
-                    else {
+                    else
+                    {
                         // Multiple results - show selection dialog to user
                         // This event is handled by the View to show modal dialog
                         selected = OnSelectDiscogsReleaseRequested?.Invoke(results, token);
                     }
 
-                    if (selected != null) {
+                    if (selected != null)
+                    {
                         await LoadDiscogsDetails(selected, token); // Get detailed information
                     }
                 }
-                else {
+                else
+                {
                     ShowInfo("No results found on Discogs.");
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 ShowError("Error loading from Discogs: " + ex.Message);
             }
         }
@@ -1405,19 +1664,23 @@ namespace OstPlayer.ViewModels {
         /// </summary>
         /// <param name="selected">Basic release info from search results</param>
         /// <param name="token">Discogs API authentication token</param>
-        private async Task LoadDiscogsDetails(DiscogsMetadataModel selected, string token) {
+        private async Task LoadDiscogsDetails(DiscogsMetadataModel selected, string token)
+        {
             string releaseId = null;
 
             // Extract release ID from Discogs URL for detailed API call
-            if (!string.IsNullOrEmpty(selected.DiscogsUrl)) {
+            if (!string.IsNullOrEmpty(selected.DiscogsUrl))
+            {
                 var urlParts = selected.DiscogsUrl.Split('/');
                 releaseId = urlParts.LastOrDefault(); // ID is typically the last URL segment
             }
 
-            if (!string.IsNullOrEmpty(releaseId)) {
+            if (!string.IsNullOrEmpty(releaseId))
+            {
                 // Fetch detailed release information from Discogs API
                 var details = await DiscogsClient.GetReleaseDetailsAsync(releaseId, token);
-                if (details != null) {
+                if (details != null)
+                {
                     // Merge search result data with detailed data (fallback for missing fields)
                     details.Released = details.Released ?? selected.Released;
                     details.Genres = details.Genres ?? selected.Genres;
@@ -1430,14 +1693,16 @@ namespace OstPlayer.ViewModels {
                     // Save to JSON file for persistence across plugin sessions
                     SaveDiscogsMetadataToCache(details);
                 }
-                else {
+                else
+                {
                     // Fallback to search result data if detailed fetch fails
                     DiscogsMetadata = selected;
                     gameDiscogsMetadata = selected;
                     SaveDiscogsMetadataToCache(selected);
                 }
             }
-            else {
+            else
+            {
                 // No release ID available - use search result data directly
                 DiscogsMetadata = selected;
                 gameDiscogsMetadata = selected;
@@ -1450,11 +1715,13 @@ namespace OstPlayer.ViewModels {
         /// Provides persistence across plugin sessions and reduces API calls.
         /// Silently handles errors to avoid disrupting user experience.
         /// </summary>
-        private void LoadCachedDiscogsMetadata() {
+        private void LoadCachedDiscogsMetadata()
+        {
             if (SelectedGame == null)
                 return;
 
-            try {
+            try
+            {
                 // Construct path to cached Discogs metadata JSON file
                 var musicDir = Path.Combine(
                     plugin.PlayniteApi.Paths.ExtensionsDataPath,
@@ -1466,17 +1733,21 @@ namespace OstPlayer.ViewModels {
                 var discogsJsonPath = Path.Combine(musicDir, $"{SelectedGame.Id}_discogs.json");
 
                 // Load and deserialize cached metadata if file exists
-                if (File.Exists(discogsJsonPath)) {
+                if (File.Exists(discogsJsonPath))
+                {
                     var json = File.ReadAllText(discogsJsonPath);
-                    var cachedMetadata = Newtonsoft.Json.JsonConvert.DeserializeObject<DiscogsMetadataModel>(json);
+                    var cachedMetadata =
+                        Newtonsoft.Json.JsonConvert.DeserializeObject<DiscogsMetadataModel>(json);
 
-                    if (cachedMetadata != null) {
+                    if (cachedMetadata != null)
+                    {
                         gameDiscogsMetadata = cachedMetadata; // Cache at game level
                         DiscogsMetadata = cachedMetadata; // Display immediately
                     }
                 }
             }
-            catch {
+            catch
+            {
                 // Silently ignore errors when loading cached metadata - it's not critical
                 // Could add debug logging here if needed for troubleshooting
             }
@@ -1488,17 +1759,24 @@ namespace OstPlayer.ViewModels {
         /// Silently handles errors to avoid disrupting user workflow.
         /// </summary>
         /// <param name="metadata">Discogs metadata to cache</param>
-        private void SaveDiscogsMetadataToCache(DiscogsMetadataModel metadata) {
+        private void SaveDiscogsMetadataToCache(DiscogsMetadataModel metadata)
+        {
             if (SelectedGame == null || metadata == null)
                 return;
 
-            try {
+            try
+            {
                 // Add timestamp to metadata for cache tracking
                 metadata.Comment = $"Cached on {DateTime.Now:yyyy-MM-dd HH:mm:ss}";
 
-                MetadataJsonSaver.SaveDiscogsMetadataToJson(SelectedGame.Id, metadata, plugin.PlayniteApi);
+                MetadataJsonSaver.SaveDiscogsMetadataToJson(
+                    SelectedGame.Id,
+                    metadata,
+                    plugin.PlayniteApi
+                );
             }
-            catch {
+            catch
+            {
                 // Silently ignore errors when saving metadata cache - it's not critical
                 // Could add debug logging here if needed for troubleshooting
             }
@@ -1512,12 +1790,15 @@ namespace OstPlayer.ViewModels {
         /// Shows track cover image in preview window if available.
         /// Delegates to View through event for proper UI separation.
         /// </summary>
-        private void ShowTrackCover() {
-            if (TrackCover != null) {
+        private void ShowTrackCover()
+        {
+            if (TrackCover != null)
+            {
                 // Delegate to View to handle window creation and display
                 OnShowTrackCoverRequested?.Invoke(TrackCover);
             }
-            else {
+            else
+            {
                 ShowInfo("Cover image is not available.");
             }
         }
@@ -1526,13 +1807,16 @@ namespace OstPlayer.ViewModels {
         /// Shows Discogs cover image in preview window if URL is available.
         /// Delegates to View for window management and URL-based image loading.
         /// </summary>
-        private void ShowDiscogsCover() {
+        private void ShowDiscogsCover()
+        {
             var coverUrl = DiscogsMetadata?.CoverUrl;
-            if (!string.IsNullOrEmpty(coverUrl)) {
+            if (!string.IsNullOrEmpty(coverUrl))
+            {
                 // Delegate to View to handle URL-based image loading and display
                 OnShowDiscogsCoverRequested?.Invoke(coverUrl);
             }
-            else {
+            else
+            {
                 ShowInfo("Discogs cover is not available.");
             }
         }
@@ -1546,9 +1830,15 @@ namespace OstPlayer.ViewModels {
         /// Necessary for accessing plugin configuration without tight coupling.
         /// </summary>
         /// <returns>Settings ViewModel or null if unavailable</returns>
-        private OstPlayerSettingsViewModel GetSettingsViewModel() {
-            var settingsProp = plugin.GetType().GetProperty("settings",
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        private OstPlayerSettingsViewModel GetSettingsViewModel()
+        {
+            var settingsProp = plugin
+                .GetType()
+                .GetProperty(
+                    "settings",
+                    System.Reflection.BindingFlags.NonPublic
+                        | System.Reflection.BindingFlags.Instance
+                );
             return settingsProp?.GetValue(plugin) as OstPlayerSettingsViewModel;
         }
 
@@ -1557,7 +1847,8 @@ namespace OstPlayer.ViewModels {
         /// Maintains MVVM separation by not directly accessing UI components.
         /// </summary>
         /// <param name="message">Error message to display</param>
-        private void ShowError(string message) {
+        private void ShowError(string message)
+        {
             OnShowErrorRequested?.Invoke(message);
         }
 
@@ -1566,7 +1857,8 @@ namespace OstPlayer.ViewModels {
         /// Maintains MVVM separation by not directly accessing UI components.
         /// </summary>
         /// <param name="message">Information message to display</param>
-        private void ShowInfo(string message) {
+        private void ShowInfo(string message)
+        {
             OnShowInfoRequested?.Invoke(message);
         }
 
@@ -1587,7 +1879,11 @@ namespace OstPlayer.ViewModels {
         public event Action<string> OnShowInfoRequested;
 
         /// <summary>Event for requesting Discogs release selection dialog when multiple results found.</summary>
-        public event Func<List<DiscogsMetadataModel>, string, DiscogsMetadataModel> OnSelectDiscogsReleaseRequested;
+        public event Func<
+            List<DiscogsMetadataModel>,
+            string,
+            DiscogsMetadataModel
+        > OnSelectDiscogsReleaseRequested;
 
         #endregion
 
@@ -1597,10 +1893,13 @@ namespace OstPlayer.ViewModels {
         /// Loads volume setting from plugin settings.
         /// Called during playback service initialization to restore last used volume.
         /// </summary>
-        private void LoadVolumeFromSettings() {
-            try {
+        private void LoadVolumeFromSettings()
+        {
+            try
+            {
                 var settings = plugin.LoadPluginSettings<OstPlayerSettings>();
-                if (settings != null) {
+                if (settings != null)
+                {
                     // Set volume without triggering save to avoid circular update
                     volume = settings.DefaultVolume;
                     OnPropertyChanged(nameof(Volume));
@@ -1610,7 +1909,8 @@ namespace OstPlayer.ViewModels {
                     playbackService?.SetVolume(volume / 100.0);
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 // Fallback to default volume if loading fails
                 volume = 50;
                 StatusText = $"Failed to load volume setting: {ex.Message}";
@@ -1622,15 +1922,21 @@ namespace OstPlayer.ViewModels {
         /// Called whenever volume changes to persist user preference.
         /// </summary>
         /// <param name="volumeLevel">Volume level to save (0-100)</param>
-        private void SaveVolumeToSettings(double volumeLevel) {
-            try {
-                var settings = plugin.LoadPluginSettings<OstPlayerSettings>() ?? new OstPlayerSettings();
+        private void SaveVolumeToSettings(double volumeLevel)
+        {
+            try
+            {
+                var settings =
+                    plugin.LoadPluginSettings<OstPlayerSettings>() ?? new OstPlayerSettings();
                 settings.DefaultVolume = volumeLevel;
                 plugin.SavePluginSettings(settings);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 // Log error but don't interrupt user experience
-                System.Diagnostics.Debug.WriteLine($"Failed to save volume to settings: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine(
+                    $"Failed to save volume to settings: {ex.Message}"
+                );
             }
         }
 
@@ -1643,7 +1949,8 @@ namespace OstPlayer.ViewModels {
         /// Essential for proper cleanup when ViewModel is no longer needed.
         /// Prevents memory leaks and audio resource conflicts.
         /// </summary>
-        public void Dispose() {
+        public void Dispose()
+        {
             playbackService?.Dispose(); // Clean up NAudio resources
             progressTimer?.Stop(); // Stop timer to prevent continued execution
         }

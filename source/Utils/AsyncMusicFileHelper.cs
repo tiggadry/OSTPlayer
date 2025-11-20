@@ -97,7 +97,8 @@ using System.Threading.Tasks;
 using Playnite.SDK;
 using Playnite.SDK.Models;
 
-namespace OstPlayer.Utils {
+namespace OstPlayer.Utils
+{
     #region Progress Reporting Models
 
     /// <summary>
@@ -105,7 +106,8 @@ namespace OstPlayer.Utils {
     /// PURPOSE: Provides UI feedback during file enumeration processes
     /// THREAD SAFETY: Immutable data transfer object (safe for cross-thread access)
     /// </summary>
-    public class FileProgressInfo {
+    public class FileProgressInfo
+    {
         /// <summary>Current number of files processed</summary>
         public int Current { get; set; }
 
@@ -121,7 +123,8 @@ namespace OstPlayer.Utils {
     /// PURPOSE: Detailed feedback for expensive metadata extraction processes
     /// UI BINDING: Suitable for progress bars, status text, and cancel buttons
     /// </summary>
-    public class MetadataProgressInfo {
+    public class MetadataProgressInfo
+    {
         /// <summary>Current number of files with loaded metadata</summary>
         public int Current { get; set; }
 
@@ -146,7 +149,8 @@ namespace OstPlayer.Utils {
     /// PERFORMANCE: Designed for large collections without blocking UI thread
     /// CANCELLATION: Full cancellation support for responsive user experience
     /// </summary>
-    public static class AsyncMusicFileHelper {
+    public static class AsyncMusicFileHelper
+    {
         #region File Discovery with Progress Reporting
 
         /// <summary>
@@ -164,7 +168,9 @@ namespace OstPlayer.Utils {
             IPlayniteAPI api,
             Game game,
             IProgress<FileProgressInfo> progress = null,
-            CancellationToken cancellationToken = default) {
+            CancellationToken cancellationToken = default
+        )
+        {
             // INPUT VALIDATION: Early exit for null game (consistent with synchronous version)
             if (game == null)
                 return new List<string>();
@@ -175,50 +181,63 @@ namespace OstPlayer.Utils {
                 return new List<string>();
 
             // ASYNC EXECUTION: Move file operations to background thread
-            return await Task.Run(async () => {
-                try {
-                    // FILE ENUMERATION: Get all MP3 files in directory
-                    // SCOPE: TopDirectoryOnly for performance (same as sync version)
-                    var files = Directory.GetFiles(musicPath, "*.mp3", SearchOption.TopDirectoryOnly);
-                    var sortedFiles = new List<string>();
+            return await Task.Run(
+                async () =>
+                {
+                    try
+                    {
+                        // FILE ENUMERATION: Get all MP3 files in directory
+                        // SCOPE: TopDirectoryOnly for performance (same as sync version)
+                        var files = Directory.GetFiles(
+                            musicPath,
+                            "*.mp3",
+                            SearchOption.TopDirectoryOnly
+                        );
+                        var sortedFiles = new List<string>();
 
-                    // PROGRESS PROCESSING: Add files one by one with progress reporting
-                    for (int i = 0; i < files.Length; i++) {
-                        // CANCELLATION CHECK: Respond to cancellation requests promptly
-                        // TIMING: Check before each file to ensure responsiveness
-                        cancellationToken.ThrowIfCancellationRequested();
+                        // PROGRESS PROCESSING: Add files one by one with progress reporting
+                        for (int i = 0; i < files.Length; i++)
+                        {
+                            // CANCELLATION CHECK: Respond to cancellation requests promptly
+                            // TIMING: Check before each file to ensure responsiveness
+                            cancellationToken.ThrowIfCancellationRequested();
 
-                        // FILE PROCESSING: Add file to result list
-                        sortedFiles.Add(files[i]);
+                            // FILE PROCESSING: Add file to result list
+                            sortedFiles.Add(files[i]);
 
-                        // PROGRESS REPORTING: Update progress for UI feedback
-                        progress?.Report(new FileProgressInfo {
-                            Current = i + 1,
-                            Total = files.Length
-                        });
+                            // PROGRESS REPORTING: Update progress for UI feedback
+                            progress?.Report(
+                                new FileProgressInfo { Current = i + 1, Total = files.Length }
+                            );
 
-                        // YIELD POINT: Periodic yielding for UI responsiveness
-                        // FREQUENCY: Every 10 files balances responsiveness with overhead
-                        // PURPOSE: Allows UI thread to process updates and handle cancellation
-                        if (i % 10 == 0)
-                            await Task.Delay(1, cancellationToken);
+                            // YIELD POINT: Periodic yielding for UI responsiveness
+                            // FREQUENCY: Every 10 files balances responsiveness with overhead
+                            // PURPOSE: Allows UI thread to process updates and handle cancellation
+                            if (i % 10 == 0)
+                                await Task.Delay(1, cancellationToken);
+                        }
+
+                        // SORTING: Apply same alphabetical sorting as synchronous version
+                        // PERFORMANCE: Sort once at end rather than maintaining sorted order during processing
+                        return sortedFiles
+                            .OrderBy(f => Path.GetFileNameWithoutExtension(f))
+                            .ToList();
                     }
-
-                    // SORTING: Apply same alphabetical sorting as synchronous version
-                    // PERFORMANCE: Sort once at end rather than maintaining sorted order during processing
-                    return sortedFiles.OrderBy(f => Path.GetFileNameWithoutExtension(f)).ToList();
-                }
-                catch (OperationCanceledException) {
-                    // CANCELLATION HANDLING: Re-throw cancellation to preserve async cancellation semantics
-                    throw; // Proper async cancellation pattern
-                }
-                catch (Exception) {
-                    // ERROR HANDLING: Convert all other exceptions to empty result
-                    // CONSISTENCY: Same graceful degradation as synchronous version
-                    // ERRORS: File access, permission, I/O, path too long, etc.
-                    return new List<string>();
-                }
-            }, cancellationToken);
+                    catch (OperationCanceledException)
+                    {
+                        // CANCELLATION HANDLING: Re-throw cancellation to preserve async cancellation semantics
+                        throw; // Proper async cancellation pattern
+                    }
+                    catch (Exception)
+                    {
+                        // ERROR HANDLING: Convert all other exceptions to empty result
+                        // CONSISTENCY: Same graceful degradation as synchronous version
+                        // ERRORS: File access, permission, I/O, path too long, etc.
+                        return new List<string>();
+                    }
+                },
+                cancellationToken
+            );
         }
 
         #endregion
@@ -235,10 +254,14 @@ namespace OstPlayer.Utils {
         /// <param name="progress">Optional progress reporter for detailed feedback</param>
         /// <param name="cancellationToken">Cancellation token for operation abort</param>
         /// <returns>Dictionary mapping file paths to metadata models</returns>
-        public static async Task<Dictionary<string, Models.TrackMetadataModel>> LoadMetadataForFilesAsync(
+        public static async Task<
+            Dictionary<string, Models.TrackMetadataModel>
+        > LoadMetadataForFilesAsync(
             IEnumerable<string> filePaths,
             IProgress<MetadataProgressInfo> progress = null,
-            CancellationToken cancellationToken = default) {
+            CancellationToken cancellationToken = default
+        )
+        {
             // COLLECTION MATERIALIZATION: Convert to list for count and indexing
             // PERFORMANCE: Single enumeration to avoid multiple iterations
             var files = filePaths.ToList();
@@ -246,24 +269,32 @@ namespace OstPlayer.Utils {
 
             // SEQUENTIAL PROCESSING: Process files one by one for memory efficiency
             // ALTERNATIVE: Could use Parallel.ForEach for CPU-bound metadata extraction
-            for (int i = 0; i < files.Count; i++) {
+            for (int i = 0; i < files.Count; i++)
+            {
                 // CANCELLATION CHECK: Allow prompt cancellation between files
                 cancellationToken.ThrowIfCancellationRequested();
 
                 var filePath = files[i];
 
                 // PROGRESS REPORTING: Detailed progress with current file information
-                progress?.Report(new MetadataProgressInfo {
-                    Current = i + 1,
-                    Total = files.Count,
-                    CurrentFile = Path.GetFileNameWithoutExtension(filePath)
-                });
+                progress?.Report(
+                    new MetadataProgressInfo
+                    {
+                        Current = i + 1,
+                        Total = files.Count,
+                        CurrentFile = Path.GetFileNameWithoutExtension(filePath),
+                    }
+                );
 
                 // METADATA EXTRACTION: Delegate to synchronous reader in background
                 // ASYNC WRAPPING: Use Task.Run to avoid blocking calling thread
                 // ERROR ISOLATION: Individual file failures don't stop entire operation
-                var metadata = await Task.Run(() => Mp3MetadataReader.ReadMetadata(filePath), cancellationToken);
-                if (metadata != null) {
+                var metadata = await Task.Run(
+                    () => Mp3MetadataReader.ReadMetadata(filePath),
+                    cancellationToken
+                );
+                if (metadata != null)
+                {
                     results[filePath] = metadata;
                 }
                 // IMPLICIT: Failed metadata reads are silently skipped (logged elsewhere if needed)
@@ -289,33 +320,44 @@ namespace OstPlayer.Utils {
         /// <param name="filePath">Path to audio file to validate</param>
         /// <param name="cancellationToken">Cancellation token for operation abort</param>
         /// <returns>true if file appears to be playable, false otherwise</returns>
-        public static async Task<bool> ValidateMusicFileAsync(string filePath, CancellationToken cancellationToken = default) {
+        public static async Task<bool> ValidateMusicFileAsync(
+            string filePath,
+            CancellationToken cancellationToken = default
+        )
+        {
             // INPUT VALIDATION: Check basic file existence before expensive validation
             if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
                 return false;
 
             // ASYNC VALIDATION: Move validation to background thread
-            return await Task.Run(() => {
-                try {
-                    // CANCELLATION CHECK: Respond to cancellation before expensive operation
-                    cancellationToken.ThrowIfCancellationRequested();
+            return await Task.Run(
+                () =>
+                {
+                    try
+                    {
+                        // CANCELLATION CHECK: Respond to cancellation before expensive operation
+                        cancellationToken.ThrowIfCancellationRequested();
 
-                    // NAUDIO VALIDATION: Use NAudio to verify file can be opened for playback
-                    // LIGHTWEIGHT: Creates reader but doesn't read audio data
-                    // VERIFICATION: Checks file format, headers, and basic structure
-                    using (var audioFileReader = new NAudio.Wave.AudioFileReader(filePath)) {
-                        // DURATION CHECK: Valid audio files should have positive duration
-                        // CORRUPTION DETECTION: Corrupted files often report zero duration
-                        return audioFileReader.TotalTime.TotalSeconds > 0;
+                        // NAUDIO VALIDATION: Use NAudio to verify file can be opened for playback
+                        // LIGHTWEIGHT: Creates reader but doesn't read audio data
+                        // VERIFICATION: Checks file format, headers, and basic structure
+                        using (var audioFileReader = new NAudio.Wave.AudioFileReader(filePath))
+                        {
+                            // DURATION CHECK: Valid audio files should have positive duration
+                            // CORRUPTION DETECTION: Corrupted files often report zero duration
+                            return audioFileReader.TotalTime.TotalSeconds > 0;
+                        }
                     }
-                }
-                catch {
-                    // ERROR HANDLING: Any exception indicates file is not playable
-                    // EXCEPTIONS: Format not supported, corrupted file, access denied, etc.
-                    // PHILOSOPHY: Conservative approach - if validation fails, assume unplayable
-                    return false;
-                }
-            }, cancellationToken);
+                    catch
+                    {
+                        // ERROR HANDLING: Any exception indicates file is not playable
+                        // EXCEPTIONS: Format not supported, corrupted file, access denied, etc.
+                        // PHILOSOPHY: Conservative approach - if validation fails, assume unplayable
+                        return false;
+                    }
+                },
+                cancellationToken
+            );
         }
 
         #endregion

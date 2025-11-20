@@ -87,14 +87,16 @@
 using System;
 using System.Windows.Input;
 
-namespace OstPlayer.Utils {
+namespace OstPlayer.Utils
+{
     /// <summary>
     /// RelayCommand implements ICommand, allowing you to bind UI actions to methods in MVVM.
     /// DESIGN PATTERN: Command Pattern implementation for WPF MVVM architecture
     /// THREAD SAFETY: Thread-safe execution (delegates handle their own thread safety)
     /// PERFORMANCE: Lightweight implementation with minimal memory overhead
     /// </summary>
-    public class RelayCommand : ICommand {
+    public class RelayCommand : ICommand
+    {
         #region Private Fields - Command Delegates
 
         // The action to execute when the command is invoked.
@@ -119,7 +121,8 @@ namespace OstPlayer.Utils {
         /// </summary>
         /// <param name="execute">Action to execute when command is invoked</param>
         /// <param name="canExecute">Optional predicate to determine if command can execute</param>
-        public RelayCommand(Action<object> execute, Predicate<object> canExecute = null) {
+        public RelayCommand(Action<object> execute, Predicate<object> canExecute = null)
+        {
             this.execute = execute;
             this.canExecute = canExecute;
         }
@@ -137,7 +140,8 @@ namespace OstPlayer.Utils {
         /// </summary>
         /// <param name="parameter">Command parameter from UI binding</param>
         /// <returns>true if command can execute, false if UI should be disabled</returns>
-        public bool CanExecute(object parameter) {
+        public bool CanExecute(object parameter)
+        {
             // DEFAULT BEHAVIOR: If no canExecute predicate provided, command is always available
             // ALTERNATIVE: Could return false by default for more defensive programming
             // PERFORMANCE: Null check is faster than delegate invocation
@@ -151,7 +155,8 @@ namespace OstPlayer.Utils {
         /// PARAMETER: Object from XAML CommandParameter binding or programmatic calls
         /// </summary>
         /// <param name="parameter">Command parameter from UI binding</param>
-        public void Execute(object parameter) {
+        public void Execute(object parameter)
+        {
             // DIRECT EXECUTION: No null check for performance (constructor validation assumed)
             // EXCEPTION BEHAVIOR: Any exceptions bubble up to WPF command system
             // THREADING: Executes synchronously on calling thread
@@ -194,7 +199,8 @@ namespace OstPlayer.Utils {
         /// - Complex multi-step workflows
         /// - Commands dependent on selection or data changes
         /// </summary>
-        public event EventHandler CanExecuteChanged {
+        public event EventHandler CanExecuteChanged
+        {
             // EMPTY IMPLEMENTATION: No actual event subscription logic
             // CONSEQUENCE: CanExecuteChanged event will never be raised
             // UI REFRESH: Manual intervention required for command state updates

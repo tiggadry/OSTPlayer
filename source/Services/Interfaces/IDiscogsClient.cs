@@ -69,20 +69,30 @@ using System.Threading;
 using System.Threading.Tasks;
 using OstPlayer.Models;
 
-namespace OstPlayer.Services.Interfaces {
+namespace OstPlayer.Services.Interfaces
+{
     /// <summary>
     /// Interface for Discogs API client supporting dependency injection.
     /// </summary>
-    public interface IDiscogsClient {
+    public interface IDiscogsClient
+    {
         /// <summary>
         /// Searches Discogs database for releases matching the provided query.
         /// </summary>
-        Task<List<DiscogsMetadataModel>> SearchReleaseAsync(string query, string token, CancellationToken cancellationToken = default);
+        Task<List<DiscogsMetadataModel>> SearchReleaseAsync(
+            string query,
+            string token,
+            CancellationToken cancellationToken = default
+        );
 
         /// <summary>
         /// Retrieves detailed metadata for a specific Discogs release.
         /// </summary>
-        Task<DiscogsMetadataModel> GetReleaseDetailsAsync(string releaseId, string token, CancellationToken cancellationToken = default);
+        Task<DiscogsMetadataModel> GetReleaseDetailsAsync(
+            string releaseId,
+            string token,
+            CancellationToken cancellationToken = default
+        );
 
         /// <summary>
         /// Performs health check on Discogs API service.

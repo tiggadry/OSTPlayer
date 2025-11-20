@@ -491,27 +491,27 @@ namespace OstPlayer.DevTools
         /// Gets or sets whether the date is valid.
         /// </summary>
         public bool IsValid { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the error message if date is invalid.
         /// </summary>
         public string ErrorMessage { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the suggested date to use instead.
         /// </summary>
         public string SuggestedDate { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the recommended action for handling the date.
         /// </summary>
         public DateValidationAction RecommendedAction { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the validation flags indicating specific issues.
         /// </summary>
         public DateValidationFlags ValidationFlags { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the context where this date validation occurred.
         /// </summary>
@@ -527,17 +527,17 @@ namespace OstPlayer.DevTools
         /// Gets or sets the file path where the problematic date was found.
         /// </summary>
         public string FilePath { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the problematic date string that was found.
         /// </summary>
         public string DateFound { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the line number where the date was found.
         /// </summary>
         public int LineNumber { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the validation result for this problematic date.
         /// </summary>
@@ -553,37 +553,37 @@ namespace OstPlayer.DevTools
         /// Gets or sets the date when the scan was performed.
         /// </summary>
         public DateTime ScanDate { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the root path of the project that was scanned.
         /// </summary>
         public string ProjectPath { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the total number of files that were scanned.
         /// </summary>
         public int TotalFilesScanned { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the total number of problems found across all files.
         /// </summary>
         public int TotalProblemsFound { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the number of files that contain problems.
         /// </summary>
         public int FilesWithProblems { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the number of blacklisted dates found.
         /// </summary>
         public int BlacklistedDatesFound { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the list of all problematic dates found in files.
         /// </summary>
         public List<ProblematicDateFound> ProblematicFiles { get; set; }
-        
+
         /// <summary>
         /// Gets or sets any error that occurred during scanning.
         /// </summary>
@@ -599,17 +599,17 @@ namespace OstPlayer.DevTools
         /// Use the date as-is without changes.
         /// </summary>
         UseAsIs,
-        
+
         /// <summary>
         /// Use the current system date instead.
         /// </summary>
         UseSystemDate,
-        
+
         /// <summary>
         /// Confirm with the user before proceeding.
         /// </summary>
         ConfirmWithUser,
-        
+
         /// <summary>
         /// Requires manual review and decision.
         /// </summary>
@@ -626,27 +626,27 @@ namespace OstPlayer.DevTools
         /// Date is valid with no issues.
         /// </summary>
         Valid = 0,
-        
+
         /// <summary>
         /// Date is in the blacklist of known incorrect dates.
         /// </summary>
         BlacklistedDate = 1,
-        
+
         /// <summary>
         /// Date format is invalid or unparseable.
         /// </summary>
         InvalidFormat = 2,
-        
+
         /// <summary>
         /// Date is too far in the future to be realistic.
         /// </summary>
         TooFarInFuture = 4,
-        
+
         /// <summary>
         /// Date is too far in the past for new content.
         /// </summary>
         TooFarInPast = 8,
-        
+
         /// <summary>
         /// Date follows a suspicious pattern.
         /// </summary>
@@ -662,22 +662,22 @@ namespace OstPlayer.DevTools
         /// Routine content update operation.
         /// </summary>
         RoutineUpdate,
-        
+
         /// <summary>
         /// Version release operation.
         /// </summary>
         VersionRelease,
-        
+
         /// <summary>
         /// Documentation update operation.
         /// </summary>
         DocumentationUpdate,
-        
+
         /// <summary>
         /// Historical correction operation.
         /// </summary>
         HistoricalCorrection,
-        
+
         /// <summary>
         /// New file creation operation.
         /// </summary>

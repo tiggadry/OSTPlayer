@@ -111,11 +111,13 @@
 using System.Collections.Generic;
 using System.Windows.Media.Imaging;
 
-namespace OstPlayer.Models {
+namespace OstPlayer.Models
+{
     /// <summary>
     /// Represents comprehensive metadata from Discogs database.
     /// </summary>
-    public class DiscogsMetadataModel : IMetadataModel {
+    public class DiscogsMetadataModel : IMetadataModel
+    {
         /// <summary>
         /// Gets the source of the metadata.
         /// </summary>
@@ -137,11 +139,14 @@ namespace OstPlayer.Models {
         public string Country { get; set; }
 
         private string _album;
+
         /// <summary>
         /// Gets or sets the album name (only if different from Title).
         /// </summary>
-        public string Album {
-            get {
+        public string Album
+        {
+            get
+            {
                 if (string.IsNullOrWhiteSpace(_album))
                     return null;
                 if (string.Equals(_album, Title))
@@ -204,7 +209,8 @@ namespace OstPlayer.Models {
         /// <summary>
         /// Represents a track in a Discogs release.
         /// </summary>
-        public class DiscogsTrack {
+        public class DiscogsTrack
+        {
             /// <summary>
             /// Gets or sets the track title.
             /// </summary>
@@ -264,7 +270,10 @@ namespace OstPlayer.Models {
         /// <summary>
         /// Merges this metadata with another source.
         /// </summary>
-        public IMetadataModel MergeWith(IMetadataModel other, MetadataMergePriority priority = MetadataMergePriority.PreferThis)
+        public IMetadataModel MergeWith(
+            IMetadataModel other,
+            MetadataMergePriority priority = MetadataMergePriority.PreferThis
+        )
         {
             // Simple implementation - can be enhanced
             return priority == MetadataMergePriority.PreferOther ? other : this;

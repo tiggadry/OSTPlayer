@@ -104,7 +104,7 @@ namespace OstPlayer.Views.Settings
         public OstPlayerSettingsView()
         {
             InitializeComponent();
-            
+
             // Note: DataContext is set explicitly in OstPlayer.GetSettingsView()
             // This ensures proper binding with Playnite's settings framework
         }

@@ -71,41 +71,44 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace OstPlayer.Services.Interfaces {
+namespace OstPlayer.Services.Interfaces
+{
     /// <summary>
     /// Audio playback states for state management.
     /// </summary>
-    public enum AudioState {
+    public enum AudioState
+    {
         /// <summary>
         /// Audio playback is stopped.
         /// </summary>
         Stopped,
-        
+
         /// <summary>
         /// Audio is currently playing.
         /// </summary>
         Playing,
-        
+
         /// <summary>
         /// Audio playback is paused.
         /// </summary>
         Paused,
-        
+
         /// <summary>
         /// Audio file is loading.
         /// </summary>
         Loading,
-        
+
         /// <summary>
         /// An error occurred with audio playback.
         /// </summary>
-        Error
+        Error,
     }
 
     /// <summary>
     /// Interface for audio service providing comprehensive audio operations.
     /// </summary>
-    public interface IAudioService {
+    public interface IAudioService
+    {
         #region Properties
 
         /// <summary>Current audio playback state.</summary>
@@ -133,7 +136,11 @@ namespace OstPlayer.Services.Interfaces {
         /// <summary>
         /// Loads and plays audio file asynchronously.
         /// </summary>
-        Task PlayAsync(string filePath, double? startPosition = null, CancellationToken cancellationToken = default);
+        Task PlayAsync(
+            string filePath,
+            double? startPosition = null,
+            CancellationToken cancellationToken = default
+        );
 
         /// <summary>
         /// Pauses current playback.
@@ -167,7 +174,10 @@ namespace OstPlayer.Services.Interfaces {
         /// <summary>
         /// Applies audio settings and configuration.
         /// </summary>
-        Task ApplySettingsAsync(OstPlayerSettings settings, CancellationToken cancellationToken = default);
+        Task ApplySettingsAsync(
+            OstPlayerSettings settings,
+            CancellationToken cancellationToken = default
+        );
 
         #endregion
 
@@ -230,27 +240,28 @@ namespace OstPlayer.Services.Interfaces {
     /// <summary>
     /// Audio engine information for diagnostics.
     /// </summary>
-    public class AudioEngineInfo {
+    public class AudioEngineInfo
+    {
         /// <summary>
         /// Gets or sets the name of the audio engine.
         /// </summary>
         public string EngineName { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the version of the audio engine.
         /// </summary>
         public string Version { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the array of supported audio formats.
         /// </summary>
         public string[] SupportedFormats { get; set; }
-        
+
         /// <summary>
         /// Gets or sets a value indicating whether the audio engine is initialized.
         /// </summary>
         public bool IsInitialized { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the current status of the audio engine.
         /// </summary>

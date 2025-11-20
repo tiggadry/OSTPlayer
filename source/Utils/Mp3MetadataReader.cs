@@ -96,14 +96,16 @@ using System.IO;
 using System.Windows.Media.Imaging;
 using OstPlayer.Models;
 
-namespace OstPlayer.Utils {
+namespace OstPlayer.Utils
+{
     /// <summary>
     /// Provides static methods for reading MP3 metadata and mapping it to TrackMetadataModel.
     /// THREAD SAFETY: All methods are static and thread-safe (no shared state)
     /// ERROR HANDLING: Defensive programming with graceful degradation on failures
     /// PERFORMANCE: Single-pass reading with minimal memory allocation
     /// </summary>
-    public static class Mp3MetadataReader {
+    public static class Mp3MetadataReader
+    {
         /// <summary>
         /// Main entry point: Reads metadata from the given MP3 file path.
         /// WORKFLOW: File validation -> TagLib creation -> Metadata extraction -> Model mapping
@@ -112,13 +114,15 @@ namespace OstPlayer.Utils {
         /// </summary>
         /// <param name="fullPath">Full file system path to the MP3 file</param>
         /// <returns>TrackMetadataModel with extracted data, or null if reading fails</returns>
-        public static TrackMetadataModel ReadMetadata(string fullPath) {
+        public static TrackMetadataModel ReadMetadata(string fullPath)
+        {
             // INPUT VALIDATION: Check file existence before expensive TagLib operations
             // EARLY EXIT: Prevents TagLib exceptions and provides fast failure path
             if (!System.IO.File.Exists(fullPath))
                 return null;
 
-            try {
+            try
+            {
                 // TAGLIB INITIALIZATION: Use TagLibSharp to open the MP3 file
                 // RESOURCE MANAGEMENT: TagLib.File implements IDisposable, but using statement
                 // not used here for simplicity - TagLib handles cleanup internally
@@ -127,13 +131,14 @@ namespace OstPlayer.Utils {
 
                 // EXTRACTION PIPELINE: Process metadata in logical order
                 // ORDER: Cover art first (memory intensive), then tags, then track numbers
-                SetCoverImage(file, metadata);      // Extract embedded album artwork
-                SetBasicTags(file, metadata, fullPath);  // Extract standard ID3 tags
-                SetTrackNumbers(file, metadata);    // Extract track numbering info
+                SetCoverImage(file, metadata); // Extract embedded album artwork
+                SetBasicTags(file, metadata, fullPath); // Extract standard ID3 tags
+                SetTrackNumbers(file, metadata); // Extract track numbering info
 
                 return metadata;
             }
-            catch {
+            catch
+            {
                 // GRACEFUL DEGRADATION: Catch all exceptions and return null
                 // REASONS FOR FAILURE:
                 // - Corrupted MP3 file structure
@@ -154,10 +159,12 @@ namespace OstPlayer.Utils {
         /// </summary>
         /// <param name="file">TagLib file object with loaded MP3 data</param>
         /// <param name="metadata">Target metadata model to populate</param>
-        private static void SetCoverImage(TagLib.File file, TrackMetadataModel metadata) {
+        private static void SetCoverImage(TagLib.File file, TrackMetadataModel metadata)
+        {
             // AVAILABILITY CHECK: Ensure Pictures array exists and has content
             // DEFENSIVE: TagLib.Tag.Pictures can be null or empty for files without artwork
-            if (file.Tag.Pictures != null && file.Tag.Pictures.Length > 0) {
+            if (file.Tag.Pictures != null && file.Tag.Pictures.Length > 0)
+            {
                 // SELECTION STRATEGY: Use first picture (usually the primary album cover)
                 // ALTERNATIVES: Could implement logic to prefer specific picture types
                 // (Front Cover, Back Cover, Artist, etc.) based on Picture.Type property
@@ -165,7 +172,8 @@ namespace OstPlayer.Utils {
 
                 // MEMORY STREAM: Convert byte array to stream for BitmapImage
                 // DISPOSAL: Using statement ensures MemoryStream is properly disposed
-                using (var ms = new MemoryStream(pic.Data.Data)) {
+                using (var ms = new MemoryStream(pic.Data.Data))
+                {
                     // BITMAPIMAGE CREATION: WPF-compatible image format
                     var img = new BitmapImage();
                     img.BeginInit();
@@ -195,7 +203,12 @@ namespace OstPlayer.Utils {
         /// <param name="file">TagLib file object with loaded MP3 data</param>
         /// <param name="metadata">Target metadata model to populate</param>
         /// <param name="fullPath">Original file path for filename fallback</param>
-        private static void SetBasicTags(TagLib.File file, TrackMetadataModel metadata, string fullPath) {
+        private static void SetBasicTags(
+            TagLib.File file,
+            TrackMetadataModel metadata,
+            string fullPath
+        )
+        {
             // TITLE EXTRACTION: Primary from ID3 tag, fallback to filename
             // FALLBACK LOGIC: If Tag.Title is null/empty, use filename without extension
             // UI BENEFIT: Ensures every track has a displayable name
@@ -237,7 +250,8 @@ namespace OstPlayer.Utils {
         /// </summary>
         /// <param name="file">TagLib file object with loaded MP3 data</param>
         /// <param name="metadata">Target metadata model to populate</param>
-        private static void SetTrackNumbers(TagLib.File file, TrackMetadataModel metadata) {
+        private static void SetTrackNumbers(TagLib.File file, TrackMetadataModel metadata)
+        {
             // PRIMARY EXTRACTION: Use TagLib's built-in track number properties
             // PROPERTIES: Tag.Track (current track) and Tag.TrackCount (total tracks)
             metadata.TrackNumber = file.Tag.Track;
@@ -264,23 +278,25 @@ namespace OstPlayer.Utils {
         /// </summary>
         /// <param name="file">TagLib file object with loaded MP3 data</param>
         /// <returns>Raw TRCK frame content as string, or null if not found</returns>
-        private static string GetTrckFrame(TagLib.File file) {
+        private static string GetTrckFrame(TagLib.File file)
+        {
             // ID3V2 TAG ACCESS: Get ID3v2-specific tag interface
             // CASTING: Required because TagLib.File.Tag is generic interface
             var id3v2 = file.GetTag(TagLib.TagTypes.Id3v2) as TagLib.Id3v2.Tag;
             if (id3v2 == null)
-                return null;  // File doesn't have ID3v2 tags
+                return null; // File doesn't have ID3v2 tags
 
             // FRAME ITERATION: Search through all TRCK frames
             // MULTIPLE FRAMES: Theoretically possible to have multiple TRCK frames
-            foreach (var frame in id3v2.GetFrames("TRCK")) {
+            foreach (var frame in id3v2.GetFrames("TRCK"))
+            {
                 // FRAME TYPE CHECK: Ensure this is a text information frame
                 // SAFETY: TRCK should always be TextInformationFrame, but cast for safety
                 var trckFrame = frame as TagLib.Id3v2.TextInformationFrame;
                 if (trckFrame != null)
-                    return trckFrame.ToString();  // Return first found TRCK frame content
+                    return trckFrame.ToString(); // Return first found TRCK frame content
             }
-            return null;  // No TRCK frame found
+            return null; // No TRCK frame found
         }
 
         /// <summary>
@@ -291,7 +307,8 @@ namespace OstPlayer.Utils {
         /// </summary>
         /// <param name="trck">Raw TRCK frame content</param>
         /// <param name="metadata">Target metadata model to populate</param>
-        private static void ParseTrckFrame(string trck, TrackMetadataModel metadata) {
+        private static void ParseTrckFrame(string trck, TrackMetadataModel metadata)
+        {
             // INPUT SANITIZATION: Remove spaces and trim for consistent parsing
             // CLEANUP: Handles formats like " 5 / 12 " -> "5/12"
             var cleaned = trck.Replace(" ", string.Empty).Trim();
@@ -301,11 +318,12 @@ namespace OstPlayer.Utils {
             var parts = cleaned.Split('/');
 
             // VARIABLE INITIALIZATION: Prepare parsing variables
-            uint num = 0, total = 0;
+            uint num = 0,
+                total = 0;
 
             // PART EXTRACTION: Get individual components with bounds checking
-            string part0 = parts.Length > 0 ? parts[0].TrimStart('0') : null;  // Track number
-            string part1 = parts.Length > 1 ? parts[1].TrimStart('0') : null;  // Total tracks
+            string part0 = parts.Length > 0 ? parts[0].TrimStart('0') : null; // Track number
+            string part1 = parts.Length > 1 ? parts[1].TrimStart('0') : null; // Total tracks
 
             // LEADING ZERO HANDLING: TrimStart('0') converts "05" -> "5"
             // EDGE CASE: "00" becomes empty string, which is handled by null check

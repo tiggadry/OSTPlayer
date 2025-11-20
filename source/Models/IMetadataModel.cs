@@ -174,12 +174,12 @@ namespace OstPlayer.Models
         /// Prefer the current metadata instance.
         /// </summary>
         PreferThis,
-        
+
         /// <summary>
         /// Prefer the other metadata instance.
         /// </summary>
         PreferOther,
-        
+
         /// <summary>
         /// Prefer the metadata instance that is most complete.
         /// </summary>

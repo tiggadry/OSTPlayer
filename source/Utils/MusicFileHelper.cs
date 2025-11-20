@@ -93,14 +93,16 @@ using System.Linq;
 using Playnite.SDK;
 using Playnite.SDK.Models;
 
-namespace OstPlayer.Utils {
+namespace OstPlayer.Utils
+{
     /// <summary>
     /// Static utility class for discovering and managing music files associated with games in Playnite.
     /// ARCHITECTURE: File system abstraction layer for game music discovery
     /// PERFORMANCE: Optimized for single-pass operations with minimal I/O
     /// EXTENSIBILITY: Designed for easy addition of new audio format support
     /// </summary>
-    public static class MusicFileHelper {
+    public static class MusicFileHelper
+    {
         #region Public API Methods
 
         /// <summary>
@@ -112,7 +114,8 @@ namespace OstPlayer.Utils {
         /// <param name="api">Playnite API instance for path resolution</param>
         /// <param name="game">Game entity from Playnite database</param>
         /// <returns>Full path to music directory, or null if directory doesn't exist</returns>
-        public static string GetGameMusicPath(IPlayniteAPI api, Game game) {
+        public static string GetGameMusicPath(IPlayniteAPI api, Game game)
+        {
             // INPUT VALIDATION: Early exit for null game prevents downstream errors
             if (game == null)
                 return null;
@@ -122,10 +125,10 @@ namespace OstPlayer.Utils {
             // REASON: MP3 files stay in original location, only JSON metadata moves to ExtensionsData
             var gameMusicPath = Path.Combine(
                 api.Paths.ConfigurationPath,
-                "ExtraMetadata",             // Playnite's extra metadata folder
-                "games",                     // Games subfolder
-                game.Id.ToString(),          // Unique game identifier (GUID)
-                "Music Files"                // Music files subfolder
+                "ExtraMetadata", // Playnite's extra metadata folder
+                "games", // Games subfolder
+                game.Id.ToString(), // Unique game identifier (GUID)
+                "Music Files" // Music files subfolder
             );
 
             // EXISTENCE VALIDATION: Only return path if directory actually exists
@@ -143,14 +146,16 @@ namespace OstPlayer.Utils {
         /// <param name="api">Playnite API instance for path resolution</param>
         /// <param name="game">Game entity from Playnite database</param>
         /// <returns>Sorted list of full file paths to MP3 files</returns>
-        public static List<string> GetGameMusicFiles(IPlayniteAPI api, Game game) {
+        public static List<string> GetGameMusicFiles(IPlayniteAPI api, Game game)
+        {
             // PATH RESOLUTION: Delegate to GetGameMusicPath for consistent logic
             // EARLY EXIT: If no music path exists, return empty list immediately
             var musicPath = GetGameMusicPath(api, game);
             if (string.IsNullOrEmpty(musicPath))
-                return new List<string>();  // Consistent empty result
+                return new List<string>(); // Consistent empty result
 
-            try {
+            try
+            {
                 // FILE ENUMERATION: Search for MP3 files in music directory
                 // PATTERN: "*.mp3" - case sensitive on Linux, case insensitive on Windows
                 // SCOPE: TopDirectoryOnly - doesn't search subdirectories for performance
@@ -164,10 +169,11 @@ namespace OstPlayer.Utils {
                 // - Consistent across different path lengths
                 // ALTERNATIVE: Could implement natural sorting for better number handling
                 return files
-                    .OrderBy(f => Path.GetFileNameWithoutExtension(f))  // Remove .mp3 for cleaner sort
+                    .OrderBy(f => Path.GetFileNameWithoutExtension(f)) // Remove .mp3 for cleaner sort
                     .ToList();
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 // EXCEPTION HANDLING: Comprehensive catch for various failure scenarios
                 // POSSIBLE EXCEPTIONS:
                 // - UnauthorizedAccessException: Insufficient permissions

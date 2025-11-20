@@ -85,7 +85,8 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace OstPlayer.Converters {
+namespace OstPlayer.Converters
+{
     /// <summary>
     /// WPF value converter that transforms null objects to Visibility enum values for conditional UI display.
     /// Implements the inverse of typical null-to-collapsed behavior by showing elements when data is missing.
@@ -107,7 +108,8 @@ namespace OstPlayer.Converters {
     /// When DiscogsMetadata has value: Button is Collapsed.
     /// </example>
     [ValueConversion(typeof(object), typeof(Visibility))]
-    public class NullToVisibilityConverter : IValueConverter {
+    public class NullToVisibilityConverter : IValueConverter
+    {
         /// <summary>
         /// Converts an input value to Visibility based on null state.
         /// Implements inverse null logic: null values become Visible, non-null values become Collapsed.
@@ -134,7 +136,8 @@ namespace OstPlayer.Converters {
         /// var result3 = converter.Convert(42, typeof(Visibility), null, null);          // Returns Visibility.Collapsed
         /// </code>
         /// </example>
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
             // Primary conversion logic: null check with inverse visibility behavior
             // This is the core logic that distinguishes this converter from typical null converters
             return value == null ? Visibility.Visible : Visibility.Collapsed;
@@ -160,15 +163,22 @@ namespace OstPlayer.Converters {
         /// If two-way binding is needed, consider using a different approach or
         /// implementing a custom converter with knowledge of the source type.
         /// </remarks>
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
+        {
             // ConvertBack is intentionally not implemented for this converter
             // Reasoning: Converting Visibility back to object state is ambiguous
             // - Visibility.Visible should become null (clear)
             // - Visibility.Collapsed should become... what object? (ambiguous)
             // - The target type and appropriate non-null value are unknown
             throw new NotImplementedException(
-                "NullToVisibilityConverter does not support backward conversion. " +
-                "Use one-way binding or implement a custom two-way converter if needed.");
+                "NullToVisibilityConverter does not support backward conversion. "
+                    + "Use one-way binding or implement a custom two-way converter if needed."
+            );
         }
     }
 }

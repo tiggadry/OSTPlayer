@@ -104,14 +104,16 @@ using System;
 using System.Windows.Controls;
 using System.Windows.Threading;
 
-namespace OstPlayer.Utils {
+namespace OstPlayer.Utils
+{
     /// <summary>
     /// Utility class for automatic persistence of DataGrid column widths.
     /// Enhanced to support star-sizing columns with proportional ratio persistence.
     /// FIXED: Column position persistence between TrackTitle and TrackDuration that was forgotten during refactoring.
     /// Provides seamless user experience by remembering column preferences.
     /// </summary>
-    public class DataGridColumnPersistence : IDisposable {
+    public class DataGridColumnPersistence : IDisposable
+    {
         #region Private Fields
 
         private readonly DataGrid _dataGrid;
@@ -129,13 +131,15 @@ namespace OstPlayer.Utils {
         /// </summary>
         /// <param name="dataGrid">DataGrid to monitor for column changes</param>
         /// <param name="plugin">Plugin instance for settings access</param>
-        public DataGridColumnPersistence(DataGrid dataGrid, OstPlayer plugin) {
+        public DataGridColumnPersistence(DataGrid dataGrid, OstPlayer plugin)
+        {
             _dataGrid = dataGrid ?? throw new ArgumentNullException(nameof(dataGrid));
             _plugin = plugin ?? throw new ArgumentNullException(nameof(plugin));
 
             // Initialize debounced save timer
-            _saveTimer = new DispatcherTimer {
-                Interval = TimeSpan.FromMilliseconds(500) // 500ms debounce
+            _saveTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(500), // 500ms debounce
             };
             _saveTimer.Tick += OnSaveTimerTick;
 
@@ -147,8 +151,10 @@ namespace OstPlayer.Utils {
         /// Subscribes to DataGrid events for column width monitoring.
         /// Enhanced to capture column reordering and position changes.
         /// </summary>
-        private void SubscribeToEvents() {
-            if (_dataGrid != null) {
+        private void SubscribeToEvents()
+        {
+            if (_dataGrid != null)
+            {
                 _dataGrid.ColumnDisplayIndexChanged += OnColumnChanged;
                 _dataGrid.LayoutUpdated += OnLayoutUpdated;
                 _dataGrid.Loaded += OnDataGridLoaded;
@@ -161,8 +167,10 @@ namespace OstPlayer.Utils {
         /// <summary>
         /// Unsubscribes from DataGrid events during disposal.
         /// </summary>
-        private void UnsubscribeFromEvents() {
-            if (_dataGrid != null) {
+        private void UnsubscribeFromEvents()
+        {
+            if (_dataGrid != null)
+            {
                 _dataGrid.ColumnDisplayIndexChanged -= OnColumnChanged;
                 _dataGrid.LayoutUpdated -= OnLayoutUpdated;
                 _dataGrid.Loaded -= OnDataGridLoaded;
@@ -182,8 +190,10 @@ namespace OstPlayer.Utils {
         /// - Duration: Star-based (*) - proportional sizing, fills remaining space
         /// FIXED: Properly restores column positions and splitter state
         /// </summary>
-        public void LoadColumnWidths() {
-            try {
+        public void LoadColumnWidths()
+        {
+            try
+            {
                 _isLoading = true;
 
                 var settings = GetSettings();
@@ -191,7 +201,8 @@ namespace OstPlayer.Utils {
                     return;
 
                 // Apply saved widths with proper handling for mixed layout
-                if (_dataGrid.Columns.Count >= 3) {
+                if (_dataGrid.Columns.Count >= 3)
+                {
                     // Track Number column (index 0) - pixel-based, expandable only (40-200px)
                     SetColumnPixelWidth(0, settings.TrackNumberColumnWidth, 40, 200);
 
@@ -203,10 +214,12 @@ namespace OstPlayer.Utils {
 
                 PerformanceStats.RecordLoad();
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 System.Diagnostics.Debug.WriteLine($"Failed to load column widths: {ex.Message}");
             }
-            finally {
+            finally
+            {
                 _isLoading = false;
             }
         }
@@ -218,11 +231,13 @@ namespace OstPlayer.Utils {
         /// - Track Title/Duration: Calculate and save proportional ratios
         /// FIXED: Also saves column positions and splitter state
         /// </summary>
-        public void SaveColumnWidths() {
+        public void SaveColumnWidths()
+        {
             if (_isLoading || _disposed)
                 return;
 
-            try {
+            try
+            {
                 var settings = GetSettings();
                 if (settings == null || _dataGrid.Columns.Count < 3)
                     return;
@@ -240,7 +255,8 @@ namespace OstPlayer.Utils {
                 // Record performance statistics
                 PerformanceStats.RecordSave();
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 System.Diagnostics.Debug.WriteLine($"Failed to save column widths: {ex.Message}");
             }
         }
@@ -252,7 +268,8 @@ namespace OstPlayer.Utils {
         /// <summary>
         /// Gets the plugin settings instance.
         /// </summary>
-        private OstPlayerSettings GetSettings() {
+        private OstPlayerSettings GetSettings()
+        {
             return _plugin?.LoadPluginSettings<OstPlayerSettings>();
         }
 
@@ -264,8 +281,15 @@ namespace OstPlayer.Utils {
         /// <param name="width">Desired width</param>
         /// <param name="minWidth">Minimum allowed width</param>
         /// <param name="maxWidth">Maximum allowed width</param>
-        private void SetColumnPixelWidth(int columnIndex, double width, double minWidth, double maxWidth) {
-            if (columnIndex >= 0 && columnIndex < _dataGrid.Columns.Count) {
+        private void SetColumnPixelWidth(
+            int columnIndex,
+            double width,
+            double minWidth,
+            double maxWidth
+        )
+        {
+            if (columnIndex >= 0 && columnIndex < _dataGrid.Columns.Count)
+            {
                 var clampedWidth = Math.Max(minWidth, Math.Min(maxWidth, width));
                 _dataGrid.Columns[columnIndex].Width = clampedWidth;
             }
@@ -279,8 +303,10 @@ namespace OstPlayer.Utils {
         /// <param name="minWidth">Minimum allowed width</param>
         /// <param name="maxWidth">Maximum allowed width</param>
         /// <returns>Clamped actual width</returns>
-        private double GetClampedWidth(int columnIndex, double minWidth, double maxWidth) {
-            if (columnIndex >= 0 && columnIndex < _dataGrid.Columns.Count) {
+        private double GetClampedWidth(int columnIndex, double minWidth, double maxWidth)
+        {
+            if (columnIndex >= 0 && columnIndex < _dataGrid.Columns.Count)
+            {
                 var actualWidth = _dataGrid.Columns[columnIndex].ActualWidth;
                 return Math.Max(minWidth, Math.Min(maxWidth, actualWidth));
             }
@@ -290,7 +316,8 @@ namespace OstPlayer.Utils {
         /// <summary>
         /// Schedules a debounced save operation.
         /// </summary>
-        private void ScheduleSave() {
+        private void ScheduleSave()
+        {
             if (_isLoading || _disposed)
                 return;
 
@@ -309,28 +336,41 @@ namespace OstPlayer.Utils {
         /// Enhanced to maintain column splitter positions between TrackTitle and TrackDuration using splitter ratio.
         /// </summary>
         /// <param name="settings">Plugin settings containing saved ratios</param>
-        private void RestoreStarSizedColumnsWithPositions(OstPlayerSettings settings) {
-            try {
+        private void RestoreStarSizedColumnsWithPositions(OstPlayerSettings settings)
+        {
+            try
+            {
                 // Get saved actual widths (used as ratio hints)
-                var savedTitleWidth = settings.TrackTitleColumnWidth;  // Saved actual width
+                var savedTitleWidth = settings.TrackTitleColumnWidth; // Saved actual width
                 var savedDurationWidth = settings.DurationColumnWidth; // Saved actual width
                 var savedSplitterRatio = settings.TitleDurationSplitterRatio; // FIXED: Use splitter ratio
 
                 // Ensure minimum widths are respected
-                var minTitleWidth = 250.0;  // From XAML MinWidth
+                var minTitleWidth = 250.0; // From XAML MinWidth
                 var minDurationWidth = 80.0; // Default minimum
 
                 // FIXED: Enhanced restoration using splitter ratio for precise positioning
-                if (savedTitleWidth >= minTitleWidth && savedDurationWidth >= minDurationWidth &&
-                    savedSplitterRatio > 0.1 && savedSplitterRatio < 0.95) {
+                if (
+                    savedTitleWidth >= minTitleWidth
+                    && savedDurationWidth >= minDurationWidth
+                    && savedSplitterRatio > 0.1
+                    && savedSplitterRatio < 0.95
+                )
+                {
                     // FIXED: Use splitter ratio to calculate precise star values
                     // This preserves the exact splitter position between TrackTitle and Duration columns
                     var titleStarValue = Math.Max(1.0, savedSplitterRatio * 4.0); // Convert ratio to star value
                     var durationStarValue = Math.Max(0.5, (1.0 - savedSplitterRatio) * 4.0); // Inverse ratio
 
                     // FIXED: Apply star-sizing with calculated values that preserve exact positions
-                    _dataGrid.Columns[1].Width = new DataGridLength(titleStarValue, DataGridLengthUnitType.Star);
-                    _dataGrid.Columns[2].Width = new DataGridLength(durationStarValue, DataGridLengthUnitType.Star);
+                    _dataGrid.Columns[1].Width = new DataGridLength(
+                        titleStarValue,
+                        DataGridLengthUnitType.Star
+                    );
+                    _dataGrid.Columns[2].Width = new DataGridLength(
+                        durationStarValue,
+                        DataGridLengthUnitType.Star
+                    );
 
                     // Set minimum widths to ensure usability
                     _dataGrid.Columns[1].MinWidth = minTitleWidth;
@@ -338,43 +378,75 @@ namespace OstPlayer.Utils {
 
                     PerformanceStats.RecordStarSizingCalculation();
 
-                    System.Diagnostics.Debug.WriteLine($"FIXED: Restored column positions using splitter ratio {savedSplitterRatio:F3} - Title: {titleStarValue:F2}*, Duration: {durationStarValue:F2}*");
+                    System.Diagnostics.Debug.WriteLine(
+                        $"FIXED: Restored column positions using splitter ratio {savedSplitterRatio:F3} - Title: {titleStarValue:F2}*, Duration: {durationStarValue:F2}*"
+                    );
                 }
-                else {
+                else
+                {
                     // FIXED: Better fallback calculation for first-time or invalid data
-                    if (savedTitleWidth >= minTitleWidth && savedDurationWidth >= minDurationWidth) {
+                    if (savedTitleWidth >= minTitleWidth && savedDurationWidth >= minDurationWidth)
+                    {
                         // Calculate ratio from saved widths as fallback
                         var totalWidth = savedTitleWidth + savedDurationWidth;
                         var titleRatio = savedTitleWidth / totalWidth;
                         var titleStarValue = Math.Max(1.5, titleRatio * 3.0);
                         var durationStarValue = Math.Max(0.5, (1.0 - titleRatio) * 3.0);
 
-                        _dataGrid.Columns[1].Width = new DataGridLength(titleStarValue, DataGridLengthUnitType.Star);
-                        _dataGrid.Columns[2].Width = new DataGridLength(durationStarValue, DataGridLengthUnitType.Star);
+                        _dataGrid.Columns[1].Width = new DataGridLength(
+                            titleStarValue,
+                            DataGridLengthUnitType.Star
+                        );
+                        _dataGrid.Columns[2].Width = new DataGridLength(
+                            durationStarValue,
+                            DataGridLengthUnitType.Star
+                        );
 
-                        System.Diagnostics.Debug.WriteLine($"FIXED: Fallback restoration from widths - Title: {titleStarValue:F2}*, Duration: {durationStarValue:F2}*");
+                        System.Diagnostics.Debug.WriteLine(
+                            $"FIXED: Fallback restoration from widths - Title: {titleStarValue:F2}*, Duration: {durationStarValue:F2}*"
+                        );
                     }
-                    else {
+                    else
+                    {
                         // Set default star values if no valid saved data
-                        _dataGrid.Columns[1].Width = new DataGridLength(2.5, DataGridLengthUnitType.Star); // Slightly larger default
-                        _dataGrid.Columns[2].Width = new DataGridLength(1.0, DataGridLengthUnitType.Star); // 1*
+                        _dataGrid.Columns[1].Width = new DataGridLength(
+                            2.5,
+                            DataGridLengthUnitType.Star
+                        ); // Slightly larger default
+                        _dataGrid.Columns[2].Width = new DataGridLength(
+                            1.0,
+                            DataGridLengthUnitType.Star
+                        ); // 1*
 
-                        System.Diagnostics.Debug.WriteLine("FIXED: Applied default column positions - Title: 2.5*, Duration: 1*");
+                        System.Diagnostics.Debug.WriteLine(
+                            "FIXED: Applied default column positions - Title: 2.5*, Duration: 1*"
+                        );
                     }
 
                     _dataGrid.Columns[1].MinWidth = minTitleWidth;
                     _dataGrid.Columns[2].MinWidth = minDurationWidth;
                 }
             }
-            catch (Exception ex) {
-                System.Diagnostics.Debug.WriteLine($"Failed to restore star-sized columns: {ex.Message}");
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(
+                    $"Failed to restore star-sized columns: {ex.Message}"
+                );
 
                 // Fallback to default star-sizing
-                try {
-                    _dataGrid.Columns[1].Width = new DataGridLength(2.5, DataGridLengthUnitType.Star);
-                    _dataGrid.Columns[2].Width = new DataGridLength(1.0, DataGridLengthUnitType.Star);
+                try
+                {
+                    _dataGrid.Columns[1].Width = new DataGridLength(
+                        2.5,
+                        DataGridLengthUnitType.Star
+                    );
+                    _dataGrid.Columns[2].Width = new DataGridLength(
+                        1.0,
+                        DataGridLengthUnitType.Star
+                    );
                 }
-                catch {
+                catch
+                {
                     // Ignore fallback errors
                 }
             }
@@ -386,43 +458,55 @@ namespace OstPlayer.Utils {
         /// and column splitter positions between TrackTitle and TrackDuration using splitter ratio.
         /// </summary>
         /// <param name="settings">Plugin settings to save ratios to</param>
-        private void SaveStarSizedColumnRatiosWithPositions(OstPlayerSettings settings) {
-            try {
+        private void SaveStarSizedColumnRatiosWithPositions(OstPlayerSettings settings)
+        {
+            try
+            {
                 // Get current actual widths of star-sized columns
                 var titleActualWidth = _dataGrid.Columns[1].ActualWidth;
                 var durationActualWidth = _dataGrid.Columns[2].ActualWidth;
 
                 // FIXED: Enhanced validation and position preservation with splitter ratio
                 // Only save if we have valid width data that represents user's positioning choices
-                if (titleActualWidth > 0 && durationActualWidth > 0) {
+                if (titleActualWidth > 0 && durationActualWidth > 0)
+                {
                     // FIXED: Calculate and save splitter ratio for precise position restoration
                     var totalStarWidth = titleActualWidth + durationActualWidth;
                     var splitterRatio = titleActualWidth / totalStarWidth;
 
                     // FIXED: Save actual widths as proportional hints for restoration
                     // These preserve the exact proportional relationship AND column positions user established
-                    var clampedTitleWidth = Math.Max(250, titleActualWidth);    // Min 250px
-                    var clampedDurationWidth = Math.Max(80, durationActualWidth);    // Min 80px
+                    var clampedTitleWidth = Math.Max(250, titleActualWidth); // Min 250px
+                    var clampedDurationWidth = Math.Max(80, durationActualWidth); // Min 80px
                     var clampedSplitterRatio = Math.Max(0.2, Math.Min(0.9, splitterRatio)); // Clamp ratio
 
                     // Only update if the values have meaningfully changed to preserve user's column positioning
-                    var titleChanged = Math.Abs(settings.TrackTitleColumnWidth - clampedTitleWidth) > 5;
-                    var durationChanged = Math.Abs(settings.DurationColumnWidth - clampedDurationWidth) > 5;
-                    var ratioChanged = Math.Abs(settings.TitleDurationSplitterRatio - clampedSplitterRatio) > 0.01;
+                    var titleChanged =
+                        Math.Abs(settings.TrackTitleColumnWidth - clampedTitleWidth) > 5;
+                    var durationChanged =
+                        Math.Abs(settings.DurationColumnWidth - clampedDurationWidth) > 5;
+                    var ratioChanged =
+                        Math.Abs(settings.TitleDurationSplitterRatio - clampedSplitterRatio) > 0.01;
 
-                    if (titleChanged || durationChanged || ratioChanged) {
+                    if (titleChanged || durationChanged || ratioChanged)
+                    {
                         settings.TrackTitleColumnWidth = clampedTitleWidth;
                         settings.DurationColumnWidth = clampedDurationWidth;
                         settings.TitleDurationSplitterRatio = clampedSplitterRatio; // FIXED: Save splitter position
 
                         PerformanceStats.RecordStarSizingCalculation();
 
-                        System.Diagnostics.Debug.WriteLine($"FIXED: Saved column positions with splitter ratio - Title: {clampedTitleWidth:F1}px, Duration: {clampedDurationWidth:F1}px, Ratio: {clampedSplitterRatio:F3}");
+                        System.Diagnostics.Debug.WriteLine(
+                            $"FIXED: Saved column positions with splitter ratio - Title: {clampedTitleWidth:F1}px, Duration: {clampedDurationWidth:F1}px, Ratio: {clampedSplitterRatio:F3}"
+                        );
                     }
                 }
             }
-            catch (Exception ex) {
-                System.Diagnostics.Debug.WriteLine($"Failed to save star-sized column ratios: {ex.Message}");
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(
+                    $"Failed to save star-sized column ratios: {ex.Message}"
+                );
             }
         }
 
@@ -433,14 +517,16 @@ namespace OstPlayer.Utils {
         /// <summary>
         /// Handles DataGrid loaded event to restore column widths.
         /// </summary>
-        private void OnDataGridLoaded(object sender, System.Windows.RoutedEventArgs e) {
+        private void OnDataGridLoaded(object sender, System.Windows.RoutedEventArgs e)
+        {
             LoadColumnWidths();
         }
 
         /// <summary>
         /// Handles column display index changes (reordering, resizing).
         /// </summary>
-        private void OnColumnChanged(object sender, DataGridColumnEventArgs e) {
+        private void OnColumnChanged(object sender, DataGridColumnEventArgs e)
+        {
             ScheduleSave();
         }
 
@@ -448,7 +534,8 @@ namespace OstPlayer.Utils {
         /// FIXED: New event handler for column reordering that was missing.
         /// Ensures column position changes between TrackTitle and TrackDuration are captured.
         /// </summary>
-        private void OnColumnReordered(object sender, DataGridColumnEventArgs e) {
+        private void OnColumnReordered(object sender, DataGridColumnEventArgs e)
+        {
             // Schedule save when columns are reordered to preserve positions
             ScheduleSave();
             System.Diagnostics.Debug.WriteLine("FIXED: Column reordered - saving positions");
@@ -458,16 +545,21 @@ namespace OstPlayer.Utils {
         /// Handles layout updates to detect column width changes.
         /// Enhanced to properly handle star-sizing layout updates and position changes.
         /// </summary>
-        private void OnLayoutUpdated(object sender, EventArgs e) {
-            if (_dataGrid.IsLoaded && _dataGrid.Columns.Count >= 3) {
+        private void OnLayoutUpdated(object sender, EventArgs e)
+        {
+            if (_dataGrid.IsLoaded && _dataGrid.Columns.Count >= 3)
+            {
                 // FIXED: Enhanced validation to ensure meaningful column position data
                 // Only schedule save if columns have meaningful widths and positions
                 // Prevents saving during initial layout phases
-                var hasValidWidths = _dataGrid.Columns[0].ActualWidth > 0 &&
-                                   _dataGrid.Columns[1].ActualWidth > 250 && // TrackTitle minimum
-                                   _dataGrid.Columns[2].ActualWidth > 80;    // Duration minimum
+                var hasValidWidths =
+                    _dataGrid.Columns[0].ActualWidth > 0
+                    && _dataGrid.Columns[1].ActualWidth > 250
+                    && // TrackTitle minimum
+                    _dataGrid.Columns[2].ActualWidth > 80; // Duration minimum
 
-                if (hasValidWidths) {
+                if (hasValidWidths)
+                {
                     ScheduleSave();
                 }
             }
@@ -476,7 +568,8 @@ namespace OstPlayer.Utils {
         /// <summary>
         /// Handles save timer tick for debounced saving.
         /// </summary>
-        private void OnSaveTimerTick(object sender, EventArgs e) {
+        private void OnSaveTimerTick(object sender, EventArgs e)
+        {
             _saveTimer.Stop();
             SaveColumnWidths();
         }
@@ -489,7 +582,8 @@ namespace OstPlayer.Utils {
         /// Gets performance statistics for monitoring.
         /// Enhanced with star-sizing operation tracking.
         /// </summary>
-        public class PerformanceStats {
+        public class PerformanceStats
+        {
             /// <summary>Number of save operations performed</summary>
             public static int SaveOperationCount { get; private set; }
 
@@ -500,29 +594,34 @@ namespace OstPlayer.Utils {
             public static int StarSizingCalculations { get; private set; }
 
             /// <summary>Records a save operation for statistics</summary>
-            internal static void RecordSave() {
+            internal static void RecordSave()
+            {
                 SaveOperationCount++;
             }
 
             /// <summary>Records a load operation for statistics</summary>
-            internal static void RecordLoad() {
+            internal static void RecordLoad()
+            {
                 LoadOperationCount++;
             }
 
             /// <summary>Records a star-sizing calculation for statistics</summary>
-            internal static void RecordStarSizingCalculation() {
+            internal static void RecordStarSizingCalculation()
+            {
                 StarSizingCalculations++;
             }
 
             /// <summary>Resets performance counters</summary>
-            public static void Reset() {
+            public static void Reset()
+            {
                 SaveOperationCount = 0;
                 LoadOperationCount = 0;
                 StarSizingCalculations = 0;
             }
 
             /// <summary>Gets performance summary for debugging</summary>
-            public static string GetSummary() {
+            public static string GetSummary()
+            {
                 return $"Saves: {SaveOperationCount}, Loads: {LoadOperationCount}, StarCalcs: {StarSizingCalculations}";
             }
         }
@@ -534,8 +633,10 @@ namespace OstPlayer.Utils {
         /// <summary>
         /// Performs final save and cleanup of resources.
         /// </summary>
-        public void Dispose() {
-            if (!_disposed) {
+        public void Dispose()
+        {
+            if (!_disposed)
+            {
                 // Perform final save
                 _saveTimer?.Stop();
                 SaveColumnWidths();

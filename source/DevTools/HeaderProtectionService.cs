@@ -539,22 +539,22 @@ namespace OstPlayer.DevTools
         /// Gets or sets the file path of the backed up header.
         /// </summary>
         public string FilePath { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the backup creation time.
         /// </summary>
         public DateTime BackupTime { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the hash of the original content.
         /// </summary>
         public string OriginalContentHash { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the critical sections that were protected.
         /// </summary>
         public Dictionary<string, string> CriticalSections { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the full content backup.
         /// </summary>
@@ -570,32 +570,32 @@ namespace OstPlayer.DevTools
         /// Gets or sets the file path that was protected.
         /// </summary>
         public string FilePath { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the validation time.
         /// </summary>
         public DateTime ValidationTime { get; set; }
-        
+
         /// <summary>
         /// Gets or sets whether the header is valid.
         /// </summary>
         public bool IsValid { get; set; }
-        
+
         /// <summary>
         /// Gets or sets whether the header was restored.
         /// </summary>
         public bool WasRestored { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the sections that were deleted.
         /// </summary>
         public List<string> DeletedSections { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the sections that were restored.
         /// </summary>
         public List<string> RestoredSections { get; set; }
-        
+
         /// <summary>
         /// Gets or sets any error message from the protection process.
         /// </summary>

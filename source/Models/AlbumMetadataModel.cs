@@ -100,61 +100,63 @@
 using System.Collections.Generic;
 using System.Windows.Media.Imaging;
 
-namespace OstPlayer.Models {
+namespace OstPlayer.Models
+{
     /// <summary>
     /// Unified model for displaying album metadata in the plugin UI.
     /// </summary>
-    public class AlbumMetadataModel {
+    public class AlbumMetadataModel
+    {
         /// <summary>
         /// Gets or sets the album title.
         /// </summary>
         public string Title { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the primary artist name.
         /// </summary>
         public string Artist { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the album name.
         /// </summary>
         public string Album { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the release date or year.
         /// </summary>
         public string Released { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the list of musical genres.
         /// </summary>
         public List<string> Genres { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the list of musical styles.
         /// </summary>
         public List<string> Styles { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the album comment or description.
         /// </summary>
         public string Comment { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the country of release.
         /// </summary>
         public string Country { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the Discogs URL for this album.
         /// </summary>
         public string DiscogsUrl { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the album cover image.
         /// </summary>
         public BitmapImage Cover { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the list of tracks in the album.
         /// </summary>

@@ -507,37 +507,37 @@ namespace OstPlayer.DevTools
         /// Gets or sets when the update was processed.
         /// </summary>
         public DateTime ProcessedAt { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the list of files that were processed.
         /// </summary>
         public List<string> FilesProcessed { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the list of relevant files found.
         /// </summary>
         public List<string> RelevantFiles { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the list of modules that were updated.
         /// </summary>
         public List<string> UpdatedModules { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the count of updated modules.
         /// </summary>
         public int UpdatedCount { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the list of recommendations from the update.
         /// </summary>
         public List<ModuleUpdateRecommendation> Recommendations { get; set; }
-        
+
         /// <summary>
         /// Gets or sets any errors that occurred during update.
         /// </summary>
         public List<string> Errors { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the result message.
         /// </summary>
@@ -566,32 +566,32 @@ namespace OstPlayer.DevTools
         /// Gets or sets when the scan was performed.
         /// </summary>
         public DateTime ScanDate { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the list of scanned modules.
         /// </summary>
         public List<string> ScannedModules { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the list of modules missing documentation.
         /// </summary>
         public List<string> MissingDocumentation { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the list of modules with outdated documentation.
         /// </summary>
         public List<string> OutdatedDocumentation { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the list of recommendations.
         /// </summary>
         public List<string> Recommendations { get; set; }
-        
+
         /// <summary>
         /// Gets or sets whether the scan result is healthy.
         /// </summary>
         public bool IsHealthy { get; set; }
-        
+
         /// <summary>
         /// Gets or sets any error that occurred during scanning.
         /// </summary>
@@ -625,22 +625,22 @@ namespace OstPlayer.DevTools
         /// Gets or sets the count of tracked modules.
         /// </summary>
         public int TrackedModuleCount { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the count of pending changes.
         /// </summary>
         public int PendingChanges { get; set; }
-        
+
         /// <summary>
         /// Gets or sets whether debounce is active.
         /// </summary>
         public bool IsDebounceActive { get; set; }
-        
+
         /// <summary>
         /// Gets or sets when the service was last processed.
         /// </summary>
         public DateTime? LastProcessedAt { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the list of tracked modules.
         /// </summary>

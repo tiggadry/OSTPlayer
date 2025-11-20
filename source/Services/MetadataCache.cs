@@ -159,17 +159,17 @@ namespace OstPlayer.Services
         /// Gets or sets statistics for the track cache.
         /// </summary>
         public CacheStatistics TrackCache { get; set; }
-        
+
         /// <summary>
         /// Gets or sets statistics for the album cache.
         /// </summary>
         public CacheStatistics AlbumCache { get; set; }
-        
+
         /// <summary>
         /// Gets or sets statistics for the artist cache.
         /// </summary>
         public CacheStatistics ArtistCache { get; set; }
-        
+
         /// <summary>
         /// Gets or sets statistics for the external cache.
         /// </summary>

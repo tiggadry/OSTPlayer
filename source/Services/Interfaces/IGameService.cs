@@ -74,7 +74,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Playnite.SDK.Models;
 
-namespace OstPlayer.Services.Interfaces {
+namespace OstPlayer.Services.Interfaces
+{
     /// <summary>
     /// Information about game music files and metadata.
     /// </summary>
@@ -84,27 +85,27 @@ namespace OstPlayer.Services.Interfaces {
         /// Gets or sets the game instance.
         /// </summary>
         public Game Game { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the music directory path.
         /// </summary>
         public string MusicDirectory { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the list of music files.
         /// </summary>
         public List<string> MusicFiles { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the total number of tracks.
         /// </summary>
         public int TotalTracks { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the total size in bytes.
         /// </summary>
         public long TotalSizeBytes { get; set; }
-        
+
         /// <summary>
         /// Gets or sets when the music was last scanned.
         /// </summary>
@@ -114,7 +115,8 @@ namespace OstPlayer.Services.Interfaces {
     /// <summary>
     /// Interface for game service providing comprehensive game and music file operations.
     /// </summary>
-    public interface IGameService {
+    public interface IGameService
+    {
         #region Game Discovery and Access
 
         /// <summary>
@@ -125,17 +127,26 @@ namespace OstPlayer.Services.Interfaces {
         /// <summary>
         /// Gets detailed music information for a specific game.
         /// </summary>
-        Task<GameMusicInfo> GetGameMusicInfoAsync(Game game, CancellationToken cancellationToken = default);
+        Task<GameMusicInfo> GetGameMusicInfoAsync(
+            Game game,
+            CancellationToken cancellationToken = default
+        );
 
         /// <summary>
         /// Filters games by name or other criteria.
         /// </summary>
-        Task<List<Game>> FilterGamesAsync(string searchText, CancellationToken cancellationToken = default);
+        Task<List<Game>> FilterGamesAsync(
+            string searchText,
+            CancellationToken cancellationToken = default
+        );
 
         /// <summary>
         /// Finds game by exact name match.
         /// </summary>
-        Task<Game> FindGameByNameAsync(string gameName, CancellationToken cancellationToken = default);
+        Task<Game> FindGameByNameAsync(
+            string gameName,
+            CancellationToken cancellationToken = default
+        );
 
         #endregion
 
@@ -144,23 +155,35 @@ namespace OstPlayer.Services.Interfaces {
         /// <summary>
         /// Gets music files for a specific game.
         /// </summary>
-        Task<List<string>> GetMusicFilesAsync(Game game, CancellationToken cancellationToken = default);
+        Task<List<string>> GetMusicFilesAsync(
+            Game game,
+            CancellationToken cancellationToken = default
+        );
 
         /// <summary>
         /// Gets music directory path for a game.
         /// </summary>
-        Task<string> GetMusicDirectoryAsync(Game game, CancellationToken cancellationToken = default);
+        Task<string> GetMusicDirectoryAsync(
+            Game game,
+            CancellationToken cancellationToken = default
+        );
 
         /// <summary>
         /// Validates music file existence and accessibility.
         /// </summary>
-        Task<bool> ValidateMusicFileAsync(string filePath, CancellationToken cancellationToken = default);
+        Task<bool> ValidateMusicFileAsync(
+            string filePath,
+            CancellationToken cancellationToken = default
+        );
 
         /// <summary>
         /// Scans for new music files in game directory.
         /// </summary>
-        Task<List<string>> ScanForMusicFilesAsync(Game game, IProgress<int> progress = null,
-            CancellationToken cancellationToken = default);
+        Task<List<string>> ScanForMusicFilesAsync(
+            Game game,
+            IProgress<int> progress = null,
+            CancellationToken cancellationToken = default
+        );
 
         #endregion
 
@@ -169,19 +192,25 @@ namespace OstPlayer.Services.Interfaces {
         /// <summary>
         /// Scans all games for music files with progress reporting.
         /// </summary>
-        Task<Dictionary<Game, List<string>>> ScanAllGamesForMusicAsync(IProgress<ScanProgress> progress = null,
-            CancellationToken cancellationToken = default);
+        Task<Dictionary<Game, List<string>>> ScanAllGamesForMusicAsync(
+            IProgress<ScanProgress> progress = null,
+            CancellationToken cancellationToken = default
+        );
 
         /// <summary>
         /// Validates music files for multiple games.
         /// </summary>
-        Task<Dictionary<Game, List<string>>> ValidateAllMusicFilesAsync(IProgress<ValidationProgress> progress = null,
-            CancellationToken cancellationToken = default);
+        Task<Dictionary<Game, List<string>>> ValidateAllMusicFilesAsync(
+            IProgress<ValidationProgress> progress = null,
+            CancellationToken cancellationToken = default
+        );
 
         /// <summary>
         /// Gets statistics about music library.
         /// </summary>
-        Task<MusicLibraryStatistics> GetLibraryStatisticsAsync(CancellationToken cancellationToken = default);
+        Task<MusicLibraryStatistics> GetLibraryStatisticsAsync(
+            CancellationToken cancellationToken = default
+        );
 
         #endregion
 
@@ -190,7 +219,10 @@ namespace OstPlayer.Services.Interfaces {
         /// <summary>
         /// Gets or creates music metadata directory for game.
         /// </summary>
-        Task<string> EnsureMusicMetadataDirectoryAsync(Game game, CancellationToken cancellationToken = default);
+        Task<string> EnsureMusicMetadataDirectoryAsync(
+            Game game,
+            CancellationToken cancellationToken = default
+        );
 
         /// <summary>
         /// Checks if game has cached metadata.
@@ -228,22 +260,22 @@ namespace OstPlayer.Services.Interfaces {
         /// Gets or sets the total number of games to scan.
         /// </summary>
         public int TotalGames { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the number of games processed.
         /// </summary>
         public int ProcessedGames { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the name of the current game being processed.
         /// </summary>
         public string CurrentGame { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the current status message.
         /// </summary>
         public string Status { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the number of music files found.
         /// </summary>
@@ -259,27 +291,27 @@ namespace OstPlayer.Services.Interfaces {
         /// Gets or sets the total number of files to validate.
         /// </summary>
         public int TotalFiles { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the number of files processed.
         /// </summary>
         public int ProcessedFiles { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the current file being validated.
         /// </summary>
         public string CurrentFile { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the current validation status.
         /// </summary>
         public string Status { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the number of valid files found.
         /// </summary>
         public int ValidFiles { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the number of invalid files found.
         /// </summary>
@@ -295,37 +327,37 @@ namespace OstPlayer.Services.Interfaces {
         /// Gets or sets the total number of games.
         /// </summary>
         public int TotalGames { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the number of games with music.
         /// </summary>
         public int GamesWithMusic { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the total number of music files.
         /// </summary>
         public int TotalMusicFiles { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the total size of all music files in bytes.
         /// </summary>
         public long TotalSizeBytes { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the name of the largest game by music size.
         /// </summary>
         public string LargestGame { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the file count of the largest game.
         /// </summary>
         public int LargestGameFileCount { get; set; }
-        
+
         /// <summary>
         /// Gets or sets when the library was last scanned.
         /// </summary>
         public DateTime LastScanned { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the distribution of file types.
         /// </summary>

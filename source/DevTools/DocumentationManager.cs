@@ -84,43 +84,50 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace OstPlayer.DevTools {
+namespace OstPlayer.DevTools
+{
     /// <summary>
     /// README type enumeration for specialized handling
     /// </summary>
-    public enum ReadmeType {
+    public enum ReadmeType
+    {
         /// <summary>
         /// Documentation/*/README.md - Navigation and index files
         /// </summary>
         Navigation,
-        
+
         /// <summary>
         /// Module/README.md - Technical module documentation
         /// </summary>
         Technical,
-        
+
         /// <summary>
         /// Documentation/SubCategory/README.md - Category overviews
         /// </summary>
         Category,
-        
+
         /// <summary>
         /// Documentation/README.md - Main project navigation
         /// </summary>
-        Root
+        Root,
     }
 
     /// <summary>
     /// Centralized development documentation management utility with enhanced README management
     /// </summary>
-    public static class DocumentationManager {
+    public static class DocumentationManager
+    {
         // Documentation file paths
         private const string DocumentationFolder = "Documentation";
         private const string ChangelogFile = "Documentation/Core/CHANGELOG.md";
         private const string TemplatesFile = "Documentation/FileHeaderTemplates.md";
 
         // README patterns for different types
-        private static readonly Dictionary<ReadmeType, string[]> ReadmePatterns = new Dictionary<ReadmeType, string[]> {
+        private static readonly Dictionary<ReadmeType, string[]> ReadmePatterns = new Dictionary<
+            ReadmeType,
+            string[]
+        >
+        {
             [ReadmeType.Root] = new[] { "Documentation/README.md" },
             [ReadmeType.Navigation] = new[]
             {
@@ -128,7 +135,7 @@ namespace OstPlayer.DevTools {
                 "Documentation/Modules/README.md",
                 "Documentation/Development/README.md",
                 "Documentation/AI-Assistant/README.md",
-                "Documentation/Archive/README.md"
+                "Documentation/Archive/README.md",
             },
             [ReadmeType.Technical] = new[]
             {
@@ -136,19 +143,28 @@ namespace OstPlayer.DevTools {
                 "DevTools/README.md",
                 "Utils/README.md",
                 "Services/README.md",
-                "Models/README.md"
+                "Models/README.md",
             },
             [ReadmeType.Category] = new[]
             {
                 "Documentation/Development/*/README.md",
-                "Documentation/Modules/*/README.md"
-            }
+                "Documentation/Modules/*/README.md",
+            },
         };
 
         // Regex patterns for documentation parsing
-        private static readonly Regex VersionHeaderRegex = new Regex(@"## \[([^\]]+)\] - (\d{4}-\d{2}-\d{2})", RegexOptions.Compiled);
-        private static readonly Regex ModuleSummaryRegex = new Regex(@"# (.+) - (.+)", RegexOptions.Compiled);
-        private static readonly Regex ReadmeQuickNavRegex = new Regex(@"\| \*\*([^*]+)\*\* \| ([^|]+) \| ([^|]+) \|", RegexOptions.Compiled);
+        private static readonly Regex VersionHeaderRegex = new Regex(
+            @"## \[([^\]]+)\] - (\d{4}-\d{2}-\d{2})",
+            RegexOptions.Compiled
+        );
+        private static readonly Regex ModuleSummaryRegex = new Regex(
+            @"# (.+) - (.+)",
+            RegexOptions.Compiled
+        );
+        private static readonly Regex ReadmeQuickNavRegex = new Regex(
+            @"\| \*\*([^*]+)\*\* \| ([^|]+) \| ([^|]+) \|",
+            RegexOptions.Compiled
+        );
 
         #region Module Summary Management
 
@@ -158,21 +174,29 @@ namespace OstPlayer.DevTools {
         /// <param name="moduleName">Name of the module (e.g., "Utils", "ViewModels")</param>
         /// <param name="changes">Description of changes made</param>
         /// <returns>True if successfully updated, false otherwise</returns>
-        public static bool UpdateModuleSummary(string moduleName, string changes) {
-            try {
+        public static bool UpdateModuleSummary(string moduleName, string changes)
+        {
+            try
+            {
                 var summaryFile = FindModuleSummaryFile(moduleName);
-                if (summaryFile == null) {
+                if (summaryFile == null)
+                {
                     var success = CreateModuleSummary(moduleName, changes);
-                    if (success) {
+                    if (success)
+                    {
                         // Auto-update navigation README when new module summary is created
-                        UpdateNavigationReadme("Modules", $"Added {moduleName}ModuleUpdateSummary.md");
+                        UpdateNavigationReadme(
+                            "Modules",
+                            $"Added {moduleName}ModuleUpdateSummary.md"
+                        );
                     }
                     return success;
                 }
 
                 return AppendToModuleSummary(summaryFile, changes);
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -182,14 +206,15 @@ namespace OstPlayer.DevTools {
         /// </summary>
         /// <param name="moduleName">Name of the module</param>
         /// <returns>Path to the summary file or null if not found</returns>
-        private static string FindModuleSummaryFile(string moduleName) {
+        private static string FindModuleSummaryFile(string moduleName)
+        {
             var patterns = new[]
             {
                 $"Documentation/Modules/{moduleName}ModuleUpdateSummary.md",
                 $"Documentation/{moduleName}ModuleUpdateSummary.md",
                 $"Documentation/{moduleName}ModuleSummary.md",
                 $"{moduleName}/README.md",
-                $"Documentation/{moduleName}Summary.md"
+                $"Documentation/{moduleName}Summary.md",
             };
 
             return patterns.FirstOrDefault(File.Exists);
@@ -201,12 +226,15 @@ namespace OstPlayer.DevTools {
         /// <param name="moduleName">Name of the module</param>
         /// <param name="changes">Initial changes description</param>
         /// <returns>True if successfully created, false otherwise</returns>
-        private static bool CreateModuleSummary(string moduleName, string changes) {
-            try {
+        private static bool CreateModuleSummary(string moduleName, string changes)
+        {
+            try
+            {
                 var summaryPath = $"Documentation/Modules/{moduleName}ModuleUpdateSummary.md";
                 var currentDate = DateHelper.GetCurrentDateString();
 
-                var content = $@"# OstPlayer {moduleName} Module - Update Summary
+                var content =
+                    $@"# OstPlayer {moduleName} Module - Update Summary
 
 ## ?? Module Overview
 
@@ -232,7 +260,8 @@ This document tracks updates and changes to the {moduleName} module of the OstPl
                 File.WriteAllText(summaryPath, content, Encoding.UTF8);
                 return true;
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -243,19 +272,23 @@ This document tracks updates and changes to the {moduleName} module of the OstPl
         /// <param name="summaryFile">Path to the summary file</param>
         /// <param name="changes">Changes to append</param>
         /// <returns>True if successfully appended, false otherwise</returns>
-        private static bool AppendToModuleSummary(string summaryFile, string changes) {
-            try {
+        private static bool AppendToModuleSummary(string summaryFile, string changes)
+        {
+            try
+            {
                 var content = File.ReadAllText(summaryFile, Encoding.UTF8);
                 var currentDate = DateHelper.GetCurrentDateString();
                 var newEntry = $"\n### {currentDate}\n- {changes}\n";
 
                 // Find the "Recent Updates" section and insert after it
                 var recentUpdatesIndex = content.IndexOf("## ?? Recent Updates");
-                if (recentUpdatesIndex == -1) {
+                if (recentUpdatesIndex == -1)
+                {
                     recentUpdatesIndex = content.IndexOf("## ?? Recent Updates"); // Fallback for old format
                 }
 
-                if (recentUpdatesIndex != -1) {
+                if (recentUpdatesIndex != -1)
+                {
                     var insertIndex = content.IndexOf('\n', recentUpdatesIndex) + 1;
                     content = content.Insert(insertIndex, newEntry);
 
@@ -265,7 +298,8 @@ This document tracks updates and changes to the {moduleName} module of the OstPl
 
                 return false;
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -280,17 +314,21 @@ This document tracks updates and changes to the {moduleName} module of the OstPl
         /// <param name="category">Category name (e.g., "Modules", "Development", "AI-Assistant")</param>
         /// <param name="changes">Description of changes made</param>
         /// <returns>True if successfully updated, false otherwise</returns>
-        public static bool UpdateNavigationReadme(string category, string changes) {
-            try {
+        public static bool UpdateNavigationReadme(string category, string changes)
+        {
+            try
+            {
                 var readmePath = $"Documentation/{category}/README.md";
 
-                if (!File.Exists(readmePath)) {
+                if (!File.Exists(readmePath))
+                {
                     return CreateNavigationReadme(category, changes);
                 }
 
                 return UpdateReadmeWithChanges(readmePath, changes, ReadmeType.Navigation);
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -301,17 +339,21 @@ This document tracks updates and changes to the {moduleName} module of the OstPl
         /// <param name="moduleName">Name of the module</param>
         /// <param name="newFiles">Array of new files added to the module</param>
         /// <returns>True if successfully updated, false otherwise</returns>
-        public static bool UpdateTechnicalReadme(string moduleName, string[] newFiles) {
-            try {
+        public static bool UpdateTechnicalReadme(string moduleName, string[] newFiles)
+        {
+            try
+            {
                 var readmePath = $"{moduleName}/README.md";
 
-                if (!File.Exists(readmePath)) {
+                if (!File.Exists(readmePath))
+                {
                     return CreateTechnicalReadme(moduleName, newFiles);
                 }
 
                 return AddFilesToTechnicalReadme(readmePath, newFiles);
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -322,17 +364,21 @@ This document tracks updates and changes to the {moduleName} module of the OstPl
         /// <param name="category">Category name</param>
         /// <param name="newDocuments">Array of new documents added to the category</param>
         /// <returns>True if successfully updated, false otherwise</returns>
-        public static bool UpdateCategoryReadme(string category, string[] newDocuments) {
-            try {
+        public static bool UpdateCategoryReadme(string category, string[] newDocuments)
+        {
+            try
+            {
                 var readmePath = $"Documentation/{category}/README.md";
 
-                if (!File.Exists(readmePath)) {
+                if (!File.Exists(readmePath))
+                {
                     return CreateCategoryReadme(category, newDocuments);
                 }
 
                 return AddDocumentsToCategoryReadme(readmePath, newDocuments);
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -341,12 +387,15 @@ This document tracks updates and changes to the {moduleName} module of the OstPl
         /// Gets all README files in the project
         /// </summary>
         /// <returns>List of README file paths</returns>
-        public static List<string> GetAllReadmeFiles() {
+        public static List<string> GetAllReadmeFiles()
+        {
             var readmeFiles = new List<string>();
 
-            try {
+            try
+            {
                 // Find all README.md files in the project
-                var allReadmes = Directory.GetFiles(".", "README.md", SearchOption.AllDirectories)
+                var allReadmes = Directory
+                    .GetFiles(".", "README.md", SearchOption.AllDirectories)
                     .Where(f => !f.Contains("\\.git\\"))
                     .Where(f => !f.Contains("\\bin\\"))
                     .Where(f => !f.Contains("\\obj\\"))
@@ -354,7 +403,8 @@ This document tracks updates and changes to the {moduleName} module of the OstPl
 
                 readmeFiles.AddRange(allReadmes);
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 // Ignore errors
             }
 
@@ -365,12 +415,15 @@ This document tracks updates and changes to the {moduleName} module of the OstPl
         /// Validates README hierarchy and cross-references
         /// </summary>
         /// <returns>True if hierarchy is valid, false otherwise</returns>
-        public static bool ValidateReadmeHierarchy() {
-            try {
+        public static bool ValidateReadmeHierarchy()
+        {
+            try
+            {
                 var issues = new List<string>();
                 var readmeFiles = GetAllReadmeFiles();
 
-                foreach (var readmeFile in readmeFiles) {
+                foreach (var readmeFile in readmeFiles)
+                {
                     var readmeType = GetReadmeType(readmeFile);
                     ValidateReadmeStructure(readmeFile, readmeType, issues);
                     ValidateReadmeCrossReferences(readmeFile, issues);
@@ -378,7 +431,8 @@ This document tracks updates and changes to the {moduleName} module of the OstPl
 
                 return issues.Count == 0;
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -387,18 +441,22 @@ This document tracks updates and changes to the {moduleName} module of the OstPl
         /// Synchronizes cross-references between README files
         /// </summary>
         /// <returns>True if successfully synchronized, false otherwise</returns>
-        public static bool SynchronizeReadmeCrossReferences() {
-            try {
+        public static bool SynchronizeReadmeCrossReferences()
+        {
+            try
+            {
                 var readmeFiles = GetAllReadmeFiles();
                 var success = true;
 
-                foreach (var readmeFile in readmeFiles) {
+                foreach (var readmeFile in readmeFiles)
+                {
                     success &= UpdateReadmeCrossReferences(readmeFile);
                 }
 
                 return success;
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -408,16 +466,24 @@ This document tracks updates and changes to the {moduleName} module of the OstPl
         /// </summary>
         /// <param name="readmePath">Path to the README file</param>
         /// <returns>README type</returns>
-        public static ReadmeType GetReadmeType(string readmePath) {
+        public static ReadmeType GetReadmeType(string readmePath)
+        {
             var normalizedPath = readmePath.Replace('\\', '/');
 
             if (normalizedPath == "Documentation/README.md")
                 return ReadmeType.Root;
 
-            if (normalizedPath.StartsWith("Documentation/") && normalizedPath.EndsWith("/README.md"))
+            if (
+                normalizedPath.StartsWith("Documentation/") && normalizedPath.EndsWith("/README.md")
+            )
                 return ReadmeType.Navigation;
 
-            if (Regex.IsMatch(normalizedPath, @"^(ViewModels|DevTools|Utils|Services|Models|Clients|Views|Converters)/README\.md$"))
+            if (
+                Regex.IsMatch(
+                    normalizedPath,
+                    @"^(ViewModels|DevTools|Utils|Services|Models|Clients|Views|Converters)/README\.md$"
+                )
+            )
                 return ReadmeType.Technical;
 
             return ReadmeType.Category;
@@ -429,12 +495,15 @@ This document tracks updates and changes to the {moduleName} module of the OstPl
         /// <param name="category">Category name</param>
         /// <param name="changes">Initial changes</param>
         /// <returns>True if successfully created, false otherwise</returns>
-        private static bool CreateNavigationReadme(string category, string changes) {
-            try {
+        private static bool CreateNavigationReadme(string category, string changes)
+        {
+            try
+            {
                 var readmePath = $"Documentation/{category}/README.md";
                 var currentDate = DateHelper.GetCurrentDateString();
 
-                var content = $@"# ?? {category} Documentation
+                var content =
+                    $@"# ?? {category} Documentation
 
 ## ?? **Purpose**
 
@@ -468,7 +537,8 @@ This folder contains {category.ToLower()} documentation for the OstPlayer projec
                 File.WriteAllText(readmePath, content, Encoding.UTF8);
                 return true;
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -479,12 +549,15 @@ This folder contains {category.ToLower()} documentation for the OstPlayer projec
         /// <param name="moduleName">Module name</param>
         /// <param name="newFiles">New files to include</param>
         /// <returns>True if successfully created, false otherwise</returns>
-        private static bool CreateTechnicalReadme(string moduleName, string[] newFiles) {
-            try {
+        private static bool CreateTechnicalReadme(string moduleName, string[] newFiles)
+        {
+            try
+            {
                 var readmePath = $"{moduleName}/README.md";
                 var currentDate = DateHelper.GetCurrentDateString();
 
-                var content = $@"# {moduleName} Module - Technical Documentation
+                var content =
+                    $@"# {moduleName} Module - Technical Documentation
 
 ## ?? Module Overview
 
@@ -493,14 +566,16 @@ The {moduleName} module provides core functionality for the OstPlayer project.
 ## ?? Files in {moduleName} Module
 
 ";
-                foreach (var file in newFiles) {
+                foreach (var file in newFiles)
+                {
                     var fileName = Path.GetFileName(file);
                     content += $"### **{fileName}**\n";
                     content += $"- **Purpose**: Core {moduleName.ToLower()} functionality\n";
                     content += $"- **Status**: ? Active\n\n";
                 }
 
-                content += $@"
+                content +=
+                    $@"
 ## ??? Architecture Overview
 
 ### **Core Design Patterns Applied:**
@@ -517,7 +592,8 @@ The {moduleName} module provides core functionality for the OstPlayer project.
                 File.WriteAllText(readmePath, content, Encoding.UTF8);
                 return true;
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -528,12 +604,15 @@ The {moduleName} module provides core functionality for the OstPlayer project.
         /// <param name="category">Category name</param>
         /// <param name="newDocuments">New documents to include</param>
         /// <returns>True if successfully created, false otherwise</returns>
-        private static bool CreateCategoryReadme(string category, string[] newDocuments) {
-            try {
+        private static bool CreateCategoryReadme(string category, string[] newDocuments)
+        {
+            try
+            {
                 var readmePath = $"Documentation/{category}/README.md";
                 var currentDate = DateHelper.GetCurrentDateString();
 
-                var content = $@"# ?? {category} Documentation
+                var content =
+                    $@"# ?? {category} Documentation
 
 ## ?? **Purpose**
 
@@ -542,12 +621,14 @@ This folder contains {category.ToLower()}-specific documentation for the OstPlay
 ## ?? **Documents in this Category**
 
 ";
-                foreach (var doc in newDocuments) {
+                foreach (var doc in newDocuments)
+                {
                     var docName = Path.GetFileNameWithoutExtension(doc);
                     content += $"- **{docName}** - Description of document\n";
                 }
 
-                content += $@"
+                content +=
+                    $@"
 
 ## ?? **Target Audience**
 
@@ -564,7 +645,8 @@ This folder contains {category.ToLower()}-specific documentation for the OstPlay
                 File.WriteAllText(readmePath, content, Encoding.UTF8);
                 return true;
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -576,27 +658,43 @@ This folder contains {category.ToLower()}-specific documentation for the OstPlay
         /// <param name="changes">Changes to add</param>
         /// <param name="readmeType">Type of README</param>
         /// <returns>True if successfully updated, false otherwise</returns>
-        private static bool UpdateReadmeWithChanges(string readmePath, string changes, ReadmeType readmeType) {
-            try {
+        private static bool UpdateReadmeWithChanges(
+            string readmePath,
+            string changes,
+            ReadmeType readmeType
+        )
+        {
+            try
+            {
                 var content = File.ReadAllText(readmePath, Encoding.UTF8);
                 var currentDate = DateHelper.GetCurrentDateString();
 
                 // Update Last Updated date
-                content = Regex.Replace(content, @"\*\*Last Updated\*\*: \d{4}-\d{2}-\d{2}", $"**Last Updated**: {currentDate}");
+                content = Regex.Replace(
+                    content,
+                    @"\*\*Last Updated\*\*: \d{4}-\d{2}-\d{2}",
+                    $"**Last Updated**: {currentDate}"
+                );
 
                 // Add changes to appropriate section based on README type
-                if (readmeType == ReadmeType.Navigation) {
+                if (readmeType == ReadmeType.Navigation)
+                {
                     var recentAdditionsIndex = content.IndexOf("### **Recent Additions**");
-                    if (recentAdditionsIndex != -1) {
+                    if (recentAdditionsIndex != -1)
+                    {
                         var insertIndex = content.IndexOf('\n', recentAdditionsIndex) + 1;
-                        content = content.Insert(insertIndex, $"- {changes} (Added {currentDate})\n");
+                        content = content.Insert(
+                            insertIndex,
+                            $"- {changes} (Added {currentDate})\n"
+                        );
                     }
                 }
 
                 File.WriteAllText(readmePath, content, Encoding.UTF8);
                 return true;
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -607,19 +705,27 @@ This folder contains {category.ToLower()}-specific documentation for the OstPlay
         /// <param name="readmePath">Path to README file</param>
         /// <param name="newFiles">New files to add</param>
         /// <returns>True if successfully updated, false otherwise</returns>
-        private static bool AddFilesToTechnicalReadme(string readmePath, string[] newFiles) {
-            try {
+        private static bool AddFilesToTechnicalReadme(string readmePath, string[] newFiles)
+        {
+            try
+            {
                 var content = File.ReadAllText(readmePath, Encoding.UTF8);
                 var currentDate = DateHelper.GetCurrentDateString();
 
                 // Find module files section and add new files
                 var moduleFilesIndex = content.IndexOf("## ?? Files in");
-                if (moduleFilesIndex != -1) {
-                    var insertIndex = content.IndexOf("## ??? Architecture Overview", moduleFilesIndex);
-                    if (insertIndex == -1) insertIndex = content.Length;
+                if (moduleFilesIndex != -1)
+                {
+                    var insertIndex = content.IndexOf(
+                        "## ??? Architecture Overview",
+                        moduleFilesIndex
+                    );
+                    if (insertIndex == -1)
+                        insertIndex = content.Length;
 
                     var newContent = "";
-                    foreach (var file in newFiles) {
+                    foreach (var file in newFiles)
+                    {
                         var fileName = Path.GetFileName(file);
                         newContent += $"\n### **{fileName}** ??\n";
                         newContent += $"- **Purpose**: New functionality added {currentDate}\n";
@@ -630,12 +736,17 @@ This folder contains {category.ToLower()}-specific documentation for the OstPlay
                 }
 
                 // Update Last Updated date
-                content = Regex.Replace(content, @"\*\*Last Updated\*\*: \d{4}-\d{2}-\d{2}", $"**Last Updated**: {currentDate}");
+                content = Regex.Replace(
+                    content,
+                    @"\*\*Last Updated\*\*: \d{4}-\d{2}-\d{2}",
+                    $"**Last Updated**: {currentDate}"
+                );
 
                 File.WriteAllText(readmePath, content, Encoding.UTF8);
                 return true;
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -646,19 +757,24 @@ This folder contains {category.ToLower()}-specific documentation for the OstPlay
         /// <param name="readmePath">Path to README file</param>
         /// <param name="newDocuments">New documents to add</param>
         /// <returns>True if successfully updated, false otherwise</returns>
-        private static bool AddDocumentsToCategoryReadme(string readmePath, string[] newDocuments) {
-            try {
+        private static bool AddDocumentsToCategoryReadme(string readmePath, string[] newDocuments)
+        {
+            try
+            {
                 var content = File.ReadAllText(readmePath, Encoding.UTF8);
                 var currentDate = DateHelper.GetCurrentDateString();
 
                 // Find documents section and add new documents
                 var documentsIndex = content.IndexOf("## ?? **Documents in this Category**");
-                if (documentsIndex != -1) {
+                if (documentsIndex != -1)
+                {
                     var insertIndex = content.IndexOf("\n\n## ??", documentsIndex);
-                    if (insertIndex == -1) insertIndex = content.Length;
+                    if (insertIndex == -1)
+                        insertIndex = content.Length;
 
                     var newContent = "";
-                    foreach (var doc in newDocuments) {
+                    foreach (var doc in newDocuments)
+                    {
                         var docName = Path.GetFileNameWithoutExtension(doc);
                         newContent += $"- **{docName}** - New document added {currentDate}\n";
                     }
@@ -667,12 +783,17 @@ This folder contains {category.ToLower()}-specific documentation for the OstPlay
                 }
 
                 // Update Last Updated date
-                content = Regex.Replace(content, @"\*\*Last Updated\*\*: \d{4}-\d{2}-\d{2}", $"**Last Updated**: {currentDate}");
+                content = Regex.Replace(
+                    content,
+                    @"\*\*Last Updated\*\*: \d{4}-\d{2}-\d{2}",
+                    $"**Last Updated**: {currentDate}"
+                );
 
                 File.WriteAllText(readmePath, content, Encoding.UTF8);
                 return true;
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -683,12 +804,19 @@ This folder contains {category.ToLower()}-specific documentation for the OstPlay
         /// <param name="readmePath">Path to README file</param>
         /// <param name="readmeType">Type of README</param>
         /// <param name="issues">List to collect issues</param>
-        private static void ValidateReadmeStructure(string readmePath, ReadmeType readmeType, List<string> issues) {
-            try {
+        private static void ValidateReadmeStructure(
+            string readmePath,
+            ReadmeType readmeType,
+            List<string> issues
+        )
+        {
+            try
+            {
                 var content = File.ReadAllText(readmePath, Encoding.UTF8);
 
                 // Check for required sections based on README type
-                switch (readmeType) {
+                switch (readmeType)
+                {
                     case ReadmeType.Root:
                         if (!content.Contains("## ?? **Documentation Structure**"))
                             issues.Add($"{readmePath}: Missing Documentation Structure section");
@@ -707,7 +835,8 @@ This folder contains {category.ToLower()}-specific documentation for the OstPlay
                 if (!content.Contains("**Last Updated**:"))
                     issues.Add($"{readmePath}: Missing Last Updated field");
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 issues.Add($"{readmePath}: Error validating structure - {ex.Message}");
             }
         }
@@ -717,25 +846,31 @@ This folder contains {category.ToLower()}-specific documentation for the OstPlay
         /// </summary>
         /// <param name="readmePath">Path to README file</param>
         /// <param name="issues">List to collect issues</param>
-        private static void ValidateReadmeCrossReferences(string readmePath, List<string> issues) {
-            try {
+        private static void ValidateReadmeCrossReferences(string readmePath, List<string> issues)
+        {
+            try
+            {
                 var content = File.ReadAllText(readmePath, Encoding.UTF8);
                 var linkRegex = new Regex(@"\[([^\]]+)\]\(([^)]+)\)", RegexOptions.Compiled);
                 var linkMatches = linkRegex.Matches(content);
 
-                foreach (Match linkMatch in linkMatches) {
+                foreach (Match linkMatch in linkMatches)
+                {
                     var linkPath = linkMatch.Groups[2].Value;
-                    if (linkPath.StartsWith("http")) continue; // Skip external links
+                    if (linkPath.StartsWith("http"))
+                        continue; // Skip external links
 
                     var fullPath = Path.Combine(Path.GetDirectoryName(readmePath), linkPath);
                     var normalizedPath = Path.GetFullPath(fullPath);
 
-                    if (!File.Exists(normalizedPath)) {
+                    if (!File.Exists(normalizedPath))
+                    {
                         issues.Add($"{readmePath}: Broken link - {linkPath}");
                     }
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 issues.Add($"{readmePath}: Error validating cross-references - {ex.Message}");
             }
         }
@@ -745,31 +880,39 @@ This folder contains {category.ToLower()}-specific documentation for the OstPlay
         /// </summary>
         /// <param name="readmePath">Path to README file</param>
         /// <returns>True if successfully updated, false otherwise</returns>
-        private static bool UpdateReadmeCrossReferences(string readmePath) {
-            try {
+        private static bool UpdateReadmeCrossReferences(string readmePath)
+        {
+            try
+            {
                 var content = File.ReadAllText(readmePath, Encoding.UTF8);
                 var originalContent = content;
 
                 // Update known path changes
-                var pathMappings = new Dictionary<string, string> {
+                var pathMappings = new Dictionary<string, string>
+                {
                     ["Utils/DateHelper.cs"] = "DevTools/DateHelper.cs",
                     ["Utils/DocumentationManager.cs"] = "DevTools/DocumentationManager.cs",
                     ["Utils/ProjectAnalyzer.cs"] = "DevTools/ProjectAnalyzer.cs",
-                    ["DevTools/FileHeaderPolicy.md"] = "Documentation/Development/FileHeaderPolicy.md",
-                    ["DevTools/SmartDateAutomation.md"] = "Documentation/AI-Assistant/SmartDateAutomation.md"
+                    ["DevTools/FileHeaderPolicy.md"] =
+                        "Documentation/Development/FileHeaderPolicy.md",
+                    ["DevTools/SmartDateAutomation.md"] =
+                        "Documentation/AI-Assistant/SmartDateAutomation.md",
                 };
 
-                foreach (var mapping in pathMappings) {
+                foreach (var mapping in pathMappings)
+                {
                     content = content.Replace(mapping.Key, mapping.Value);
                 }
 
-                if (content != originalContent) {
+                if (content != originalContent)
+                {
                     File.WriteAllText(readmePath, content, Encoding.UTF8);
                 }
 
                 return true;
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -784,15 +927,19 @@ This folder contains {category.ToLower()}-specific documentation for the OstPlay
         /// <param name="version">Version number</param>
         /// <param name="changes">Description of changes</param>
         /// <returns>True if successfully updated, false otherwise</returns>
-        public static bool UpdateMainChangelog(string version, string changes) {
-            try {
-                if (!File.Exists(ChangelogFile)) {
+        public static bool UpdateMainChangelog(string version, string changes)
+        {
+            try
+            {
+                if (!File.Exists(ChangelogFile))
+                {
                     return CreateMainChangelog(version, changes);
                 }
 
                 return InsertChangelogEntry(version, changes);
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -803,10 +950,13 @@ This folder contains {category.ToLower()}-specific documentation for the OstPlay
         /// <param name="version">Initial version</param>
         /// <param name="changes">Initial changes</param>
         /// <returns>True if successfully created, false otherwise</returns>
-        private static bool CreateMainChangelog(string version, string changes) {
-            try {
+        private static bool CreateMainChangelog(string version, string changes)
+        {
+            try
+            {
                 var currentDate = DateHelper.GetCurrentDateString();
-                var content = $@"# OstPlayer - Changelog
+                var content =
+                    $@"# OstPlayer - Changelog
 
 Všechny významné změny v tomto projektu budou dokumentovány v tomto souboru.
 
@@ -839,7 +989,8 @@ a tento projekt dodržuje [Semantic Versioning](https://semver.org/spec/v2.0.0.h
                 File.WriteAllText(ChangelogFile, content, Encoding.UTF8);
                 return true;
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -850,12 +1001,15 @@ a tento projekt dodržuje [Semantic Versioning](https://semver.org/spec/v2.0.0.h
         /// <param name="version">Version number</param>
         /// <param name="changes">Description of changes</param>
         /// <returns>True if successfully inserted, false otherwise</returns>
-        private static bool InsertChangelogEntry(string version, string changes) {
-            try {
+        private static bool InsertChangelogEntry(string version, string changes)
+        {
+            try
+            {
                 var content = File.ReadAllText(ChangelogFile, Encoding.UTF8);
                 var currentDate = DateHelper.GetCurrentDateString();
 
-                var newEntry = $@"
+                var newEntry =
+                    $@"
 ## [{version}] - {currentDate}
 
 ### Added
@@ -864,7 +1018,8 @@ a tento projekt dodržuje [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
                 // Find the first existing version entry and insert before it
                 var firstVersionMatch = VersionHeaderRegex.Match(content);
-                if (firstVersionMatch.Success) {
+                if (firstVersionMatch.Success)
+                {
                     var insertIndex = firstVersionMatch.Index;
                     content = content.Insert(insertIndex, newEntry + "\n");
 
@@ -874,7 +1029,8 @@ a tento projekt dodržuje [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
                 return false;
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -888,8 +1044,10 @@ a tento projekt dodržuje [Semantic Versioning](https://semver.org/spec/v2.0.0.h
         /// </summary>
         /// <param name="projectPath">Root path of the project</param>
         /// <returns>True if documentation is consistent, false otherwise</returns>
-        public static bool ValidateDocumentationConsistency(string projectPath = ".") {
-            try {
+        public static bool ValidateDocumentationConsistency(string projectPath = ".")
+        {
+            try
+            {
                 var issues = new List<string>();
 
                 ValidateChangelogConsistency(issues);
@@ -899,7 +1057,8 @@ a tento projekt dodržuje [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
                 return issues.Count == 0;
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -908,13 +1067,17 @@ a tento projekt dodržuje [Semantic Versioning](https://semver.org/spec/v2.0.0.h
         /// Validates README hierarchy as part of documentation consistency
         /// </summary>
         /// <param name="issues">List to collect issues</param>
-        private static void ValidateReadmeHierarchy(List<string> issues) {
-            try {
-                if (!ValidateReadmeHierarchy()) {
+        private static void ValidateReadmeHierarchy(List<string> issues)
+        {
+            try
+            {
+                if (!ValidateReadmeHierarchy())
+                {
                     issues.Add("README hierarchy validation failed");
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 issues.Add($"Error validating README hierarchy: {ex.Message}");
             }
         }
@@ -923,9 +1086,12 @@ a tento projekt dodržuje [Semantic Versioning](https://semver.org/spec/v2.0.0.h
         /// Validates changelog consistency
         /// </summary>
         /// <param name="issues">List to collect validation issues</param>
-        private static void ValidateChangelogConsistency(List<string> issues) {
-            try {
-                if (!File.Exists(ChangelogFile)) {
+        private static void ValidateChangelogConsistency(List<string> issues)
+        {
+            try
+            {
+                if (!File.Exists(ChangelogFile))
+                {
                     issues.Add("Main changelog file not found");
                     return;
                 }
@@ -934,20 +1100,27 @@ a tento projekt dodržuje [Semantic Versioning](https://semver.org/spec/v2.0.0.h
                 var versionMatches = VersionHeaderRegex.Matches(content);
 
                 var versions = new List<Version>();
-                foreach (Match match in versionMatches) {
-                    if (Version.TryParse(match.Groups[1].Value, out var version)) {
+                foreach (Match match in versionMatches)
+                {
+                    if (Version.TryParse(match.Groups[1].Value, out var version))
+                    {
                         versions.Add(version);
                     }
                 }
 
                 // Check if versions are in descending order
-                for (int i = 0; i < versions.Count - 1; i++) {
-                    if (versions[i] < versions[i + 1]) {
-                        issues.Add($"Changelog versions not in descending order: {versions[i]} < {versions[i + 1]}");
+                for (int i = 0; i < versions.Count - 1; i++)
+                {
+                    if (versions[i] < versions[i + 1])
+                    {
+                        issues.Add(
+                            $"Changelog versions not in descending order: {versions[i]} < {versions[i + 1]}"
+                        );
                     }
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 issues.Add($"Error validating changelog: {ex.Message}");
             }
         }
@@ -957,24 +1130,30 @@ a tento projekt dodržuje [Semantic Versioning](https://semver.org/spec/v2.0.0.h
         /// </summary>
         /// <param name="projectPath">Root path of the project</param>
         /// <param name="issues">List to collect validation issues</param>
-        private static void ValidateModuleSummaries(string projectPath, List<string> issues) {
-            try {
-                var moduleDirectories = Directory.GetDirectories(projectPath)
+        private static void ValidateModuleSummaries(string projectPath, List<string> issues)
+        {
+            try
+            {
+                var moduleDirectories = Directory
+                    .GetDirectories(projectPath)
                     .Where(d => !Path.GetFileName(d).StartsWith("."))
                     .Where(d => Path.GetFileName(d) != "Documentation")
                     .Where(d => Path.GetFileName(d) != "DevTools")
                     .ToList();
 
-                foreach (var moduleDir in moduleDirectories) {
+                foreach (var moduleDir in moduleDirectories)
+                {
                     var moduleName = Path.GetFileName(moduleDir);
                     var summaryFile = FindModuleSummaryFile(moduleName);
 
-                    if (summaryFile == null) {
+                    if (summaryFile == null)
+                    {
                         issues.Add($"No summary file found for module: {moduleName}");
                     }
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 issues.Add($"Error validating module summaries: {ex.Message}");
             }
         }
@@ -984,27 +1163,38 @@ a tento projekt dodržuje [Semantic Versioning](https://semver.org/spec/v2.0.0.h
         /// </summary>
         /// <param name="projectPath">Root path of the project</param>
         /// <param name="issues">List to collect validation issues</param>
-        private static void ValidateCrossReferences(string projectPath, List<string> issues) {
-            try {
-                var documentationFiles = Directory.GetFiles(DocumentationFolder, "*.md", SearchOption.AllDirectories);
+        private static void ValidateCrossReferences(string projectPath, List<string> issues)
+        {
+            try
+            {
+                var documentationFiles = Directory.GetFiles(
+                    DocumentationFolder,
+                    "*.md",
+                    SearchOption.AllDirectories
+                );
                 var linkRegex = new Regex(@"\[([^\]]+)\]\(([^)]+)\)", RegexOptions.Compiled);
 
-                foreach (var docFile in documentationFiles) {
+                foreach (var docFile in documentationFiles)
+                {
                     var content = File.ReadAllText(docFile, Encoding.UTF8);
                     var linkMatches = linkRegex.Matches(content);
 
-                    foreach (Match linkMatch in linkMatches) {
+                    foreach (Match linkMatch in linkMatches)
+                    {
                         var linkPath = linkMatch.Groups[2].Value;
-                        if (linkPath.StartsWith("http")) continue; // Skip external links
+                        if (linkPath.StartsWith("http"))
+                            continue; // Skip external links
 
                         var fullPath = Path.Combine(Path.GetDirectoryName(docFile), linkPath);
-                        if (!File.Exists(fullPath)) {
+                        if (!File.Exists(fullPath))
+                        {
                             issues.Add($"Broken link in {docFile}: {linkPath}");
                         }
                     }
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 issues.Add($"Error validating cross-references: {ex.Message}");
             }
         }
@@ -1018,23 +1208,32 @@ a tento projekt dodržuje [Semantic Versioning](https://semver.org/spec/v2.0.0.h
         /// </summary>
         /// <param name="pathMappings">Dictionary of old path to new path mappings</param>
         /// <returns>True if successfully updated, false otherwise</returns>
-        public static bool UpdateDocumentationPaths(Dictionary<string, string> pathMappings) {
-            try {
-                var documentationFiles = Directory.GetFiles(DocumentationFolder, "*.md", SearchOption.AllDirectories);
+        public static bool UpdateDocumentationPaths(Dictionary<string, string> pathMappings)
+        {
+            try
+            {
+                var documentationFiles = Directory.GetFiles(
+                    DocumentationFolder,
+                    "*.md",
+                    SearchOption.AllDirectories
+                );
                 var readmeFiles = GetAllReadmeFiles(); // Include README files
                 var allFiles = documentationFiles.Concat(readmeFiles).Distinct().ToArray();
 
                 var success = true;
 
-                foreach (var docFile in allFiles) {
-                    if (!UpdatePathsInFile(docFile, pathMappings)) {
+                foreach (var docFile in allFiles)
+                {
+                    if (!UpdatePathsInFile(docFile, pathMappings))
+                    {
                         success = false;
                     }
                 }
 
                 return success;
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -1045,22 +1244,30 @@ a tento projekt dodržuje [Semantic Versioning](https://semver.org/spec/v2.0.0.h
         /// <param name="filePath">Path to the file to update</param>
         /// <param name="pathMappings">Dictionary of path mappings</param>
         /// <returns>True if successfully updated, false otherwise</returns>
-        private static bool UpdatePathsInFile(string filePath, Dictionary<string, string> pathMappings) {
-            try {
+        private static bool UpdatePathsInFile(
+            string filePath,
+            Dictionary<string, string> pathMappings
+        )
+        {
+            try
+            {
                 var content = File.ReadAllText(filePath, Encoding.UTF8);
                 var originalContent = content;
 
-                foreach (var mapping in pathMappings) {
+                foreach (var mapping in pathMappings)
+                {
                     content = content.Replace(mapping.Key, mapping.Value);
                 }
 
-                if (content != originalContent) {
+                if (content != originalContent)
+                {
                     File.WriteAllText(filePath, content, Encoding.UTF8);
                 }
 
                 return true;
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -1074,21 +1281,29 @@ a tento projekt dodržuje [Semantic Versioning](https://semver.org/spec/v2.0.0.h
         /// </summary>
         /// <param name="projectPath">Root path of the project</param>
         /// <returns>List of documentation file paths</returns>
-        public static List<string> GetDocumentationFiles(string projectPath = ".") {
+        public static List<string> GetDocumentationFiles(string projectPath = ".")
+        {
             var files = new List<string>();
 
-            if (Directory.Exists(DocumentationFolder)) {
-                files.AddRange(Directory.GetFiles(DocumentationFolder, "*.md", SearchOption.AllDirectories));
+            if (Directory.Exists(DocumentationFolder))
+            {
+                files.AddRange(
+                    Directory.GetFiles(DocumentationFolder, "*.md", SearchOption.AllDirectories)
+                );
             }
 
             // Add module-specific documentation
-            var moduleDirectories = Directory.GetDirectories(projectPath)
+            var moduleDirectories = Directory
+                .GetDirectories(projectPath)
                 .Where(d => !Path.GetFileName(d).StartsWith("."))
                 .Where(d => Path.GetFileName(d) != "Documentation")
                 .Where(d => Path.GetFileName(d) != "DevTools");
 
-            foreach (var moduleDir in moduleDirectories) {
-                files.AddRange(Directory.GetFiles(moduleDir, "*.md", SearchOption.TopDirectoryOnly));
+            foreach (var moduleDir in moduleDirectories)
+            {
+                files.AddRange(
+                    Directory.GetFiles(moduleDir, "*.md", SearchOption.TopDirectoryOnly)
+                );
             }
 
             return files;
@@ -1099,10 +1314,11 @@ a tento projekt dodržuje [Semantic Versioning](https://semver.org/spec/v2.0.0.h
         /// </summary>
         /// <param name="projectPath">Root path of the project</param>
         /// <returns>True if structure is valid, false otherwise</returns>
-        public static bool IsDocumentationStructureValid(string projectPath = ".") {
-            return Directory.Exists(DocumentationFolder) &&
-                   File.Exists(ChangelogFile) &&
-                   ValidateReadmeHierarchy(); // Include README validation
+        public static bool IsDocumentationStructureValid(string projectPath = ".")
+        {
+            return Directory.Exists(DocumentationFolder)
+                && File.Exists(ChangelogFile)
+                && ValidateReadmeHierarchy(); // Include README validation
         }
 
         #endregion
@@ -1115,26 +1331,31 @@ a tento projekt dodržuje [Semantic Versioning](https://semver.org/spec/v2.0.0.h
         /// </summary>
         /// <param name="changedFiles">List of files that were modified</param>
         /// <returns>Number of module summaries updated</returns>
-        public static int UpdateModuleSummariesFromChanges(IEnumerable<string> changedFiles) {
-            try {
+        public static int UpdateModuleSummariesFromChanges(IEnumerable<string> changedFiles)
+        {
+            try
+            {
                 var moduleChanges = ProjectAnalyzer.DetectModuleChanges(changedFiles);
                 var updatedCount = 0;
 
-                foreach (var moduleChange in moduleChanges) {
+                foreach (var moduleChange in moduleChanges)
+                {
                     var moduleName = moduleChange.Key;
                     var changes = moduleChange.Value;
 
                     var changeDescription = string.Join(", ", changes);
                     var success = UpdateModuleSummary(moduleName, changeDescription);
 
-                    if (success) {
+                    if (success)
+                    {
                         updatedCount++;
                     }
                 }
 
                 return updatedCount;
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return 0;
             }
         }
@@ -1147,18 +1368,26 @@ a tento projekt dodržuje [Semantic Versioning](https://semver.org/spec/v2.0.0.h
         /// <param name="changes">Description of changes</param>
         /// <param name="changeType">Type of change (Added, Modified, Refactored, etc.)</param>
         /// <returns>True if successfully updated</returns>
-        public static bool UpdateModuleSummaryEnhanced(string moduleName, string changes, string changeType = "Modified") {
-            try {
+        public static bool UpdateModuleSummaryEnhanced(
+            string moduleName,
+            string changes,
+            string changeType = "Modified"
+        )
+        {
+            try
+            {
                 var summaryFile = FindModuleSummaryFile(moduleName);
 
-                if (summaryFile == null) {
+                if (summaryFile == null)
+                {
                     // Create new module summary if it doesn't exist
                     return CreateModuleSummary(moduleName, $"{changeType}: {changes}");
                 }
 
                 return AppendToModuleSummaryEnhanced(summaryFile, changes, changeType);
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -1170,12 +1399,15 @@ a tento projekt dodržuje [Semantic Versioning](https://semver.org/spec/v2.0.0.h
         /// <param name="moduleName">Name of the module</param>
         /// <param name="initialChanges">Initial changes description</param>
         /// <returns>True if successfully created</returns>
-        private static bool CreateModuleSummaryEnhanced(string moduleName, string initialChanges) {
-            try {
+        private static bool CreateModuleSummaryEnhanced(string moduleName, string initialChanges)
+        {
+            try
+            {
                 var summaryPath = $"Documentation/Modules/{moduleName}ModuleUpdateSummary.md";
                 var currentDate = DateHelper.GetCurrentDateString();
 
-                var content = $@"# OstPlayer {moduleName} Module - Update Summary
+                var content =
+                    $@"# OstPlayer {moduleName} Module - Update Summary
 
 ## ?? **Module Overview**
 
@@ -1245,7 +1477,8 @@ The {moduleName} module provides essential functionality for the OstPlayer plugi
                 File.WriteAllText(summaryPath, content, Encoding.UTF8);
                 return true;
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -1258,8 +1491,14 @@ The {moduleName} module provides essential functionality for the OstPlayer plugi
         /// <param name="changes">Changes to append</param>
         /// <param name="changeType">Type of change</param>
         /// <returns>True if successfully appended</returns>
-        private static bool AppendToModuleSummaryEnhanced(string summaryFile, string changes, string changeType) {
-            try {
+        private static bool AppendToModuleSummaryEnhanced(
+            string summaryFile,
+            string changes,
+            string changeType
+        )
+        {
+            try
+            {
                 var content = File.ReadAllText(summaryFile, Encoding.UTF8);
                 var currentDate = DateHelper.GetCurrentDateString();
 
@@ -1269,11 +1508,13 @@ The {moduleName} module provides essential functionality for the OstPlayer plugi
 
                 // Find the "Recent Updates" section and insert after it
                 var recentUpdatesIndex = content.IndexOf("## ?? **Recent Updates**");
-                if (recentUpdatesIndex == -1) {
+                if (recentUpdatesIndex == -1)
+                {
                     recentUpdatesIndex = content.IndexOf("## Recent Updates"); // Fallback
                 }
 
-                if (recentUpdatesIndex != -1) {
+                if (recentUpdatesIndex != -1)
+                {
                     var insertIndex = content.IndexOf('\n', recentUpdatesIndex) + 1;
                     content = content.Insert(insertIndex, newEntry);
 
@@ -1286,7 +1527,8 @@ The {moduleName} module provides essential functionality for the OstPlayer plugi
 
                 return false;
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -1297,16 +1539,26 @@ The {moduleName} module provides essential functionality for the OstPlayer plugi
         /// </summary>
         /// <param name="changeType">Type of change</param>
         /// <returns>Emoji representing the change type</returns>
-        private static string GetChangeTypeEmoji(string changeType) {
-            switch (changeType.ToLower()) {
-                case "added": return "?";
-                case "modified": return "??";
-                case "refactored": return "??";
-                case "fixed": return "??";
-                case "enhanced": return "?";
-                case "deprecated": return "??";
-                case "removed": return "???";
-                default: return "??";
+        private static string GetChangeTypeEmoji(string changeType)
+        {
+            switch (changeType.ToLower())
+            {
+                case "added":
+                    return "?";
+                case "modified":
+                    return "??";
+                case "refactored":
+                    return "??";
+                case "fixed":
+                    return "??";
+                case "enhanced":
+                    return "?";
+                case "deprecated":
+                    return "??";
+                case "removed":
+                    return "???";
+                default:
+                    return "??";
             }
         }
 
@@ -1317,7 +1569,8 @@ The {moduleName} module provides essential functionality for the OstPlayer plugi
         /// <param name="content">Module summary content</param>
         /// <param name="newDate">New date to set</param>
         /// <returns>Updated content</returns>
-        private static string UpdateLastUpdatedTimestamp(string content, string newDate) {
+        private static string UpdateLastUpdatedTimestamp(string content, string newDate)
+        {
             var timestampPattern = @"\*\*Last Updated\*\*:\s*\d{4}-\d{2}-\d{2}";
             var replacement = $"**Last Updated**: {newDate}";
 
@@ -1330,12 +1583,17 @@ The {moduleName} module provides essential functionality for the OstPlayer plugi
         /// </summary>
         /// <param name="changedFiles">List of files that were changed</param>
         /// <returns>List of recommendations for module documentation updates</returns>
-        public static List<ModuleUpdateRecommendation> GetModuleUpdateRecommendations(IEnumerable<string> changedFiles) {
-            try {
+        public static List<ModuleUpdateRecommendation> GetModuleUpdateRecommendations(
+            IEnumerable<string> changedFiles
+        )
+        {
+            try
+            {
                 var moduleChanges = ProjectAnalyzer.DetectModuleChanges(changedFiles);
                 return ProjectAnalyzer.AnalyzeModuleActivity(moduleChanges);
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return new List<ModuleUpdateRecommendation>();
             }
         }
@@ -1346,26 +1604,43 @@ The {moduleName} module provides essential functionality for the OstPlayer plugi
         /// </summary>
         /// <param name="recommendations">List of update recommendations</param>
         /// <returns>Number of recommendations successfully processed</returns>
-        public static int ProcessModuleUpdateRecommendations(List<ModuleUpdateRecommendation> recommendations) {
+        public static int ProcessModuleUpdateRecommendations(
+            List<ModuleUpdateRecommendation> recommendations
+        )
+        {
             var processedCount = 0;
 
-            foreach (var recommendation in recommendations) {
-                try {
-                    if (!recommendation.SummaryExists) {
+            foreach (var recommendation in recommendations)
+            {
+                try
+                {
+                    if (!recommendation.SummaryExists)
+                    {
                         // Create new module summary
                         var initialChanges = string.Join(", ", recommendation.Changes);
-                        var success = CreateModuleSummaryEnhanced(recommendation.ModuleName, initialChanges);
-                        if (success) processedCount++;
+                        var success = CreateModuleSummaryEnhanced(
+                            recommendation.ModuleName,
+                            initialChanges
+                        );
+                        if (success)
+                            processedCount++;
                     }
-                    else {
+                    else
+                    {
                         // Update existing module summary
                         var changes = string.Join(", ", recommendation.Changes);
                         var changeType = DetermineChangeType(recommendation.Changes);
-                        var success = UpdateModuleSummaryEnhanced(recommendation.ModuleName, changes, changeType);
-                        if (success) processedCount++;
+                        var success = UpdateModuleSummaryEnhanced(
+                            recommendation.ModuleName,
+                            changes,
+                            changeType
+                        );
+                        if (success)
+                            processedCount++;
                     }
                 }
-                catch (Exception) {
+                catch (Exception)
+                {
                     // Continue processing other recommendations even if one fails
                     continue;
                 }
@@ -1380,7 +1655,8 @@ The {moduleName} module provides essential functionality for the OstPlayer plugi
         /// </summary>
         /// <param name="changes">List of change descriptions</param>
         /// <returns>Primary change type</returns>
-        private static string DetermineChangeType(List<string> changes) {
+        private static string DetermineChangeType(List<string> changes)
+        {
             if (changes.Any(c => c.Contains("Added")))
                 return "Added";
             if (changes.Any(c => c.Contains("Enhanced") || c.Contains("Improved")))

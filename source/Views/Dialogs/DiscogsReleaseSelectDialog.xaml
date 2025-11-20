@@ -134,6 +134,7 @@ CHANGELOG:
 ====================================================================
 -->
 
+
 <!--
 FILE: DiscogsReleaseSelectDialog.xaml
 PROJECT: OstPlayer - Playnite plugin
@@ -168,55 +169,66 @@ AUTHORING CONVENTIONS:
 - Consistent use of margins and alignment.
 -->
 
-<Window x:Class="OstPlayer.Views.Dialogs.DiscogsReleaseSelectDialog"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Select Discogs Release" Height="800" Width="600" WindowStartupLocation="CenterOwner">
+
+<Window
+  x:Class="OstPlayer.Views.Dialogs.DiscogsReleaseSelectDialog"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  Title="Select Discogs Release"
+  Height="800"
+  Width="600"
+  WindowStartupLocation="CenterOwner"
+>
   <Grid Margin="10">
     <Grid.RowDefinitions>
-      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto" />
       <!-- Search bar -->
-      <RowDefinition Height="*"/>
+      <RowDefinition Height="*" />
       <!-- List of results -->
-      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto" />
       <!-- Action buttons -->
     </Grid.RowDefinitions>
 
     <!-- Search box section -->
     <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
-      <TextBox x:Name="SearchTextBox"
-                     Width="350"
-                     Height="26"
-                     VerticalAlignment="Center"
-                     Margin="0,0,8,0"
-                     KeyDown="SearchTextBox_KeyDown"/>
-      <Button Content="Search"
-                    Width="80"
-                    Height="26"
-                    Click="SearchButton_Click"/>
+      <TextBox
+        x:Name="SearchTextBox"
+        Width="350"
+        Height="26"
+        VerticalAlignment="Center"
+        Margin="0,0,8,0"
+        KeyDown="SearchTextBox_KeyDown"
+      />
+      <Button Content="Search" Width="80" Height="26" Click="SearchButton_Click" />
     </StackPanel>
 
     <!-- List of search results -->
-    <ListBox x:Name="ReleaseListBox"
-                 Grid.Row="1"
-                 SelectedIndex="0"
-                 MouseDoubleClick="ReleaseListBox_MouseDoubleClick">
+    <ListBox
+      x:Name="ReleaseListBox"
+      Grid.Row="1"
+      SelectedIndex="0"
+      MouseDoubleClick="ReleaseListBox_MouseDoubleClick"
+    >
       <ListBox.ItemTemplate>
         <DataTemplate>
           <StackPanel Orientation="Horizontal" Margin="4">
             <!-- Cover image for the release -->
-            <Image Source="{Binding CoverUrl, TargetNullValue='', FallbackValue=''}"
-                               Width="60"
-                               Height="60"
-                               Margin="0,0,10,0"/>
+            <Image
+              Source="{Binding CoverUrl, TargetNullValue='', FallbackValue=''}"
+              Width="60"
+              Height="60"
+              Margin="0,0,10,0"
+            />
             <StackPanel>
               <!-- Release title -->
-              <TextBlock Text="{Binding Title, TargetNullValue='(no title)', FallbackValue='(no title)'}"
-                                       FontWeight="Bold"/>
+              <TextBlock
+                Text="{Binding Title, TargetNullValue='(no title)', FallbackValue='(no title)'}"
+                FontWeight="Bold"
+              />
               <!-- Artist name -->
-              <TextBlock Text="{Binding Artist, TargetNullValue='(no artist)', FallbackValue='(no artist)'}"/>
+              <TextBlock Text="{Binding Artist, TargetNullValue='(no artist)', FallbackValue='(no artist)'}" />
               <!-- Release date -->
-              <TextBlock Text="{Binding Released, TargetNullValue='(no date)', FallbackValue='(no date)'}"/>
+              <TextBlock Text="{Binding Released, TargetNullValue='(no date)', FallbackValue='(no date)'}" />
             </StackPanel>
           </StackPanel>
         </DataTemplate>
@@ -224,18 +236,9 @@ AUTHORING CONVENTIONS:
     </ListBox>
 
     <!-- OK / Cancel buttons -->
-    <StackPanel Grid.Row="2"
-                    Orientation="Horizontal"
-                    HorizontalAlignment="Right"
-                    Margin="0,10,0,0">
-      <Button Content="OK"
-                    Width="80"
-                    Margin="0,0,10,0"
-                    IsDefault="True"
-                    Click="OkButton_Click"/>
-      <Button Content="Cancel"
-                    Width="80"
-                    IsCancel="True"/>
+    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+      <Button Content="OK" Width="80" Margin="0,0,10,0" IsDefault="True" Click="OkButton_Click" />
+      <Button Content="Cancel" Width="80" IsCancel="True" />
     </StackPanel>
   </Grid>
 </Window>

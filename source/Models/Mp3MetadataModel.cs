@@ -99,13 +99,15 @@
 using System;
 using System.Collections.Generic;
 
-namespace OstPlayer.Models {
+namespace OstPlayer.Models
+{
     /// <summary>
     /// Model for storing metadata of a single MP3 file extracted via TagLibSharp.
     /// Provides comprehensive ID3 tag support with intelligent redundancy handling.
     /// See: https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1
     /// </summary>
-    public class Mp3MetadataModel {
+    public class Mp3MetadataModel
+    {
         #region Private Fields
 
         /// <summary>
@@ -127,7 +129,8 @@ namespace OstPlayer.Models {
         /// This property is used internally for Album redundancy detection.
         /// Reference: ID3v2.4 specification - TIT2 frame (Title/songname/content description)
         /// </summary>
-        public string Title {
+        public string Title
+        {
             get => title;
             set => title = value;
         }
@@ -144,7 +147,8 @@ namespace OstPlayer.Models {
         /// Returns null if album name is identical to title to avoid UI duplication.
         /// Maps to ID3v2 TALB frame (Album/Movie/Show title)
         /// </summary>
-        public string Album {
+        public string Album
+        {
             get => (album == title) ? null : album; // Avoid redundant display when album equals title
             set => album = value;
         }
@@ -205,7 +209,8 @@ namespace OstPlayer.Models {
         /// <example>
         /// string safe = Mp3MetadataModel.Sanitize("Track: Title/Artist"); // Returns "Track Title Artist"
         /// </example>
-        public static string Sanitize(string input) {
+        public static string Sanitize(string input)
+        {
             // Remove all characters that are invalid for filenames on this platform
             // This approach preserves all valid characters while removing problematic ones
             return string.Concat(input.Split(System.IO.Path.GetInvalidFileNameChars()));
@@ -224,7 +229,8 @@ namespace OstPlayer.Models {
         /// This nested class could be extracted to its own file in future refactoring
         /// for better separation of concerns and reusability across metadata models.
         /// </remarks>
-        public class TrackInfo {
+        public class TrackInfo
+        {
             /// <summary>
             /// Gets or sets the individual track title.
             /// May differ from parent Mp3MetadataModel.Title in multi-track files.

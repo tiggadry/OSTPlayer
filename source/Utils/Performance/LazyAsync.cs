@@ -70,7 +70,8 @@
 using System;
 using System.Threading.Tasks;
 
-namespace OstPlayer.Utils.Performance {
+namespace OstPlayer.Utils.Performance
+{
     /// <summary>
     /// Lazy loading wrapper for expensive operations
     /// PATTERN: Lazy initialization with async support for non-blocking expensive operations
@@ -78,7 +79,8 @@ namespace OstPlayer.Utils.Performance {
     /// USE CASES: Database connections, file loading, API calls, resource initialization
     /// </summary>
     /// <typeparam name="T">Type of value to lazily initialize</typeparam>
-    public class LazyAsync<T> {
+    public class LazyAsync<T>
+    {
         #region Private Fields
 
         // Factory function that creates the value when first requested
@@ -106,7 +108,8 @@ namespace OstPlayer.Utils.Performance {
         /// DEFERRED EXECUTION: Factory is not called until Value property is first accessed
         /// </summary>
         /// <param name="factory">Function that creates the value asynchronously</param>
-        public LazyAsync(Func<Task<T>> factory) {
+        public LazyAsync(Func<Task<T>> factory)
+        {
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
         }
 
@@ -120,18 +123,22 @@ namespace OstPlayer.Utils.Performance {
         /// INITIALIZATION: Factory is called exactly once, even with concurrent access
         /// SHARING: All callers receive the same Task<T> instance
         /// </summary>
-        public Task<T> Value {
-            get {
+        public Task<T> Value
+        {
+            get
+            {
                 // FAST PATH: If already initialized, return immediately without locking
                 // PERFORMANCE: Avoids lock overhead for subsequent accesses
                 if (_task != null)
                     return _task;
 
                 // SLOW PATH: First access or concurrent initialization
-                lock (_lock) {
+                lock (_lock)
+                {
                     // DOUBLE-CHECK: Another thread might have initialized while waiting for lock
                     // CORRECTNESS: Ensures only one initialization even with race conditions
-                    if (_task == null) {
+                    if (_task == null)
+                    {
                         // INITIALIZATION: Call factory function and store result
                         // SINGLE EXECUTION: Factory called exactly once regardless of concurrent access
                         _task = _factory();

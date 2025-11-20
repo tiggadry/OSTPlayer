@@ -96,7 +96,8 @@
 
 using System.Windows.Media.Imaging;
 
-namespace OstPlayer.Models {
+namespace OstPlayer.Models
+{
     /// <summary>
     /// Represents comprehensive metadata for MusicBrainz releases.
     /// </summary>
@@ -193,7 +194,10 @@ namespace OstPlayer.Models {
         /// <summary>
         /// Merges this metadata with another source.
         /// </summary>
-        public IMetadataModel MergeWith(IMetadataModel other, MetadataMergePriority priority = MetadataMergePriority.PreferThis)
+        public IMetadataModel MergeWith(
+            IMetadataModel other,
+            MetadataMergePriority priority = MetadataMergePriority.PreferThis
+        )
         {
             // Simple implementation - can be enhanced
             return priority == MetadataMergePriority.PreferOther ? other : this;

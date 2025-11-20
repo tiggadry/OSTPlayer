@@ -84,12 +84,14 @@ using System.Collections.Generic;
 using Playnite.SDK;
 using Playnite.SDK.Data;
 
-namespace OstPlayer.ViewModels {
+namespace OstPlayer.ViewModels
+{
     /// <summary>
     /// ViewModel for plugin settings, implements Playnite's ISettings interface.
     /// Handles loading, editing, and saving settings.
     /// </summary>
-    public class OstPlayerSettingsViewModel : ObservableObject, ISettings {
+    public class OstPlayerSettingsViewModel : ObservableObject, ISettings
+    {
         /// <summary>
         /// Reference to the main plugin instance.
         /// </summary>
@@ -97,12 +99,15 @@ namespace OstPlayer.ViewModels {
         private OstPlayerSettings editingClone { get; set; }
 
         private OstPlayerSettings settings;
+
         /// <summary>
         /// Current settings instance for binding and editing.
         /// </summary>
-        public OstPlayerSettings Settings {
+        public OstPlayerSettings Settings
+        {
             get => settings;
-            set {
+            set
+            {
                 settings = value;
                 OnPropertyChanged();
             }
@@ -111,7 +116,8 @@ namespace OstPlayer.ViewModels {
         /// <summary>
         /// Loads settings from disk or initializes defaults.
         /// </summary>
-        public OstPlayerSettingsViewModel(OstPlayer plugin) {
+        public OstPlayerSettingsViewModel(OstPlayer plugin)
+        {
             this.plugin = plugin;
             var savedSettings = plugin.LoadPluginSettings<OstPlayerSettings>();
             Settings = savedSettings ?? new OstPlayerSettings();
@@ -120,28 +126,32 @@ namespace OstPlayer.ViewModels {
         /// <summary>
         /// Begins editing session (creates a clone for cancel support).
         /// </summary>
-        public void BeginEdit() {
+        public void BeginEdit()
+        {
             editingClone = Serialization.GetClone(Settings);
         }
 
         /// <summary>
         /// Cancels editing and reverts changes to the last saved state.
         /// </summary>
-        public void CancelEdit() {
+        public void CancelEdit()
+        {
             Settings = editingClone;
         }
 
         /// <summary>
         /// Saves the current settings.
         /// </summary>
-        public void EndEdit() {
+        public void EndEdit()
+        {
             plugin.SavePluginSettings(Settings);
         }
 
         /// <summary>
         /// Verifies settings before saving. Returns true if valid.
         /// </summary>
-        public bool VerifySettings(out List<string> errors) {
+        public bool VerifySettings(out List<string> errors)
+        {
             errors = new List<string>();
             return true;
         }

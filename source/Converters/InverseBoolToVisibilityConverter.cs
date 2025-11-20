@@ -86,7 +86,8 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace OstPlayer.Converters {
+namespace OstPlayer.Converters
+{
     /// <summary>
     /// Converts bool to Visibility, but inversely.
     /// true ? Collapsed, false ? Visible.
@@ -96,11 +97,13 @@ namespace OstPlayer.Converters {
     /// - OstPlayerSidebarView.xaml: Used as a resource with the key "InverseBoolToVisibilityConverter".
     ///   Used for buttons "Show MP3 metadata" and "Show Discogs metadata" (Visibility binding).
     /// </summary>
-    public class InverseBoolToVisibilityConverter : IValueConverter {
+    public class InverseBoolToVisibilityConverter : IValueConverter
+    {
         /// <summary>
         /// true ? Collapsed, false ? Visible
         /// </summary>
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
             if (value is bool b)
                 return b ? Visibility.Collapsed : Visibility.Visible;
             return Visibility.Visible;
@@ -109,7 +112,13 @@ namespace OstPlayer.Converters {
         /// <summary>
         /// Collapsed ? true, Visible ? false
         /// </summary>
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
+        {
             if (value is Visibility v)
                 return v != Visibility.Visible;
             return true;
