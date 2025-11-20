@@ -12,14 +12,14 @@
 // PURPOSE:
 // Static utility class for discovering and managing music files associated
 // with games in Playnite. Handles path resolution and file enumeration
-// for the ExtraMetadata folder structure used by OstPlayer.
+// for the plugin's ExtensionsData folder structure used by OstPlayer.
 //
 // FEATURES:
 // - Game music path resolution
 // - MP3 file discovery and enumeration
 // - Alphabetical sorting of music files
 // - Error-tolerant file operations
-// - ExtraMetadata folder structure support
+// - Plugin ExtensionsData folder structure support
 //
 // DEPENDENCIES:
 // - Playnite.SDK (IPlayniteAPI, Game model)
@@ -33,10 +33,10 @@
 // - Defensive programming against missing directories
 //
 // FILE STRUCTURE:
-// ExtraMetadata/
-//   games/
-//     {GameId}/
-//       Music Files/
+// ExtensionsData/
+//   OstPlayer_f3b0c108-5212-4b34-a303-47e859b31a92/
+//     Metadata/
+//       {GameId}/
 //         *.mp3
 //
 // PERFORMANCE NOTES:
@@ -105,7 +105,7 @@ namespace OstPlayer.Utils {
 
         /// <summary>
         /// Gets the path to the music files for a specific game.
-        /// FOLDER STRUCTURE: Uses Playnite's ExtraMetadata convention for organization
+        /// FOLDER STRUCTURE: Uses Playnite's plugin ExtensionsData convention for organization
         /// PATH VALIDATION: Verifies directory existence before returning path
         /// RETURN STRATEGY: Returns null for non-existent paths (caller-friendly)
         /// </summary>
@@ -117,15 +117,15 @@ namespace OstPlayer.Utils {
             if (game == null)
                 return null;
 
-            // PATH CONSTRUCTION: Build path using Playnite's standard structure
+            // PATH CONSTRUCTION: Build path using original ExtraMetadata structure for MP3 files
             // STRUCTURE: {ConfigPath}/ExtraMetadata/games/{GameId}/Music Files/
-            // BENEFITS: Follows Playnite conventions, organizes by unique game ID
-            var extraMetadataPath = Path.Combine(api.Paths.ConfigurationPath, "ExtraMetadata");
+            // REASON: MP3 files stay in original location, only JSON metadata moves to ExtensionsData
             var gameMusicPath = Path.Combine(
-                extraMetadataPath,
-                "games",                    // Standard ExtraMetadata subfolder
-                game.Id.ToString(),         // Unique game identifier (GUID)
-                "Music Files"               // OstPlayer-specific music folder
+                api.Paths.ConfigurationPath,
+                "ExtraMetadata",             // Playnite's extra metadata folder
+                "games",                     // Games subfolder
+                game.Id.ToString(),          // Unique game identifier (GUID)
+                "Music Files"                // Music files subfolder
             );
 
             // EXISTENCE VALIDATION: Only return path if directory actually exists

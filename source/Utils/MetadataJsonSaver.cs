@@ -11,12 +11,12 @@
 //
 // PURPOSE:
 // Static utility class for saving metadata from multiple sources (MP3, MusicBrainz, Discogs)
-// as JSON files in the game's ExtraMetadata folder structure. Provides persistent caching
-// and storage capabilities for metadata management within Playnite's file organization.
+// as JSON files in the plugin's ExtensionsData folder structure. Provides persistent caching
+// and storage capabilities for metadata management within Playnite's plugin data organization.
 //
 // FEATURES:
 // - Multi-source metadata persistence to JSON files
-// - ExtraMetadata folder structure integration
+// - Plugin-specific ExtensionsData folder integration
 // - Automatic directory creation and management
 // - Game-specific metadata organization by database ID
 // - Thread-safe static methods for concurrent access
@@ -32,14 +32,14 @@
 // - SaveMp3MetadataToJson: Persist MP3 tag metadata
 // - SaveDiscogsMetadataToJson: Persist Discogs release information
 // - SaveMusicBrainzMetadataToJson: Persist MusicBrainz release data
-// - GetMusicFilesDirectory: Resolve ExtraMetadata path for game
+// - GetMusicFilesDirectory: Resolve plugin ExtensionsData path for game
 // - EnsureDirectoryExists: Create directory structure if needed
 //
 // FILE ORGANIZATION:
-// ExtraMetadata/
-//   games/
-//     {GameId}/
-//       Music Files/
+// ExtensionsData/
+//   OstPlayer_f3b0c108-5212-4b34-a303-47e859b31a92/
+//     Metadata/
+//       {GameId}/
 //         {GameId}_mp3.json
 //         {GameId}_discogs.json
 //         {GameId}_musicbrainz.json
@@ -78,9 +78,9 @@
 //
 // PLAYNITE INTEGRATION:
 // - Uses IPlayniteAPI for consistent path resolution
-// - Follows ExtraMetadata folder conventions
-// - Compatible with Playnite's game database structure
-// - Integrates with game-specific data organization
+// - Follows plugin ExtensionsData folder conventions
+// - Compatible with Playnite's plugin data structure
+// - Integrates with plugin-specific data organization
 //
 // COMPATIBILITY:
 // - .NET Framework 4.6.2
@@ -101,17 +101,17 @@ using Playnite.SDK;
 namespace OstPlayer.Utils
 {
     /// <summary>
-    /// Static utility for saving metadata as JSON files in the game's ExtraMetadata folder.
+    /// Static utility for saving metadata as JSON files in the plugin's ExtensionsData folder.
     /// ARCHITECTURE: Persistence layer for metadata caching and cross-session storage
     /// THREAD SAFETY: All static methods are thread-safe (no shared mutable state)
-    /// FILE ORGANIZATION: Follows Playnite ExtraMetadata conventions for consistency
+    /// FILE ORGANIZATION: Follows Playnite plugin data conventions for consistency
     /// </summary>
     public static class MetadataJsonSaver
     {
         #region Public API Methods - Multi-Source Metadata Persistence
 
         /// <summary>
-        /// Saves MP3 metadata to a JSON file in the game's ExtraMetadata folder.
+        /// Saves MP3 metadata to a JSON file in the plugin's ExtensionsData folder.
         /// PURPOSE: Cache ID3 tag data to avoid repeated file reads
         /// FILENAME PATTERN: {GameId}_mp3.json for easy identification
         /// SERIALIZATION: Indented JSON for human readability and debugging
@@ -145,7 +145,7 @@ namespace OstPlayer.Utils
         }
 
         /// <summary>
-        /// Saves Discogs metadata to a JSON file in the game's ExtraMetadata folder.
+        /// Saves Discogs metadata to a JSON file in the plugin's ExtensionsData folder.
         /// PURPOSE: Cache external API data to reduce network requests and improve performance
         /// API RATE LIMITING: Reduces load on Discogs API by caching responses
         /// OFFLINE ACCESS: Enables metadata access when network is unavailable
@@ -174,7 +174,7 @@ namespace OstPlayer.Utils
         }
 
         /// <summary>
-        /// Saves MusicBrainz metadata to a JSON file in the game's ExtraMetadata folder.
+        /// Saves MusicBrainz metadata to a JSON file in the plugin's ExtensionsData folder.
         /// PURPOSE: Cache MusicBrainz API responses for comprehensive music database integration
         /// FUTURE PROOFING: Prepared for MusicBrainz integration when implemented
         /// METADATA COMPLETENESS: Provides additional data source for comprehensive metadata
@@ -206,29 +206,27 @@ namespace OstPlayer.Utils
         #region Private Helper Methods - Directory and Path Management
 
         /// <summary>
-        /// Returns the path to the Music Files directory for the given game by DatabaseId
-        /// PATH STRUCTURE: {ConfigPath}/ExtraMetadata/games/{GameId}/Music Files/
-        /// PLAYNITE INTEGRATION: Uses official Playnite path conventions
-        /// CONSISTENCY: Same structure used throughout OstPlayer for organization
+        /// Returns the path to the Metadata directory for the given game by DatabaseId
+        /// PATH STRUCTURE: {ExtensionsDataPath}/OstPlayer_{PluginId}/Metadata/{GameId}/
+        /// PLAYNITE INTEGRATION: Uses official Playnite plugin data conventions
+        /// CONSISTENCY: Avoids conflicts with other plugins using ExtraMetadata
         /// </summary>
         /// <param name="databaseId">Unique game identifier (GUID)</param>
         /// <param name="api">Playnite API for path resolution</param>
         /// <returns>Full path to the game's music files directory</returns>
         private static string GetMusicFilesDirectory(Guid databaseId, IPlayniteAPI api)
         {
-            // PATH CONSTRUCTION: Build standardized path using Playnite conventions
+            // PATH CONSTRUCTION: Build plugin-specific path using ExtensionsData conventions
             // COMPONENTS:
-            // - ConfigurationPath: User's Playnite data directory
-            // - ExtraMetadata: Standard folder for additional game data
-            // - games: Container for per-game data
+            // - ExtensionsDataPath: Plugin data directory
+            // - OstPlayer_f3b0c108-5212-4b34-a303-47e859b31a92: Plugin ID folder
+            // - Metadata: Plugin-specific metadata container
             // - {databaseId}: Unique folder per game (prevents conflicts)
-            // - Music Files: OstPlayer-specific folder for audio data
             return Path.Combine(
-                api.Paths.ConfigurationPath, // Base Playnite configuration directory
-                "ExtraMetadata", // Standard metadata container
-                "games", // Game-specific data container
-                databaseId.ToString(), // Unique game directory (GUID string)
-                "Music Files" // OstPlayer music and metadata folder
+                api.Paths.ExtensionsDataPath, // Base plugin data directory
+                "OstPlayer_f3b0c108-5212-4b34-a303-47e859b31a92", // Plugin ID folder
+                "Metadata", // OstPlayer metadata container
+                databaseId.ToString() // Unique game directory (GUID string)
             );
         }
 
