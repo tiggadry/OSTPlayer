@@ -165,7 +165,7 @@ namespace OstPlayer.Services
                     return new List<Game>(cachedGamesWithMusic);
                 }
 
-                logger.Info("Scanning for games with music files...");
+                logger.Info("Scanning for games with UniPlaySong music files...");
 
                 return await Task.Run(
                     () =>
@@ -189,7 +189,7 @@ namespace OstPlayer.Services
                                 {
                                     logger.Warn(
                                         ex,
-                                        $"Error checking music files for game: {game.Name}"
+                                        $"Error checking UniPlaySong music files for game: {game.Name}"
                                     );
                                     return false;
                                 }
@@ -201,7 +201,7 @@ namespace OstPlayer.Services
                         cachedGamesWithMusic = gamesWithMusic;
                         lastGameScanTime = DateTime.Now;
 
-                        logger.Info($"Found {gamesWithMusic.Count} games with music files");
+                        logger.Info($"Found {gamesWithMusic.Count} games with UniPlaySong music files");
                         return gamesWithMusic;
                     },
                     cancellationToken
@@ -209,12 +209,12 @@ namespace OstPlayer.Services
             }
             catch (OperationCanceledException)
             {
-                logger.Info("Get games with music operation cancelled");
+                logger.Info("Get games with UniPlaySong music operation cancelled");
                 throw;
             }
             catch (Exception ex)
             {
-                logger.Error(ex, "Failed to get games with music");
+                logger.Error(ex, "Failed to get games with UniPlaySong music");
                 errorHandler.HandlePlaybackError(ex, "Game Discovery");
                 return new List<Game>();
             }
@@ -459,12 +459,12 @@ namespace OstPlayer.Services
             }
             catch (OperationCanceledException)
             {
-                logger.Info($"Get music files cancelled for game: {game.Name}");
+                logger.Info($"Get UniPlaySong music files cancelled for game: {game.Name}");
                 throw;
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"Failed to get music files for game: {game.Name}");
+                logger.Error(ex, $"Failed to get UniPlaySong music files for game: {game.Name}");
                 return new List<string>();
             }
         }
@@ -576,7 +576,7 @@ namespace OstPlayer.Services
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                logger.Debug($"Scanning for music files in game: {game.Name}");
+                logger.Debug($"Scanning for UniPlaySong music files in game: {game.Name}");
 
                 return await Task.Run(
                     () =>
@@ -618,7 +618,7 @@ namespace OstPlayer.Services
                             progress?.Report((processedCount * 100) / allFiles.Count);
                         }
 
-                        logger.Debug($"Found {musicFiles.Count} music files in game: {game.Name}");
+                        logger.Debug($"Found {musicFiles.Count} UniPlaySong music files in game: {game.Name}");
                         return musicFiles;
                     },
                     cancellationToken
@@ -626,12 +626,12 @@ namespace OstPlayer.Services
             }
             catch (OperationCanceledException)
             {
-                logger.Info($"Scan for music files cancelled for game: {game.Name}");
+                logger.Info($"Scan for UniPlaySong music files cancelled for game: {game.Name}");
                 throw;
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"Failed to scan for music files in game: {game.Name}");
+                logger.Error(ex, $"Failed to scan for UniPlaySong music files in game: {game.Name}");
                 return new List<string>();
             }
         }
@@ -653,7 +653,7 @@ namespace OstPlayer.Services
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                logger.Info("Starting batch scan for music files across all games...");
+                logger.Info("Starting batch scan for UniPlaySong music files across all games...");
 
                 var allGames = playniteApi.Database.Games.ToList();
                 int processedGames = 0;
@@ -721,7 +721,7 @@ namespace OstPlayer.Services
             }
             catch (Exception ex)
             {
-                logger.Error(ex, "Failed to perform batch scan for music files");
+                logger.Error(ex, "Failed to perform batch scan for UniPlaySong music files");
                 return results;
             }
         }
@@ -743,7 +743,7 @@ namespace OstPlayer.Services
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                logger.Info("Starting batch validation of music files...");
+                logger.Info("Starting batch validation of UniPlaySong music files...");
 
                 var gamesWithMusic = await GetGamesWithMusicAsync(cancellationToken);
                 var allMusicFiles = new List<GameFileInfo>();
@@ -834,7 +834,7 @@ namespace OstPlayer.Services
             }
             catch (Exception ex)
             {
-                logger.Error(ex, "Failed to perform batch validation of music files");
+                logger.Error(ex, "Failed to perform batch validation of UniPlaySong music files");
                 return results;
             }
         }

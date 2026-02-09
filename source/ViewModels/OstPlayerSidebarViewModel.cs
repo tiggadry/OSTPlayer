@@ -329,7 +329,7 @@ namespace OstPlayer.ViewModels
         /// Status message displayed to user about current operations or errors.
         /// Provides feedback for loading, errors, and system state changes.
         /// </summary>
-        private string statusText = "Select a game to see available music files";
+        private string statusText = "Select a game to see available UniPlaySong music files";
 
         /// <summary>
         /// Display text for currently playing track including play/pause state.
@@ -1198,12 +1198,12 @@ namespace OstPlayer.ViewModels
                             if (Games.Count == 0)
                             {
                                 StatusText =
-                                    "No games with MP3 files found. Make sure games have .mp3 files in "
-                                    + "ExtensionsData/OstPlayer_{PluginId}/Metadata/{GameId}/ folder";
+                                    "No games with MP3 files found. Make sure UniPlaySong stores .mp3 files in "
+                                    + "ExtraMetadata/UniPlaySong/Games/{GameId}/.";
                             }
                             else
                             {
-                                StatusText = $"Found {Games.Count} games with MP3 music files";
+                                StatusText = $"Found {Games.Count} games with UniPlaySong music files";
                             }
 
                             // Apply preselection if provided
@@ -1251,7 +1251,7 @@ namespace OstPlayer.ViewModels
             {
                 // Clear collection and show instructional message
                 MusicFiles = new ObservableCollection<TrackListItem>();
-                StatusText = "Select a game to see available music files";
+                StatusText = "Select a game to see available UniPlaySong music files";
                 return;
             }
 
@@ -1285,16 +1285,16 @@ namespace OstPlayer.ViewModels
                 // Provide user feedback based on results
                 if (MusicFiles.Count == 0)
                 {
-                    StatusText = $"No music files found for {SelectedGame.Name}";
+                    StatusText = $"No UniPlaySong music files found for {SelectedGame.Name}";
                 }
                 else
                 {
-                    StatusText = $"Found {MusicFiles.Count} music files for {SelectedGame.Name}";
+                    StatusText = $"Found {MusicFiles.Count} UniPlaySong music files for {SelectedGame.Name}";
                 }
             }
             catch (Exception ex)
             {
-                StatusText = $"Error loading music files: {ex.Message}";
+                StatusText = $"Error loading UniPlaySong music files: {ex.Message}";
                 MusicFiles = new ObservableCollection<TrackListItem>(); // Ensure clean state
             }
         }

@@ -120,15 +120,15 @@ namespace OstPlayer.Utils
             if (game == null)
                 return null;
 
-            // PATH CONSTRUCTION: Build path using original ExtraMetadata structure for MP3 files
-            // STRUCTURE: {ConfigPath}/ExtraMetadata/games/{GameId}/Music Files/
-            // REASON: MP3 files stay in original location, only JSON metadata moves to ExtensionsData
+            // PATH CONSTRUCTION: Build path using UniPlaySong ExtraMetadata structure for MP3 files
+            // STRUCTURE: {ConfigPath}/ExtraMetadata/UniPlaySong/Games/{GameId}/
+            // REASON: Music files are stored by UniPlaySong addon, JSON metadata stays in ExtensionsData
             var gameMusicPath = Path.Combine(
                 api.Paths.ConfigurationPath,
                 "ExtraMetadata", // Playnite's extra metadata folder
-                "games", // Games subfolder
-                game.Id.ToString(), // Unique game identifier (GUID)
-                "Music Files" // Music files subfolder
+                "UniPlaySong", // UniPlaySong addon folder
+                "Games", // Games subfolder
+                game.Id.ToString() // Unique game identifier (GUID)
             );
 
             // EXISTENCE VALIDATION: Only return path if directory actually exists
